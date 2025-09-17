@@ -198,7 +198,7 @@
 - 권한: RBAC + ABAC 정책 엔진(결재선/문서등급/소속 기반)
 - 구성: 다중 프로파일(dev, prod), 외부 설정(.properties/.yml + 환경변수/Secret 관리)
 - 로깅/감사: 감사 이벤트 별도 채널로 분리, 불변 스토리지 연동 API 제공
-- 최초에는 로컬에서만 구동되도록 하고 추후 AWS와 연동
+- 로컬 개발 환경에서 완전히 구동되도록 구현 (AWS 연동은 향후 확장 계획)
 
 ### 데이터베이스(RDBMS)
 - 권장: PostgreSQL 16.x (우선 추천)
@@ -208,19 +208,20 @@
 - 보안: 전송(TLS) + 저장 암호화(디스크/스토리지 레벨), 민감 데이터 칼럼 암호화/마스킹
 - 성능: 인덱스 설계(상태, 결재자, 기간, 등급), 아카이브 파티션 정책
 
-### 인프라/런타임
-- 배포 단위: 컨테이너 이미지(권장) 또는 단일 JAR
-- 최소 구성(초기): 단일 VM(리눅스) + Docker/Podman, 리버스 프록시(Nginx) + TLS
-- 스토리지: 애플리케이션 DB(PostgreSQL), 첨부는 Object Storage(또는 암호화된 파일 스토리지)
+### 인프라/런타임 (로컬 개발 환경)
+- 배포 단위: 단일 JAR 또는 Docker 컨테이너
+- 로컬 구성: 로컬 PostgreSQL + Spring Boot 애플리케이션
+- 스토리지: 로컬 PostgreSQL DB, 첨부파일은 로컬 파일시스템 (암호화된 디렉토리)
+- 개발 환경: IntelliJ IDEA 또는 VS Code, 로컬 터미널에서 실행
 
-### CI/CD(GitHub Actions 예시)
-- 목표: PR 시 빌드/테스트, main 머지 시 컨테이너 빌드/배포
-- 레지스트리: GitHub Container Registry(GHCR)
-- 배포 방식: 대상 서버로 SSH 배포 또는 Actions Runner(Self-hosted)에서 `docker compose` 재기동
+### CI/CD(로컬 개발용)
+- 목표: PR 시 빌드/테스트, 로컬 개발 환경 구축
+- 개발 워크플로우: 로컬에서 직접 실행 및 테스트
+- 배포 방식: 로컬 JAR 실행 또는 Docker Compose를 통한 로컬 실행
 
-#### 간단 워크플로우 예시
+#### 로컬 개발 워크플로우 예시
 ```yaml
-name: ci-cd
+name: local-dev-ci
 
 on:
   pull_request:
@@ -249,44 +250,13 @@ jobs:
         run: ./gradlew clean build -x test
       - name: Test
         run: ./gradlew test
-
-  docker-release:
-    if: github.ref == 'refs/heads/main'
-    needs: build-test
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - uses: actions/checkout@v4
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build image
+      - name: Build Docker image for local testing
         run: |
-          IMAGE=ghcr.io/${{ github.repository }}/approval-app:$(echo $GITHUB_SHA | head -c7)
-          docker build -t $IMAGE .
-          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
-      - name: Push image
-        run: docker push $IMAGE
-      - name: Deploy via SSH
-        if: secrets.SSH_HOST && secrets.SSH_USER && secrets.SSH_KEY
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            export IMAGE=$IMAGE
-            cd /opt/approval-app
-            docker compose pull
-            docker compose up -d
+          docker build -t approval-app:local .
 ```
 
-### 운영 시크릿/설정
-- GitHub Actions: `SSH_HOST`, `SSH_USER`, `SSH_KEY`, 데이터베이스 접속 정보는 서버 환경변수/시크릿 매니저로 관리
-- 애플리케이션: 프로파일별 DB URL, JWT/세션 키, 메일/푸시 자격증명은 외부화하고 접근 최소화
+### 로컬 개발 시크릿/설정
+- 로컬 환경변수: 데이터베이스 접속 정보, JWT/세션 키는 로컬 환경변수로 관리
+- 애플리케이션: 프로파일별 DB URL, JWT/세션 키는 application-dev.yml에 로컬 설정으로 관리
+- 개발용 시크릿: 로컬 개발용 고정 키 사용 (운영 환경과 분리)
 
