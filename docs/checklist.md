@@ -3,9 +3,9 @@
 아래 순서대로 진행합니다. 각 항목 완료 시 [x]로 표시하세요.
 
 ### 0) 프로젝트 초기 설정
-- [ ] 리포지토리 초기화 및 브랜치 전략 준비 (`main`, `feature/*`)
-- [ ] 로컬 개발 환경 설정: PostgreSQL 설치, Java 17, Gradle
-- [ ] 개발 프로파일 환경변수 정의 (`SPRING_PROFILES_ACTIVE=dev`, 로컬 DB URL)
+- [x] 리포지토리 초기화 및 브랜치 전략 준비 (`main`, `feature/*`)
+- [x] 로컬 개발 환경 설정: PostgreSQL 설치, Java 17, Gradle
+- [x] 개발 프로파일 환경변수 정의 (`SPRING_PROFILES_ACTIVE=dev`, 로컬 DB URL)
 
 ### 1) 데이터베이스/스키마 (로컬)
 - [ ] 로컬 PostgreSQL 설치 및 설정 (포트 5432)
