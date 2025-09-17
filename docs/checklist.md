@@ -49,24 +49,33 @@
   - [ ] 감사 로깅 무결성 테스트 `AuditLogTests.java`
   - [ ] 지사 교차 결재 시나리오 테스트 `CrossBranchApprovalTests.java`
 
-### 3) 프론트엔드(jQuery + HTML/CSS)
-- [ ] 정적 리소스 구조 `frontend/`
-  - [ ] `frontend/index.html` (대시보드/알림 요약)
-  - [ ] `frontend/login.html`, `frontend/logout.html`
-  - [ ] 문서 목록 `frontend/documents/list.html`
-  - [ ] 문서 작성 `frontend/documents/new.html`
-  - [ ] 문서 상세/결재 `frontend/documents/detail.html`
-  - [ ] 관리(지사/사용자/정책) `frontend/admin/index.html`
-  - [ ] 공통 스크립트 `frontend/js/app.js` (AJAX 기본, 에러/토스트, 로딩)
-  - [ ] API 클라이언트 `frontend/js/api.js` (인증 헤더, CSRF 토큰 처리)
-  - [ ] 결재 UX 스크립트 `frontend/js/approval.js` (상신/승인/반려/회수)
-  - [ ] 접근제어 UX `frontend/js/access.js` (버튼/메뉴 가시성)
-  - [ ] 스타일 `frontend/css/styles.css` (또는 Bootstrap 5 사용)
-  - [ ] 뷰어 보안 옵션(워터마크) `frontend/js/watermark.js`
-  - [ ] 파일 업/다운로드 컴포넌트 `frontend/js/file.js`
-  - [ ] 클라이언트 사이드 유효성 검사 `frontend/js/validation.js`
-  - [ ] 템플릿 조각(`partials`): 헤더/사이드바/푸터
-  - [ ] 지사 선택/전환 UI 및 결재선 추천 미리보기
+### 3) 프론트엔드 (Brotherhood 디자인 시스템 - Next.js 14 + React 19)
+- [ ] Brotherhood 프로젝트 구조 설정 `brotherhood/`
+  - [ ] Next.js App Router 설정 (로그인, 대시보드, 문서관리, 결재관리, 사용자관리, 설정)
+  - [ ] shadcn/ui 컴포넌트 시스템 설정
+  - [ ] Tailwind CSS 4.1.9 + Radix UI 설정
+  - [ ] 상태 관리 설정 (React Context + useReducer 또는 Zustand)
+- [ ] 공통 컴포넌트 (shadcn/ui 기반)
+  - [ ] `DashboardHeader` (사용자 메뉴, 알림, 세례명 표시)
+  - [ ] `DashboardSidebar` (네비게이션)
+  - [ ] `DocumentList` (문서 목록, 필터링, 검색)
+  - [ ] `DocumentForm` (문서 작성/수정)
+  - [ ] `ApprovalWorkflow` (결재선 설정, 진행상태)
+  - [ ] `CommentSection` (의견/댓글)
+  - [ ] `AttachmentUpload` (첨부파일)
+- [ ] 페이지 컴포넌트 (Next.js App Router)
+  - [ ] `LoginPage` (MFA 포함)
+  - [ ] `DashboardPage` (통계, 최근 문서, 결재 대기)
+  - [ ] `DocumentListPage` (문서 목록, 검색/필터)
+  - [ ] `DocumentDetailPage` (문서 상세, 결재 액션)
+  - [ ] `ApprovalQueuePage` (내 결재 대기 목록)
+  - [ ] `UserManagementPage` (사용자/권한 관리)
+- [ ] API 클라이언트 설정 (Axios, React Query)
+- [ ] 인증/권한 훅 (`useAuth`, `usePermissions`)
+- [ ] 폼 유효성 검사 (React Hook Form + Zod)
+- [ ] 반응형 디자인 (모바일/태블릿/데스크톱)
+- [ ] 다국어 지원 (i18next)
+- [ ] 테스트 (Jest + React Testing Library)
 
 ### 4) 권한/정책 구성(중요)
 - [ ] 역할/권한 시드: 일반/중간관리/책임/장상/관리자

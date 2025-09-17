@@ -27,6 +27,8 @@
 │ country         │    │ permissions     │    │ password_hash   │
 │ created_at      │    │ created_at      │    │ first_name      │
 │ updated_at      │    │ updated_at      │    │ last_name       │
+│ baptismal_name  │
+│ phone           │
 └─────────────────┘    └─────────────────┘    │ branch_id (FK)  │
          │                       │             │ is_active       │
          │                       │             │ created_at      │
@@ -188,6 +190,8 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
+    baptismal_name VARCHAR(50) NOT NULL, -- 세례명 (필수)
+    phone VARCHAR(20),
     branch_id BIGINT REFERENCES branches(id),
     is_active BOOLEAN DEFAULT true,
     last_login_at TIMESTAMP,
@@ -418,6 +422,15 @@ INSERT INTO branches (name, code, country, address, phone, email) VALUES
 ('본원', 'HQ', 'Korea', '서울특별시 강남구', '02-1234-5678', 'hq@cckbm.org'),
 ('부산지사', 'BUSAN', 'Korea', '부산광역시 해운대구', '051-1234-5678', 'busan@cckbm.org'),
 ('대구지사', 'DAEGU', 'Korea', '대구광역시 중구', '053-1234-5678', 'daegu@cckbm.org');
+```
+
+### 기본 사용자 데이터
+```sql
+INSERT INTO users (username, email, password_hash, first_name, last_name, baptismal_name, phone, branch_id) VALUES
+('admin', 'admin@cckbm.org', '$2a$10$encrypted_password_hash', '관리자', '김', '요한', '010-1234-5678', 1),
+('superior1', 'superior1@cckbm.org', '$2a$10$encrypted_password_hash', '장상', '이', '마리아', '010-2345-6789', 1),
+('manager1', 'manager1@cckbm.org', '$2a$10$encrypted_password_hash', '책임자', '박', '요셉', '010-3456-7890', 1),
+('member1', 'member1@cckbm.org', '$2a$10$encrypted_password_hash', '수도자', '최', '테레사', '010-4567-8901', 1);
 ```
 
 ## 데이터베이스 마이그레이션

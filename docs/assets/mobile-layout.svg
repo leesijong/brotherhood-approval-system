@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="700" viewBox="0 0 400 700" xmlns="http://www.w3.org/2000/svg">
+  <!-- 배경 -->
+  <rect width="400" height="700" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1"/>
+  
+  <!-- 상단 헤더 (고정) -->
+  <rect x="0" y="0" width="400" height="56" fill="#003366" stroke="#002244" stroke-width="1"/>
+  <text x="20" y="20" font-family="Arial, sans-serif" font-size="12" fill="white">☰</text>
+  <text x="50" y="35" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="white">내부결재</text>
+  <text x="320" y="35" font-family="Arial, sans-serif" font-size="16" fill="white">🔔</text>
+  <circle cx="350" cy="20" r="8" fill="#dc3545"/>
+  <text x="345" y="25" font-family="Arial, sans-serif" font-size="8" fill="white">3</text>
+  
+  <!-- 메인 콘텐츠 영역 -->
+  <rect x="0" y="56" width="400" height="564" fill="white" stroke="none"/>
+  
+  <!-- 대시보드 헤더 -->
+  <rect x="20" y="80" width="360" height="40" fill="white" stroke="none"/>
+  <text x="20" y="105" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#333">대시보드</text>
+  <rect x="280" y="85" width="80" height="30" fill="#003366" stroke="#002244" stroke-width="1" rx="4"/>
+  <text x="300" y="103" font-family="Arial, sans-serif" font-size="10" fill="white">+ 새 문서</text>
+  
+  <!-- 통계 카드 (2x2 그리드) -->
+  <rect x="20" y="140" width="360" height="160" fill="#f8f9fa" stroke="none"/>
+  
+  <!-- 통계 카드 1 -->
+  <rect x="30" y="150" width="160" height="60" fill="white" stroke="#e9ecef" stroke-width="1" rx="4"/>
+  <text x="110" y="175" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#003366">12</text>
+  <text x="110" y="195" font-family="Arial, sans-serif" font-size="10" fill="#666">내 문서</text>
+  
+  <!-- 통계 카드 2 -->
+  <rect x="210" y="150" width="160" height="60" fill="white" stroke="#e9ecef" stroke-width="1" rx="4"/>
+  <text x="290" y="175" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#ffd700">3</text>
+  <text x="290" y="195" font-family="Arial, sans-serif" font-size="10" fill="#666">결재 대기</text>
+  
+  <!-- 통계 카드 3 -->
+  <rect x="30" y="230" width="160" height="60" fill="white" stroke="#e9ecef" stroke-width="1" rx="4"/>
+  <text x="110" y="255" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#28a745">8</text>
+  <text x="110" y="275" font-family="Arial, sans-serif" font-size="10" fill="#666">승인 완료</text>
+  
+  <!-- 통계 카드 4 -->
+  <rect x="210" y="230" width="160" height="60" fill="white" stroke="#e9ecef" stroke-width="1" rx="4"/>
+  <text x="290" y="255" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#dc3545">1</text>
+  <text x="290" y="275" font-family="Arial, sans-serif" font-size="10" fill="#666">반려 문서</text>
+  
+  <!-- 최근 문서 목록 -->
+  <rect x="20" y="320" width="360" height="200" fill="white" stroke="#e9ecef" stroke-width="1" rx="4"/>
+  <text x="30" y="345" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#003366">최근 문서</text>
+  <rect x="320" y="330" width="50" height="25" fill="white" stroke="#003366" stroke-width="1" rx="4"/>
+  <text x="335" y="345" font-family="Arial, sans-serif" font-size="9" fill="#003366">전체</text>
+  
+  <!-- 문서 항목 1 -->
+  <rect x="30" y="360" width="340" height="50" fill="white" stroke="#e9ecef" stroke-width="1" rx="2"/>
+  <text x="40" y="375" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333">경비 신청서</text>
+  <text x="40" y="390" font-family="Arial, sans-serif" font-size="10" fill="#666">2024년 1월 경비 신청</text>
+  <text x="40" y="405" font-family="Arial, sans-serif" font-size="9" fill="#666">김관리자 (요한)</text>
+  <rect x="280" y="365" width="40" height="15" fill="#ffd700" stroke="#ffd700" stroke-width="1" rx="2"/>
+  <text x="290" y="375" font-family="Arial, sans-serif" font-size="8" fill="#333">진행중</text>
+  <text x="320" y="375" font-family="Arial, sans-serif" font-size="9" fill="#666">2분 전</text>
+  
+  <!-- 문서 항목 2 -->
+  <rect x="30" y="420" width="340" height="50" fill="white" stroke="#e9ecef" stroke-width="1" rx="2"/>
+  <text x="40" y="435" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333">회의록</text>
+  <text x="40" y="450" font-family="Arial, sans-serif" font-size="10" fill="#666">주간 회의록</text>
+  <text x="40" y="465" font-family="Arial, sans-serif" font-size="9" fill="#666">이사원 (마리아)</text>
+  <rect x="280" y="425" width="40" height="15" fill="#28a745" stroke="#28a745" stroke-width="1" rx="2"/>
+  <text x="290" y="435" font-family="Arial, sans-serif" font-size="8" fill="white">승인</text>
+  <text x="320" y="435" font-family="Arial, sans-serif" font-size="9" fill="#666">1시간 전</text>
+  
+  <!-- 결재 대기 목록 -->
+  <rect x="20" y="540" width="360" height="100" fill="white" stroke="#e9ecef" stroke-width="1" rx="4"/>
+  <text x="30" y="565" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#003366">결재 대기</text>
+  
+  <!-- 결재 대기 항목 -->
+  <rect x="30" y="580" width="340" height="40" fill="#fff9e6" stroke="#ffd700" stroke-width="1" rx="4"/>
+  <text x="40" y="595" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#333">경비 신청서 - 긴급</text>
+  <text x="40" y="610" font-family="Arial, sans-serif" font-size="9" fill="#666">김사원 (요한) → 이과장 (마리아)</text>
+  <rect x="280" y="590" width="60" height="20" fill="#003366" stroke="#002244" stroke-width="1" rx="2"/>
+  <text x="295" y="602" font-family="Arial, sans-serif" font-size="8" fill="white">결재</text>
+  
+  <!-- 하단 네비게이션 (고정) -->
+  <rect x="0" y="644" width="400" height="56" fill="white" stroke="#dee2e6" stroke-width="1"/>
+  
+  <!-- 네비게이션 아이템들 -->
+  <rect x="0" y="644" width="80" height="56" fill="white" stroke="none"/>
+  <text x="40" y="665" font-family="Arial, sans-serif" font-size="12" fill="#003366">🏠</text>
+  <text x="35" y="680" font-family="Arial, sans-serif" font-size="8" fill="#003366">홈</text>
+  
+  <rect x="80" y="644" width="80" height="56" fill="white" stroke="none"/>
+  <text x="120" y="665" font-family="Arial, sans-serif" font-size="12" fill="#6c757d">📄</text>
+  <text x="115" y="680" font-family="Arial, sans-serif" font-size="8" fill="#6c757d">문서</text>
+  
+  <rect x="160" y="644" width="80" height="56" fill="white" stroke="none"/>
+  <text x="200" y="665" font-family="Arial, sans-serif" font-size="12" fill="#6c757d">✅</text>
+  <text x="195" y="680" font-family="Arial, sans-serif" font-size="8" fill="#6c757d">결재</text>
+  
+  <rect x="240" y="644" width="80" height="56" fill="white" stroke="none"/>
+  <text x="280" y="665" font-family="Arial, sans-serif" font-size="12" fill="#6c757d">🔔</text>
+  <text x="275" y="680" font-family="Arial, sans-serif" font-size="8" fill="#6c757d">알림</text>
+  
+  <rect x="320" y="644" width="80" height="56" fill="white" stroke="none"/>
+  <text x="360" y="665" font-family="Arial, sans-serif" font-size="12" fill="#6c757d">👤</text>
+  <text x="355" y="680" font-family="Arial, sans-serif" font-size="8" fill="#6c757d">내정보</text>
+  
+  <!-- 레이아웃 라벨 -->
+  <text x="10" y="15" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#666">모바일 버전 레이아웃</text>
+</svg>

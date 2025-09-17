@@ -1,0 +1,174 @@
+<svg width="1200" height="800" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="headerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="cardGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f8fafc;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000000" flood-opacity="0.1"/>
+    </filter>
+    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.05"/>
+    </filter>
+  </defs>
+  
+  <!-- 배경 -->
+  <rect width="1200" height="800" fill="#f1f5f9"/>
+  
+  <!-- 상단 헤더 -->
+  <rect x="0" y="0" width="1200" height="64" fill="url(#headerGradient)"/>
+  <rect x="0" y="64" width="1200" height="1" fill="#e2e8f0"/>
+  
+  <!-- 로고 영역 -->
+  <rect x="24" y="16" width="200" height="32" fill="none"/>
+  <circle cx="40" cy="32" r="12" fill="#7E1416"/>
+  <rect x="56" y="20" width="120" height="24" fill="none"/>
+  <text x="60" y="36" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="white">내부결재 시스템</text>
+  
+  <!-- 알림 아이콘 -->
+  <circle cx="1000" cy="32" r="16" fill="#475569"/>
+  <circle cx="1000" cy="32" r="8" fill="none" stroke="white" stroke-width="2"/>
+  <circle cx="1000" cy="28" r="2" fill="white"/>
+  <circle cx="1000" cy="36" r="2" fill="white"/>
+  <circle cx="1000" cy="32" r="2" fill="white"/>
+  
+  <!-- 사용자 프로필 -->
+  <circle cx="1100" cy="32" r="16" fill="#7E1416"/>
+  <text x="1100" y="38" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="white" text-anchor="middle">김</text>
+  <text x="1124" y="36" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="white">김관리자 (요한)</text>
+  
+  <!-- 사이드바 -->
+  <rect x="0" y="65" width="240" height="735" fill="white" filter="url(#shadow)"/>
+  <rect x="240" y="65" width="1" height="735" fill="#e2e8f0"/>
+  
+  <!-- 사이드바 메뉴 -->
+  <rect x="16" y="80" width="208" height="40" fill="#7E1416" rx="8"/>
+  <text x="24" y="104" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="white">📊 대시보드</text>
+  
+  <rect x="16" y="130" width="208" height="40" fill="none"/>
+  <text x="24" y="154" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#64748b">📄 문서 관리</text>
+  
+  <rect x="16" y="180" width="208" height="40" fill="none"/>
+  <text x="24" y="204" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#64748b">✅ 결재 관리</text>
+  
+  <rect x="16" y="230" width="208" height="40" fill="none"/>
+  <text x="24" y="254" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#64748b">👥 사용자 관리</text>
+  
+  <rect x="16" y="280" width="208" height="40" fill="none"/>
+  <text x="24" y="304" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#64748b">📈 통계/리포트</text>
+  
+  <rect x="16" y="330" width="208" height="40" fill="none"/>
+  <text x="24" y="354" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#64748b">⚙️ 설정</text>
+  
+  <!-- 메인 콘텐츠 영역 -->
+  <rect x="260" y="80" width="920" height="720" fill="none"/>
+  
+  <!-- 페이지 헤더 -->
+  <text x="280" y="110" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#0f172a">대시보드</text>
+  
+  <!-- 새 문서 작성 버튼 -->
+  <rect x="1000" y="90" width="160" height="40" fill="#7E1416" rx="8" filter="url(#cardShadow)"/>
+  <text x="1040" y="114" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="white" text-anchor="middle">+ 새 문서 작성</text>
+  
+  <!-- 통계 카드들 -->
+  <!-- 내 문서 카드 -->
+  <rect x="280" y="140" width="200" height="120" fill="url(#cardGradient)" rx="12" filter="url(#cardShadow)"/>
+  <rect x="300" y="160" width="40" height="40" fill="#7E1416" rx="8"/>
+  <text x="310" y="185" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="white" text-anchor="middle">📄</text>
+  <text x="300" y="210" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#64748b">내 문서</text>
+  <text x="300" y="230" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#0f172a">12</text>
+  <text x="300" y="250" font-family="Inter, sans-serif" font-size="12" font-weight="400" fill="#10b981">+2 이번 주</text>
+  
+  <!-- 결재 대기 카드 -->
+  <rect x="500" y="140" width="200" height="120" fill="url(#cardGradient)" rx="12" filter="url(#cardShadow)"/>
+  <rect x="520" y="160" width="40" height="40" fill="#f59e0b" rx="8"/>
+  <text x="530" y="185" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="white" text-anchor="middle">⏰</text>
+  <text x="520" y="210" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#64748b">결재 대기</text>
+  <text x="520" y="230" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#0f172a">3</text>
+  <text x="520" y="250" font-family="Inter, sans-serif" font-size="12" font-weight="400" fill="#ef4444">1 긴급</text>
+  
+  <!-- 승인 완료 카드 -->
+  <rect x="720" y="140" width="200" height="120" fill="url(#cardGradient)" rx="12" filter="url(#cardShadow)"/>
+  <rect x="740" y="160" width="40" height="40" fill="#10b981" rx="8"/>
+  <text x="750" y="185" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="white" text-anchor="middle">✅</text>
+  <text x="740" y="210" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#64748b">승인 완료</text>
+  <text x="740" y="230" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#0f172a">8</text>
+  <text x="740" y="250" font-family="Inter, sans-serif" font-size="12" font-weight="400" fill="#10b981">이번 주</text>
+  
+  <!-- 반려 문서 카드 -->
+  <rect x="940" y="140" width="200" height="120" fill="url(#cardGradient)" rx="12" filter="url(#cardShadow)"/>
+  <rect x="960" y="160" width="40" height="40" fill="#ef4444" rx="8"/>
+  <text x="970" y="185" font-family="Inter, sans-serif" font-size="16" font-weight="600" fill="white" text-anchor="middle">❌</text>
+  <text x="960" y="210" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#64748b">반려 문서</text>
+  <text x="960" y="230" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#0f172a">1</text>
+  <text x="960" y="250" font-family="Inter, sans-serif" font-size="12" font-weight="400" fill="#ef4444">이번 주</text>
+  
+  <!-- 최근 문서 섹션 -->
+  <rect x="280" y="300" width="640" height="400" fill="url(#cardGradient)" rx="12" filter="url(#cardShadow)"/>
+  <text x="300" y="330" font-family="Inter, sans-serif" font-size="18" font-weight="600" fill="#0f172a">최근 문서</text>
+  <text x="850" y="330" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#7E1416">전체 보기 →</text>
+  
+  <!-- 테이블 헤더 -->
+  <rect x="300" y="350" width="600" height="40" fill="#f8fafc"/>
+  <text x="320" y="375" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#64748b">문서명</text>
+  <text x="500" y="375" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#64748b">상태</text>
+  <text x="600" y="375" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#64748b">작성일</text>
+  <text x="750" y="375" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#64748b">작성자</text>
+  
+  <!-- 테이블 행들 -->
+  <!-- 행 1 -->
+  <rect x="300" y="390" width="600" height="50" fill="white"/>
+  <text x="320" y="415" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#0f172a">경비 신청서</text>
+  <rect x="500" y="400" width="60" height="20" fill="#fef3c7" rx="10"/>
+  <text x="530" y="413" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#d97706" text-anchor="middle">진행중</text>
+  <text x="600" y="415" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#64748b">2024-01-15</text>
+  <text x="750" y="415" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#64748b">김관리자 (요한)</text>
+  
+  <!-- 행 2 -->
+  <rect x="300" y="440" width="600" height="50" fill="#f8fafc"/>
+  <text x="320" y="465" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#0f172a">회의록</text>
+  <rect x="500" y="450" width="50" height="20" fill="#d1fae5" rx="10"/>
+  <text x="525" y="463" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#059669" text-anchor="middle">승인</text>
+  <text x="600" y="465" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#64748b">2024-01-14</text>
+  <text x="750" y="465" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#64748b">이사원 (마리아)</text>
+  
+  <!-- 행 3 -->
+  <rect x="300" y="490" width="600" height="50" fill="white"/>
+  <text x="320" y="515" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#0f172a">보고서</text>
+  <rect x="500" y="500" width="50" height="20" fill="#d1fae5" rx="10"/>
+  <text x="525" y="513" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#059669" text-anchor="middle">승인</text>
+  <text x="600" y="515" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#64748b">2024-01-13</text>
+  <text x="750" y="515" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#64748b">박부장 (베드로)</text>
+  
+  <!-- 결재 대기 섹션 -->
+  <rect x="940" y="300" width="200" height="400" fill="url(#cardGradient)" rx="12" filter="url(#cardShadow)"/>
+  <text x="960" y="330" font-family="Inter, sans-serif" font-size="18" font-weight="600" fill="#0f172a">결재 대기</text>
+  
+  <!-- 결재 대기 항목들 -->
+  <rect x="960" y="350" width="160" height="60" fill="#fef3c7" rx="8"/>
+  <text x="970" y="370" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#d97706">긴급</text>
+  <text x="970" y="385" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#0f172a">경비 신청서</text>
+  <text x="970" y="400" font-family="Inter, sans-serif" font-size="11" font-weight="400" fill="#64748b">김사원 → 이사장</text>
+  
+  <rect x="960" y="420" width="160" height="60" fill="white" rx="8"/>
+  <text x="970" y="440" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#0f172a">회의록</text>
+  <text x="970" y="455" font-family="Inter, sans-serif" font-size="11" font-weight="400" fill="#64748b">이부장 → 박사장</text>
+  
+  <rect x="960" y="490" width="160" height="60" fill="white" rx="8"/>
+  <text x="970" y="510" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#0f172a">보고서</text>
+  <text x="970" y="525" font-family="Inter, sans-serif" font-size="11" font-weight="400" fill="#64748b">최과장 → 김부장</text>
+  
+  <!-- 빠른 액션 버튼들 -->
+  <rect x="280" y="720" width="120" height="40" fill="#7E1416" rx="8" filter="url(#cardShadow)"/>
+  <text x="340" y="744" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="white" text-anchor="middle">📄 새 문서</text>
+  
+  <rect x="420" y="720" width="120" height="40" fill="#10b981" rx="8" filter="url(#cardShadow)"/>
+  <text x="480" y="744" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="white" text-anchor="middle">✅ 결재하기</text>
+  
+  <rect x="560" y="720" width="120" height="40" fill="#f59e0b" rx="8" filter="url(#cardShadow)"/>
+  <text x="620" y="744" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="white" text-anchor="middle">📊 통계 보기</text>
+</svg>

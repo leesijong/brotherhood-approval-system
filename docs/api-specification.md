@@ -34,6 +34,7 @@ Content-Type: application/json
       "email": "admin@cckbm.org",
       "firstName": "관리자",
       "lastName": "김",
+      "baptismalName": "요한",
       "branch": {
         "id": 1,
         "name": "본원",
@@ -81,6 +82,7 @@ Authorization: Bearer {token}
         "email": "admin@cckbm.org",
         "firstName": "관리자",
         "lastName": "김",
+        "baptismalName": "요한",
         "branch": {
           "id": 1,
           "name": "본원",
@@ -120,6 +122,8 @@ Content-Type: application/json
   "password": "password123",
   "firstName": "새",
   "lastName": "사용자",
+  "baptismalName": "세례명",
+  "phone": "010-1234-5678",
   "branchId": 1,
   "roleIds": [1, 2]
 }
@@ -135,6 +139,8 @@ Content-Type: application/json
   "email": "updated@cckbm.org",
   "firstName": "수정된",
   "lastName": "사용자",
+  "baptismalName": "세례명",
+  "phone": "010-1234-5678",
   "branchId": 1,
   "roleIds": [1, 2],
   "isActive": true

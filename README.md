@@ -22,10 +22,17 @@
 - **Spring Security 6.2.0**
 - **Gradle 8.5**
 
-### 프론트엔드
-- **HTML5/CSS3/JavaScript**
-- **jQuery 3.7.1**
-- **Bootstrap 5.3.2** (선택적)
+### 프론트엔드 (Brotherhood 디자인 시스템)
+- **Next.js 14.2.25** + **React 19** + **TypeScript 5.x**
+- **Tailwind CSS 4.1.9** + **shadcn/ui** (UI Framework)
+- **Radix UI** (접근성 지원)
+- **Lucide React 0.454.0** (아이콘)
+- **Geist** (현대적인 폰트)
+- **브랜드 컬러**: #7e1416 (레드) - 한국순교복자수도회 홈페이지 색감 반영
+  - 메인: #7e1416 (레드)
+  - 보조: #f59e0b (앰버/오렌지)
+  - 카드: #fef2f2 (연한 레드)
+  - 파괴적: #dc2626 (빨간색)
 
 ## 로컬 개발 환경 설정
 
@@ -33,6 +40,8 @@
 - Java 17 LTS
 - PostgreSQL 16.1
 - Gradle 8.5
+- Node.js 18.x (Brotherhood 프론트엔드용)
+- npm 또는 yarn
 
 ### 설치 및 실행
 

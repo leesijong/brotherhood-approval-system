@@ -3,6 +3,20 @@
 ## 전체 프로젝트 구조
 ```
 cckbm/
+├── brotherhood/                      # Brotherhood 프론트엔드 (Next.js 14 + React 19)
+│   ├── src/                          # 소스 코드
+│   │   ├── components/               # React 컴포넌트
+│   │   ├── pages/                    # Next.js 페이지
+│   │   ├── hooks/                    # 커스텀 훅
+│   │   ├── lib/                      # 유틸리티 함수
+│   │   ├── types/                    # TypeScript 타입
+│   │   └── styles/                   # 스타일 파일
+│   ├── public/                       # 정적 파일
+│   ├── docs/                         # 프로젝트 문서
+│   ├── package.json                  # Node.js 의존성
+│   ├── tailwind.config.ts            # Tailwind CSS 설정
+│   ├── components.json               # shadcn/ui 설정
+│   └── next.config.mjs               # Next.js 설정
 ├── backend/                          # Spring Boot 백엔드
 │   ├── build.gradle                  # Gradle 빌드 설정
 │   ├── settings.gradle               # Gradle 프로젝트 설정

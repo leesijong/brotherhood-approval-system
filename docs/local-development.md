@@ -14,6 +14,8 @@
 - **IntelliJ IDEA** (권장) 또는 **VS Code**
 - **Git** (버전 관리)
 - **Docker Desktop** (선택적, 컨테이너 실행용)
+- **Node.js 18.x** (Brotherhood 프론트엔드 개발용)
+- **npm 또는 yarn** (패키지 관리)
 
 ## 설치 및 설정
 
