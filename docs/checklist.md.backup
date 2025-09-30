@@ -1,0 +1,142 @@
+## 구현 체크리스트 (프론트엔드/백엔드/설정)
+
+아래 순서대로 진행합니다. 각 항목 완료 시 [x]로 표시하세요.
+
+### 0) 프로젝트 초기 설정
+- [x] 리포지토리 초기화 및 브랜치 전략 준비 (`main`, `feature/*`)
+- [x] 로컬 개발 환경 설정: PostgreSQL 설치, Java 17, Gradle
+- [x] 개발 프로파일 환경변수 정의 (`SPRING_PROFILES_ACTIVE=dev`, 로컬 DB URL)
+- [x] Brotherhood 프론트엔드 프로젝트 구조 설정 (`brotherhood/`)
+
+### 1) 데이터베이스/스키마 (로컬)
+- [x] 로컬 PostgreSQL 설치 및 설정 (포트 5432)
+- [x] 로컬 DB 인스턴스 생성: `approval_system_dev`
+- [x] 스키마 정의 파일 생성 `db/schema.sql`
+  - [x] 테이블: `users`, `roles`, `user_roles`, `branches`, `documents`, `approval_lines`, `approval_steps`, `comments`, `attachments`, `audit_logs`, `policies`
+- [x] 초기 데이터(권장) `db/seed.sql` (기본 역할/지사/템플릿)
+- [x] 마이그레이션 도구 선택/초기화 (예: Flyway) `backend/src/main/resources/db/migration/V1__init.sql`
+- [x] 멀티테넌시/지사 스코프 키(Branch-ID) 설계 및 인덱스 적용
+
+### 2) 백엔드(Spring Boot 3, Java 17)
+- [x] 프로젝트 생성 (Gradle) `backend/build.gradle`, `backend/settings.gradle` ✅ **2024-09-18 완료**
+- [x] 애플리케이션 엔트리 `backend/src/main/java/.../Application.java` ✅ **2024-09-18 완료**
+- [x] 환경설정 `backend/src/main/resources/application.yml`, `application-dev.yml` (로컬 개발용) ✅ **2024-09-18 완료**
+- [x] 보안 설정 ✅ **2024-09-18 완료**
+  - [x] `SecurityConfig` (MFA 훅, 세션/JWT 정책, CSRF)
+  - [x] `MethodSecurityConfig` (권한 주석)
+- [x] 도메인 엔티티(`entity`) ✅ **2024-09-18 완료**
+  - [x] `User`, `Role`, `Branch`, `UserRole` (기본 엔티티 완료)
+  - [x] `Document`, `ApprovalLine`, `ApprovalStep`, `Comment`, `Attachment`, `AuditLog`, `Policy`
+  - [x] `Notification`, `ApprovalHistory` (추가 엔티티 구현)
+- [x] 리포지토리(`repository`) ✅ **2024-09-18 완료**
+- [x] DTO/요청/응답(`dto`) ✅ **2024-09-18 완료**
+- [x] 매퍼(`mapper`) (MapStruct) ✅ **2024-09-18 완료**
+- [x] 서비스(`service`) ✅ **2024-09-18 완료**
+  - [x] 사용자/권한 서비스
+  - [x] 결재선/결재 프로세스 서비스 (순차/병렬/조건부, 대결/위임)
+  - [x] 문서/첨부 관리 서비스(바이러스 스캔 훅 포함 지점)
+  - [x] 감사 로그 서비스(WORM/별도 저장 연계 포인트)
+  - [x] 알림 서비스, 크로스 브랜치 승인 서비스
+- [x] 컨트롤러(`controller`) ✅ **2024-09-18 완료**
+  - [x] 인증/세션/프로필 API
+  - [x] 문서 CRUD/검색 API(권한 필터링)
+  - [x] 결재 상신/승인/반려/회수/재상신 API
+  - [x] 첨부 업/다운로드 API(권한/워터마크 정책)
+  - [x] 알림 훅(웹훅/메일/푸시 연계 지점)
+  - [x] 지사/본원 라우팅 정책 API(조건부 결재선 추천)
+- [x] 예외/에러 응답 표준화 `GlobalExceptionHandler` ✅ **2024-09-18 완료**
+- [x] OpenAPI 문서 `springdoc` 설정 ✅ **2024-09-18 완료**
+- [x] 로깅/감사 인터셉터(열람/검색/다운로드/권한 변경 기록) ✅ **2024-09-18 완료**
+- [x] **Spring Boot 애플리케이션 실행 성공** ✅ **2024-09-18 완료**
+- [x] **테스트 환경 구축 (ApplicationContext 로딩)** ✅ **2024-09-18 완료**
+- [x] 단위/통합 테스트 (TDD - 백엔드 필수)
+  - [x] **TDD 1단계**: 결재선 정책 엔진 테스트 `src/test/java/.../ApprovalPolicyTests.java`
+  - [x] **TDD 2단계**: 문서 접근제어(RBAC+ABAC) 테스트 `AccessControlTests.java`
+  - [x] **TDD 3단계**: 감사 로깅 무결성 테스트 `AuditLogTests.java`
+  - [x] **TDD 4단계**: 지사 교차 결재 시나리오 테스트 `CrossBranchApprovalTests.java`
+  - [x] **TDD 5단계**: 사용자/권한 서비스 테스트 `UserServiceTests.java`
+  - [x] **TDD 6단계**: 문서 관리 서비스 테스트 `DocumentServiceTests.java`
+  - [x] **테스트 환경**: H2 인메모리 DB, application-test.yml 설정
+
+### 3) 프론트엔드 (Brotherhood 디자인 시스템 - Next.js 14 + React 19)
+- [x] Brotherhood 프로젝트 구조 설정 `brotherhood/`
+  - [x] Next.js App Router 설정 (로그인, 대시보드, 문서관리, 결재관리, 사용자관리, 설정)
+  - [x] shadcn/ui 컴포넌트 시스템 설정 (new-york 스타일)
+  - [x] Tailwind CSS 4.1.9 + Radix UI 설정 (접근성 WCAG 2.1 AA)
+  - [x] Geist 폰트 설정 (현대적 타이포그래피)
+  - [x] Lucide React 아이콘 시스템 설정
+  - [ ] 상태 관리 설정 (React Context + useReducer 또는 Zustand)
+- [ ] Brotherhood 디자인 시스템 구현
+  - [ ] 컬러 팔레트 설정 (#7e1416 메인, #f59e0b 보조, #fef2f2 카드)
+  - [ ] CSS 변수 시스템 구축 (globals.css)
+  - [ ] 반응형 브레이크포인트 설정 (모바일/태블릿/데스크톱)
+  - [ ] 애니메이션 및 트랜지션 설정
+- [ ] 공통 컴포넌트 (shadcn/ui + Radix UI 기반)
+  - [ ] `TopNavigation` (상단 네비게이션, 사용자 메뉴, 세례명 표시)
+  - [ ] `DashboardSidebar` (사이드바 네비게이션, 접근성 지원)
+  - [ ] `StatCard` (통계 카드, 호버 효과, 그리드 레이아웃)
+  - [ ] `DocumentList` (문서 목록, 필터링, 검색, 테이블)
+  - [ ] `DocumentForm` (문서 작성/수정, 폼 검증)
+  - [ ] `ApprovalWorkflow` (결재선 설정, 진행상태 표시)
+  - [ ] `CommentSection` (의견/댓글, 실시간 업데이트)
+  - [ ] `AttachmentUpload` (첨부파일, 드래그앤드롭)
+  - [ ] `MobileBottomNav` (모바일 하단 네비게이션)
+- [ ] 페이지 컴포넌트 (Next.js App Router)
+  - [ ] `LoginPage` (MFA 포함, 반응형 로그인 폼)
+  - [ ] `DashboardPage` (통계 카드 그리드, 최근 문서, 결재 대기)
+  - [ ] `DocumentListPage` (문서 목록, 검색/필터, 페이지네이션)
+  - [ ] `DocumentDetailPage` (문서 상세, 결재 액션, 워터마크)
+  - [ ] `ApprovalQueuePage` (내 결재 대기 목록, 우선순위 표시)
+  - [ ] `UserManagementPage` (사용자/권한 관리, 세례명 표시)
+- [ ] 보안 UI 요소 구현
+  - [ ] 워터마크 시스템 (CONFIDENTIAL 표시)
+  - [ ] 접근 제한 UI (blur 효과, 포인터 이벤트 차단)
+  - [ ] 권한별 UI 제어 (RBAC + ABAC)
+- [ ] API 클라이언트 설정 (Axios, React Query)
+- [ ] 인증/권한 훅 (`useAuth`, `usePermissions`)
+- [ ] 폼 유효성 검사 (React Hook Form + Zod)
+- [ ] 반응형 디자인 (모바일/태블릿/데스크톱)
+- [ ] 다국어 지원 (i18next)
+- [ ] 테스트 (Jest + React Testing Library)
+
+### 4) 권한/정책 구성(중요)
+- [ ] 역할/권한 시드: 일반/중간관리/책임/장상/관리자
+- [ ] 문서 등급 정책(일반/대외비/비밀/특정) + 다운로드 제한
+- [ ] 지사(분원) 라우팅 규칙(금액/유형/통화/본원 승인 삽입)
+- [ ] 교차 지사 결재 접근 최소화 정책(Need-to-Know)
+- [ ] 지역 경계 태그 및 경보 정책(지사 외 전파 방지)
+
+### 5) 감사/모니터링/알림
+- [ ] 감사 로그 수집 파이프라인(별도 저장/WORM 지향) 연동 지점 토글
+- [ ] 시스템/보안/애플리케이션 로그 수집 설정
+- [ ] 알림 채널 설정(메일/푸시). 토큰/SMTP 자격증명 시크릿 분리
+
+### 6) 로컬 배포/인프라
+- [ ] Dockerfile (백엔드)
+- [ ] docker-compose.yaml (app + db, 로컬 개발용)
+- [ ] 로컬 실행 스크립트 `scripts/run-local.sh`
+- [ ] 로컬 개발용 설정 파일 `config/local/`
+- [ ] 로컬 백업/복구 스크립트 `scripts/backup-local.sh`
+- [ ] 로컬 완전 구동 검증 (PostgreSQL + Spring Boot + 프론트엔드)
+
+### 7) 문서/로컬 개발 가이드
+- [ ] OpenAPI 스펙 파일 `docs/openapi.yaml`
+- [ ] 로컬 개발 가이드 `docs/local-development.md`
+- [ ] 사용자 매뉴얼(기안/결재/대결/회수) `docs/user-guide.md`
+- [ ] 로컬 환경 설정 가이드 `docs/setup-guide.md`
+
+---
+
+## 산출물 경로 요약 (로컬 개발)
+- 백엔드: `backend/src/main/java`, `backend/src/main/resources`, `backend/src/test/java`
+- 프론트엔드: `brotherhood/*` (Next.js 14 + React 19 + shadcn/ui)
+  - 컴포넌트: `brotherhood/src/components/` (shadcn/ui + Radix UI)
+  - 페이지: `brotherhood/src/pages/` (Next.js App Router)
+  - 스타일: `brotherhood/src/styles/` (Tailwind CSS + Brotherhood 디자인 시스템)
+  - 아이콘: `brotherhood/src/assets/icons/` (Lucide React)
+- 스키마/마이그레이션: `db/*`, `backend/src/main/resources/db/migration/*`
+- 로컬 인프라: `Dockerfile`, `docker-compose.yaml`, `scripts/*`, `config/local/*`
+- 문서: `docs/*` (요구사항, 설계, UI/UX, 개발가이드)
+- 디자인 에셋: `docs/assets/*` (PC/모바일 레이아웃 SVG)
+
+

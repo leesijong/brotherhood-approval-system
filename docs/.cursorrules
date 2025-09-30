@@ -4,3 +4,17 @@
 - 이 프로젝트는 로컬 개발 환경에서만 구동되도록 구현할 것
 - AWS 서버리스나 클라우드 배포는 고려하지 말고 로컬 PostgreSQL + Spring Boot로만 구현
 - 로컬 개발 환경 설정과 실행에 필요한 스크립트와 설정 파일들을 우선적으로 제공할 것
+- 프론트엔드 구현시에는 실행코드를 먼저 작성한다. 코어 비즈니스 로직 구현시에만 TDD로 구현할 것
+- 백엔드는 TDD로 구현할 것
+- PostgreSQL의 USER 패스워드는 'postgres' 이므로 모든 쉘 명령어 실행시 기억하고 실행할 것
+- PostgreSQL psql 경로는 'C:\Program Files\PostgreSQL\17\bin\psql.exe' 이므로 모든 데이터베이스 관련 명령어 실행시 이 경로를 사용할 것
+- Gradle PATH는 'C:\gradle-8.5\bin' 이므로 모든 쉘 명령어 실행시 이 경로를 사용할 것
+- Java PATH는 'C:\Program Files\Eclipse Adoptium\jdk-17.0.16.8-hotspot\bin' 이므로 모든 쉘 명령어 실행시 이 경로를 사용할 것
+- 모든 PowerShell 세션 시작시 다음 환경변수를 자동 설정할 것:
+  - $env:PATH += ";C:\gradle-8.5\bin"
+  - $env:PATH += ";C:\Program Files\Eclipse Adoptium\jdk-17.0.16.8-hotspot\bin"
+  - $env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-17.0.16.8-hotspot"
+  - $env:PGCLIENTENCODING = "UTF8"
+- PowerShell 실행시 && 연산자가 지원되지 않는다는것을 명심할 것.
+- 빌드나 bootRun 실행이후 오류 발생 여부를 확인하고 다음 명령어를 실행할 것.
+- Start-Sleep 명령어와 그와 동일한 기능을 하는 명령어는 실행하지 말 것.

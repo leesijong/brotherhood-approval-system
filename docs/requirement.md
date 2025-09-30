@@ -191,12 +191,6 @@
 
 ## 개발환경 및 배포 요건
 
-### 프론트엔드(UI)
-- 기술 스택: jQuery 3.x, 순수 HTML/CSS (필요 시 Bootstrap 5.x 적용 가능)
-- 브라우저 지원: 최신 LTS(Chrome/Edge/Firefox) 및 iOS/Android 최신 2개 메이저
-- 보안/품질 요구: CSP(Content-Security-Policy) 적용, XSS 방지 이스케이프, CSRF 토큰 연동, 정적 리소스 무결성(SRI) 선택 적용
-- 번들링: 초기 버전은 번들러 미사용(정적 제공). 필요 시 최소화/압축 도입
-
 ### 백엔드(API)
 - 기술 스택: Spring Boot 3.2.0, Java 17 LTS
 - 주요 모듈: Spring Web, Spring Security, Spring Data JPA, Validation, Springdoc(OpenAPI)
@@ -204,9 +198,11 @@
 - 권한: RBAC + ABAC 정책 엔진(결재선/문서등급/소속 기반)
 - 구성: 다중 프로파일(dev, local, prod), 외부 설정(.properties/.yml + 환경변수/Secret 관리)
 - 로깅/감사: 감사 이벤트 별도 채널로 분리, 불변 스토리지 연동 API 제공
+- **개발 방법론**: TDD 필수 - 모든 코어 비즈니스 로직은 테스트 우선 개발
+- **디버깅**: Perplexity 활용 - 구현 시 오류 발생 시 AI 기반 문제 해결
 - 로컬 개발 환경에서 완전히 구동되도록 구현 (AWS 연동은 향후 확장 계획)
 
-### 프론트엔드 (Brotherhood 디자인 시스템)
+### 프론트엔드 (Brotherhood 디자인 시스템 - Next.js + React)
 - **기술 스택**: Next.js 14.2.25 + React 19 + TypeScript 5.x + Tailwind CSS 4.1.9
 - **UI/UX**: shadcn/ui 기반 현대적이고 직관적인 인터페이스, 모바일 우선 반응형 디자인
 - **컴포넌트**: Radix UI 기반 완전한 접근성 지원 (WCAG 2.1 AA)
@@ -216,6 +212,7 @@
 - **차트/시각화**: Recharts 2.15.4
 - **아이콘**: Lucide React 0.454.0
 - **폰트**: Geist (현대적인 폰트)
+- **개발 방법론**: 실행코드 우선 개발 - UI/UX 구현 후 필요시 TDD 적용
 - **로컬 개발 환경에서 완전히 구동되도록 구현 (AWS 연동은 향후 확장 계획)**
 
 ### 데이터베이스(RDBMS)
@@ -272,6 +269,27 @@ jobs:
         run: |
           docker build -t approval-app:local .
 ```
+
+### 현재 구현 상태 (2025-09-23 업데이트)
+
+#### ✅ 완료된 핵심 기능
+- **로그인 시스템**: JWT 기반 인증 완전 구현 및 테스트 완료
+- **사용자 관리**: UUID 기반 사용자 목록 조회, 통계 조회 기능 구현
+- **데이터베이스 동기화**: 모든 엔티티와 테이블 스키마 완전 동기화
+- **API 연동**: 백엔드-프론트엔드 실제 통신 및 CORS 설정 완료
+- **보안 구현**: BCrypt 비밀번호 해싱, JWT 토큰 관리, 세션 보안
+
+#### 🔧 해결된 기술적 이슈
+- **JPA Lazy Loading 문제**: `Illegal pop() with non-matching JdbcValuesSourceProcessingState` 오류 해결
+- **데이터베이스 스키마 불일치**: 누락된 컬럼들 추가 및 엔티티-테이블 동기화
+- **컴파일 오류**: MapStruct 매핑, UUID 타입 불일치, 중복 메서드 정의 문제 해결
+- **권한 검증**: Spring Security `@PreAuthorize` 설정 및 JWT 토큰 역할 정보 포함
+
+#### 🧪 테스트 완료 항목
+- **로그인 API**: `POST /api/auth/login` - admin/admin123 계정으로 성공
+- **사용자 목록 API**: `GET /api/users` - 페이지네이션 지원
+- **사용자 통계 API**: `GET /api/users/stats` - 관리자 권한 테스트
+- **프론트엔드 연동**: 실제 백엔드 API 호출 및 응답 처리
 
 ### 로컬 개발 시크릿/설정
 - 로컬 환경변수: 데이터베이스 접속 정보, JWT/세션 키는 로컬 환경변수로 관리

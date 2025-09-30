@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Brotherhood 디자인 시스템 컬러 팔레트 */
+  
+  /* 기본 컬러 */
+  --background: 0 0% 100%;
+  --foreground: 210 40% 20%;
+  
+  /* 카드 컬러 */
+  --card: 0 0% 100%;
+  --card-foreground: 210 40% 20%;
+  
+  /* 팝오버 컬러 */
+  --popover: 0 0% 100%;
+  --popover-foreground: 210 40% 20%;
+  
+  /* 메인 컬러 (Brotherhood Red) */
+  --primary: 356 74% 30%;
+  --primary-foreground: 0 0% 100%;
+  
+  /* 보조 컬러 (Brotherhood Gold) */
+  --secondary: 45 93% 50%;
+  --secondary-foreground: 210 40% 20%;
+  
+  /* 뮤트 컬러 */
+  --muted: 0 0% 96%;
+  --muted-foreground: 215 16% 47%;
+  
+  /* 액센트 컬러 */
+  --accent: 45 93% 50%;
+  --accent-foreground: 210 40% 20%;
+  
+  /* 상태 컬러 */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  
+  /* UI 컬러 */
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 356 74% 30%;
+  
+  /* 보더 반경 */
+  --radius: 0.5rem;
+}
+
+.dark {
+  /* Brotherhood 다크 테마 컬러 팔레트 */
+  
+  /* 기본 컬러 */
+  --background: 0 0% 6%;
+  --foreground: 0 0% 98%;
+  
+  /* 카드 컬러 */
+  --card: 0 0% 10%;
+  --card-foreground: 0 0% 98%;
+  
+  /* 팝오버 컬러 */
+  --popover: 0 0% 10%;
+  --popover-foreground: 0 0% 98%;
+  
+  /* 메인 컬러 (Brotherhood Red - 다크) */
+  --primary: 0 84% 60%;
+  --primary-foreground: 0 0% 98%;
+  
+  /* 보조 컬러 (Brotherhood Gold - 다크) */
+  --secondary: 45 93% 50%;
+  --secondary-foreground: 0 0% 6%;
+  
+  /* 뮤트 컬러 */
+  --muted: 0 0% 15%;
+  --muted-foreground: 0 0% 64%;
+  
+  /* 액센트 컬러 */
+  --accent: 45 93% 50%;
+  --accent-foreground: 0 0% 6%;
+  
+  /* 상태 컬러 */
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  
+  /* UI 컬러 */
+  --border: 0 0% 25%;
+  --input: 0 0% 15%;
+  --ring: 0 84% 60%;
+}
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+

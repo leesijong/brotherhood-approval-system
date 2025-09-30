@@ -1,0 +1,28 @@
+---
+alwaysApply: true
+---
+
+# 프로젝트 구조 가이드
+
+## 백엔드 구조
+- 메인 애플리케이션: [ApprovalSystemApplication.java](mdc:backend/src/main/java/com/brotherhood/approval/ApprovalSystemApplication.java)
+- 엔티티: [entity/](mdc:backend/src/main/java/com/brotherhood/approval/entity/) 디렉토리
+- 컨트롤러: [controller/](mdc:backend/src/main/java/com/brotherhood/approval/controller/) 디렉토리
+- 서비스: [service/](mdc:backend/src/main/java/com/brotherhood/approval/service/) 디렉토리
+- 리포지토리: [repository/](mdc:backend/src/main/java/com/brotherhood/approval/repository/) 디렉토리
+- DTO: [dto/](mdc:backend/src/main/java/com/brotherhood/approval/dto/) 디렉토리
+- 매퍼: [mapper/](mdc:backend/src/main/java/com/brotherhood/approval/mapper/) 디렉토리
+
+## 프론트엔드 구조
+- Next.js 앱: [brotherhood/](mdc:brotherhood/) 디렉토리
+- 컴포넌트: [brotherhood/src/components/](mdc:brotherhood/src/components/) 디렉토리
+- 페이지: [brotherhood/src/pages/](mdc:brotherhood/src/pages/) 디렉토리
+
+## 데이터베이스
+- 스키마: [db/schema.sql](mdc:db/schema.sql)
+- 시드 데이터: [db/seed.sql](mdc:db/seed.sql)
+
+## 설정 파일
+- Gradle: [backend/build.gradle](mdc:backend/build.gradle)
+- Spring 설정: [backend/src/main/resources/application.yml](mdc:backend/src/main/resources/application.yml)
+- 개발 설정: [backend/src/main/resources/application-dev.yml](mdc:backend/src/main/resources/application-dev.yml)

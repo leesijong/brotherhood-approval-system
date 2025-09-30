@@ -1,0 +1,244 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1200" height="900" viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .layer-box { fill: #f8fafc; stroke: #334155; stroke-width: 2; }
+      .config-box { fill: #fef2f2; stroke: #dc2626; stroke-width: 1.5; }
+      .controller-box { fill: #eff6ff; stroke: #2563eb; stroke-width: 1.5; }
+      .service-box { fill: #f0fdf4; stroke: #16a34a; stroke-width: 1.5; }
+      .repository-box { fill: #fdf4ff; stroke: #a855f7; stroke-width: 1.5; }
+      .entity-box { fill: #fffbeb; stroke: #d97706; stroke-width: 1.5; }
+      .dto-box { fill: #f0f9ff; stroke: #0891b2; stroke-width: 1.5; }
+      .interceptor-box { fill: #fdf2f8; stroke: #ec4899; stroke-width: 1.5; }
+      .mapper-box { fill: #f5f3ff; stroke: #8b5cf6; stroke-width: 1.5; }
+      .database-box { fill: #f0fdf4; stroke: #059669; stroke-width: 2; }
+      
+      .title-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 18px; font-weight: bold; fill: #1e293b; }
+      .layer-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 14px; font-weight: bold; fill: #334155; }
+      .component-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; fill: #475569; }
+      .small-text { font-family: 'Segoe UI', Arial, sans-serif; font-size: 9px; fill: #64748b; }
+      
+      .arrow { stroke: #64748b; stroke-width: 2; fill: none; marker-end: url(#arrowhead); }
+      .data-flow { stroke: #059669; stroke-width: 2; fill: none; marker-end: url(#dataflow); stroke-dasharray: 5,5; }
+      .config-flow { stroke: #dc2626; stroke-width: 2; fill: none; marker-end: url(#configflow); stroke-dasharray: 3,3; }
+    </style>
+    
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b" />
+    </marker>
+    
+    <marker id="dataflow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#059669" />
+    </marker>
+    
+    <marker id="configflow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#dc2626" />
+    </marker>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="1200" height="900" fill="#ffffff"/>
+  
+  <!-- Title -->
+  <text x="600" y="30" text-anchor="middle" class="title-text">Spring Boot 아키텍처 - 계층별 컴포넌트 구조</text>
+  
+  <!-- Configuration Layer -->
+  <rect x="50" y="60" width="1100" height="100" rx="8" class="layer-box"/>
+  <text x="600" y="80" text-anchor="middle" class="layer-text">Configuration Layer (설정 계층)</text>
+  
+  <!-- SecurityConfig -->
+  <rect x="300" y="95" width="150" height="50" rx="4" class="config-box"/>
+  <text x="375" y="115" text-anchor="middle" class="component-text">SecurityConfig</text>
+  <text x="375" y="127" text-anchor="middle" class="small-text">@Configuration</text>
+  <text x="375" y="137" text-anchor="middle" class="small-text">JWT, CORS, Security</text>
+  
+  <!-- MethodSecurityConfig -->
+  <rect x="500" y="95" width="150" height="50" rx="4" class="config-box"/>
+  <text x="575" y="115" text-anchor="middle" class="component-text">MethodSecurityConfig</text>
+  <text x="575" y="127" text-anchor="middle" class="small-text">@EnableMethodSecurity</text>
+  <text x="575" y="137" text-anchor="middle" class="small-text">@PreAuthorize</text>
+  
+  <!-- Presentation Layer -->
+  <rect x="50" y="180" width="1100" height="150" rx="8" class="layer-box"/>
+  <text x="600" y="200" text-anchor="middle" class="layer-text">Presentation Layer (프레젠테이션 계층)</text>
+  
+  <!-- Controllers -->
+  <rect x="80" y="220" width="130" height="50" rx="4" class="controller-box"/>
+  <text x="145" y="240" text-anchor="middle" class="component-text">UserController</text>
+  <text x="145" y="252" text-anchor="middle" class="small-text">@RestController</text>
+  <text x="145" y="262" text-anchor="middle" class="small-text">/api/users</text>
+  
+  <rect x="230" y="220" width="130" height="50" rx="4" class="controller-box"/>
+  <text x="295" y="240" text-anchor="middle" class="component-text">DocumentController</text>
+  <text x="295" y="252" text-anchor="middle" class="small-text">@RestController</text>
+  <text x="295" y="262" text-anchor="middle" class="small-text">/api/documents</text>
+  
+  <rect x="380" y="220" width="130" height="50" rx="4" class="controller-box"/>
+  <text x="445" y="240" text-anchor="middle" class="component-text">ApprovalController</text>
+  <text x="445" y="252" text-anchor="middle" class="small-text">@RestController</text>
+  <text x="445" y="262" text-anchor="middle" class="small-text">/api/approvals</text>
+  
+  <!-- DTOs -->
+  <rect x="550" y="220" width="120" height="50" rx="4" class="dto-box"/>
+  <text x="610" y="240" text-anchor="middle" class="component-text">Request DTOs</text>
+  <text x="610" y="252" text-anchor="middle" class="small-text">@Valid, @NotNull</text>
+  <text x="610" y="262" text-anchor="middle" class="small-text">Data Validation</text>
+  
+  <rect x="690" y="220" width="120" height="50" rx="4" class="dto-box"/>
+  <text x="750" y="240" text-anchor="middle" class="component-text">Response DTOs</text>
+  <text x="750" y="252" text-anchor="middle" class="small-text">@Data, @Builder</text>
+  <text x="750" y="262" text-anchor="middle" class="small-text">API Response</text>
+  
+  <!-- Interceptor -->
+  <rect x="850" y="220" width="150" height="50" rx="4" class="interceptor-box"/>
+  <text x="925" y="235" text-anchor="middle" class="component-text">AuditLogging</text>
+  <text x="925" y="247" text-anchor="middle" class="component-text">Interceptor</text>
+  <text x="925" y="257" text-anchor="middle" class="small-text">@Component</text>
+  <text x="925" y="267" text-anchor="middle" class="small-text">Request Tracking</text>
+  
+  <!-- Business Layer -->
+  <rect x="50" y="350" width="1100" height="180" rx="8" class="layer-box"/>
+  <text x="600" y="370" text-anchor="middle" class="layer-text">Business Layer (비즈니스 계층)</text>
+  
+  <!-- Services -->
+  <rect x="80" y="390" width="120" height="60" rx="4" class="service-box"/>
+  <text x="140" y="410" text-anchor="middle" class="component-text">UserService</text>
+  <text x="140" y="422" text-anchor="middle" class="small-text">@Service</text>
+  <text x="140" y="432" text-anchor="middle" class="small-text">@Transactional</text>
+  <text x="140" y="442" text-anchor="middle" class="small-text">User Management</text>
+  
+  <rect x="220" y="390" width="120" height="60" rx="4" class="service-box"/>
+  <text x="280" y="410" text-anchor="middle" class="component-text">DocumentService</text>
+  <text x="280" y="422" text-anchor="middle" class="small-text">@Service</text>
+  <text x="280" y="432" text-anchor="middle" class="small-text">@Transactional</text>
+  <text x="280" y="442" text-anchor="middle" class="small-text">Document CRUD</text>
+  
+  <rect x="360" y="390" width="120" height="60" rx="4" class="service-box"/>
+  <text x="420" y="410" text-anchor="middle" class="component-text">ApprovalService</text>
+  <text x="420" y="422" text-anchor="middle" class="small-text">@Service</text>
+  <text x="420" y="432" text-anchor="middle" class="small-text">@Transactional</text>
+  <text x="420" y="442" text-anchor="middle" class="small-text">Approval Process</text>
+  
+  <rect x="500" y="390" width="120" height="60" rx="4" class="service-box"/>
+  <text x="560" y="410" text-anchor="middle" class="component-text">AuthService</text>
+  <text x="560" y="422" text-anchor="middle" class="small-text">@Service</text>
+  <text x="560" y="432" text-anchor="middle" class="small-text">JWT Management</text>
+  <text x="560" y="442" text-anchor="middle" class="small-text">Authentication</text>
+  
+  <rect x="640" y="390" width="120" height="60" rx="4" class="service-box"/>
+  <text x="700" y="410" text-anchor="middle" class="component-text">NotificationService</text>
+  <text x="700" y="422" text-anchor="middle" class="small-text">@Service</text>
+  <text x="700" y="432" text-anchor="middle" class="small-text">@Async</text>
+  <text x="700" y="442" text-anchor="middle" class="small-text">Notifications</text>
+  
+  <!-- Mappers -->
+  <rect x="800" y="390" width="120" height="60" rx="4" class="mapper-box"/>
+  <text x="860" y="410" text-anchor="middle" class="component-text">UserMapper</text>
+  <text x="860" y="422" text-anchor="middle" class="small-text">@Mapper</text>
+  <text x="860" y="432" text-anchor="middle" class="small-text">MapStruct</text>
+  <text x="860" y="442" text-anchor="middle" class="small-text">DTO  Entity</text>
+  
+  <rect x="940" y="390" width="120" height="60" rx="4" class="mapper-box"/>
+  <text x="1000" y="410" text-anchor="middle" class="component-text">DocumentMapper</text>
+  <text x="1000" y="422" text-anchor="middle" class="small-text">@Mapper</text>
+  <text x="1000" y="432" text-anchor="middle" class="small-text">MapStruct</text>
+  <text x="1000" y="442" text-anchor="middle" class="small-text">Data Conversion</text>
+  
+  <!-- Data Access Layer -->
+  <rect x="50" y="550" width="1100" height="150" rx="8" class="layer-box"/>
+  <text x="600" y="570" text-anchor="middle" class="layer-text">Data Access Layer (데이터 접근 계층)</text>
+  
+  <!-- Repositories -->
+  <rect x="80" y="590" width="130" height="60" rx="4" class="repository-box"/>
+  <text x="145" y="610" text-anchor="middle" class="component-text">UserRepository</text>
+  <text x="145" y="622" text-anchor="middle" class="small-text">@Repository</text>
+  <text x="145" y="632" text-anchor="middle" class="small-text">JpaRepository</text>
+  <text x="145" y="642" text-anchor="middle" class="small-text">Custom Queries</text>
+  
+  <rect x="230" y="590" width="130" height="60" rx="4" class="repository-box"/>
+  <text x="295" y="610" text-anchor="middle" class="component-text">DocumentRepository</text>
+  <text x="295" y="622" text-anchor="middle" class="small-text">@Repository</text>
+  <text x="295" y="632" text-anchor="middle" class="small-text">@Query</text>
+  <text x="295" y="642" text-anchor="middle" class="small-text">Complex Queries</text>
+  
+  <rect x="380" y="590" width="130" height="60" rx="4" class="repository-box"/>
+  <text x="445" y="610" text-anchor="middle" class="component-text">ApprovalRepository</text>
+  <text x="445" y="622" text-anchor="middle" class="small-text">@Repository</text>
+  <text x="445" y="632" text-anchor="middle" class="small-text">@Query</text>
+  <text x="445" y="642" text-anchor="middle" class="small-text">Approval Data</text>
+  
+  <!-- Entities -->
+  <rect x="550" y="590" width="120" height="60" rx="4" class="entity-box"/>
+  <text x="610" y="610" text-anchor="middle" class="component-text">User Entity</text>
+  <text x="610" y="622" text-anchor="middle" class="small-text">@Entity</text>
+  <text x="610" y="632" text-anchor="middle" class="small-text">@Table</text>
+  <text x="610" y="642" text-anchor="middle" class="small-text">User Data</text>
+  
+  <rect x="690" y="590" width="120" height="60" rx="4" class="entity-box"/>
+  <text x="750" y="610" text-anchor="middle" class="component-text">Document Entity</text>
+  <text x="750" y="622" text-anchor="middle" class="small-text">@Entity</text>
+  <text x="750" y="632" text-anchor="middle" class="small-text">@OneToMany</text>
+  <text x="750" y="642" text-anchor="middle" class="small-text">Document Data</text>
+  
+  <rect x="830" y="590" width="120" height="60" rx="4" class="entity-box"/>
+  <text x="890" y="610" text-anchor="middle" class="component-text">ApprovalStep</text>
+  <text x="890" y="622" text-anchor="middle" class="small-text">@Entity</text>
+  <text x="890" y="632" text-anchor="middle" class="small-text">@ManyToOne</text>
+  <text x="890" y="642" text-anchor="middle" class="small-text">Step Data</text>
+  
+  <!-- Database -->
+  <rect x="450" y="720" width="300" height="100" rx="8" class="database-box"/>
+  <text x="600" y="740" text-anchor="middle" class="layer-text">Database Layer (데이터베이스 계층)</text>
+  <text x="600" y="760" text-anchor="middle" class="component-text">PostgreSQL 17</text>
+  <text x="600" y="775" text-anchor="middle" class="small-text">approval_system_new</text>
+  <text x="600" y="785" text-anchor="middle" class="small-text">Flyway Migration</text>
+  <text x="600" y="795" text-anchor="middle" class="small-text">Row Level Security</text>
+  <text x="600" y="805" text-anchor="middle" class="small-text">ACID Transactions</text>
+  
+  <!-- Arrows - Configuration to Controllers -->
+  <line x1="375" y1="145" x2="295" y2="220" class="config-flow"/>
+  <line x1="575" y1="145" x2="445" y2="220" class="config-flow"/>
+  
+  <!-- Arrows - Controllers to Services -->
+  <line x1="145" y1="270" x2="140" y2="390" class="arrow"/>
+  <line x1="295" y1="270" x2="280" y2="390" class="arrow"/>
+  <line x1="445" y1="270" x2="420" y2="390" class="arrow"/>
+  
+  <!-- Arrows - Controllers to DTOs -->
+  <line x1="510" y1="245" x2="550" y2="245" class="data-flow"/>
+  <line x1="670" y1="245" x2="690" y2="245" class="data-flow"/>
+  
+  <!-- Arrows - Interceptor to Services -->
+  <line x1="925" y1="270" x2="700" y2="390" class="config-flow"/>
+  
+  <!-- Arrows - Services to Mappers -->
+  <line x1="760" y1="420" x2="800" y2="420" class="data-flow"/>
+  <line x1="760" y1="420" x2="940" y2="420" class="data-flow"/>
+  
+  <!-- Arrows - Services to Repositories -->
+  <line x1="140" y1="450" x2="145" y2="590" class="arrow"/>
+  <line x1="280" y1="450" x2="295" y2="590" class="arrow"/>
+  <line x1="420" y1="450" x2="445" y2="590" class="arrow"/>
+  
+  <!-- Arrows - Repositories to Entities -->
+  <line x1="210" y1="620" x2="550" y2="620" class="data-flow"/>
+  <line x1="360" y1="620" x2="690" y2="620" class="data-flow"/>
+  <line x1="510" y1="620" x2="830" y2="620" class="data-flow"/>
+  
+  <!-- Arrows - Repositories to Database -->
+  <line x1="300" y1="650" x2="500" y2="720" class="arrow"/>
+  <line x1="400" y1="650" x2="600" y2="720" class="arrow"/>
+  
+  <!-- Legend -->
+  <rect x="50" y="480" width="350" height="60" rx="4" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="60" y="500" class="layer-text">범례 (Legend)</text>
+  
+  <line x1="70" y1="515" x2="90" y2="515" class="arrow"/>
+  <text x="100" y="520" class="small-text">의존성 주입 (Dependency Injection)</text>
+  
+  <line x1="200" y1="515" x2="220" y2="515" class="data-flow"/>
+  <text x="230" y="520" class="small-text">데이터 흐름 (Data Flow)</text>
+  
+  <line x1="70" y1="530" x2="90" y2="530" class="config-flow"/>
+  <text x="100" y="535" class="small-text">설정 적용 (Configuration)</text>
+</svg>

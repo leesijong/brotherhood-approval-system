@@ -1,0 +1,51 @@
+{
+  "$schema": "https://aka.ms/terminal-profiles-schema",
+  "defaultProfile": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+  "profiles": {
+    "defaults": {
+      "fontFace": "Cascadia Code",
+      "fontSize": 12,
+      "cursorShape": "bar",
+      "colorScheme": "Campbell Powershell"
+    },
+    "list": [
+      {
+        "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+        "name": "PowerShell",
+        "commandline": "powershell.exe",
+        "hidden": false,
+        "startingDirectory": "C:\\cckbm"
+      },
+      {
+        "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+        "name": "Command Prompt",
+        "commandline": "cmd.exe",
+        "hidden": false,
+        "startingDirectory": "C:\\cckbm"
+      }
+    ]
+  },
+  "schemes": [
+    {
+      "name": "Campbell Powershell",
+      "background": "#0C0C0C",
+      "black": "#0C0C0C",
+      "blue": "#0037DA",
+      "brightBlack": "#767676",
+      "brightBlue": "#3B78FF",
+      "brightCyan": "#61D6D6",
+      "brightGreen": "#16C60C",
+      "brightPurple": "#B4009E",
+      "brightRed": "#E74856",
+      "brightWhite": "#F2F2F2",
+      "brightYellow": "#F9F1A5",
+      "cyan": "#3A96DD",
+      "foreground": "#CCCCCC",
+      "green": "#13A10E",
+      "purple": "#881798",
+      "red": "#C50F1F",
+      "white": "#CCCCCC",
+      "yellow": "#C19C00"
+    }
+  ]
+}

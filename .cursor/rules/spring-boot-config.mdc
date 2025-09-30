@@ -1,0 +1,32 @@
+---
+globs: *.yml,*.yaml,*.properties
+---
+
+# Spring Boot 설정 규칙
+
+## 프로파일 설정
+- 기본 설정: [application.yml](mdc:backend/src/main/resources/application.yml)
+- 개발 설정: [application-dev.yml](mdc:backend/src/main/resources/application-dev.yml)
+- 로컬 설정: [config/local/application-local.yml](mdc:config/local/application-local.yml)
+
+## 데이터베이스 설정
+- PostgreSQL 사용
+- 개발 환경: `approval_system_dev` 데이터베이스
+- 사용자: `postgres`, 비밀번호: `postgres`
+- 포트: 5432
+
+## JPA 설정
+- Hibernate 사용
+- DDL 모드: `validate` (스키마 검증)
+- Flyway 사용 (현재 비활성화 상태)
+
+## 로깅 설정
+- Logback 사용
+- 로그 레벨: DEBUG (개발), INFO (운영)
+- 파일 로그: `logs/` 디렉토리
+- 감사 로그: 별도 파일로 분리
+
+## 보안 설정
+- JWT 토큰 사용
+- CORS 설정 필요
+- RLS (Row Level Security) 활성화

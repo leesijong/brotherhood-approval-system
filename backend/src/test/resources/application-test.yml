@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: approval-system-test
+  
+  # 테스트용 인메모리 데이터베이스 설정
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE
+    username: sa
+    password: 
+    driver-class-name: org.h2.Driver
+  
+  # JPA 설정
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+
+# SQL 초기화 비활성화 (테스트에서 직접 데이터 설정)
+  
+  # Flyway 비활성화
+  flyway:
+    enabled: false
+
+# 로깅 설정 (최소화)
+logging:
+  level:
+    com.brotherhood.approval: INFO
+    root: WARN

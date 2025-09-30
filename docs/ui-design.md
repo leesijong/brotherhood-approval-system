@@ -590,11 +590,11 @@ shadcn/ui 기반의 현대적이고 전문적인 컬러 시스템입니다.
 - **반응형**: 모바일 우선 설계로 모든 디바이스 지원
 
 ### 5.2 기술 스택
-- **CSS**: Tailwind CSS 또는 커스텀 CSS
-- **폰트**: Inter (Google Fonts)
-- **아이콘**: 이모지 + Lucide Icons
-- **JavaScript**: Vanilla JS 또는 React
-- **빌드**: Vite 또는 Next.js
+- **CSS**: Tailwind CSS 4.1.9
+- **폰트**: Geist (현대적인 폰트)
+- **아이콘**: Lucide React 0.454.0
+- **JavaScript**: React 19 + TypeScript 5.x
+- **빌드**: Next.js 14.2.25
 
 ### 5.3 파일 구조
 ```

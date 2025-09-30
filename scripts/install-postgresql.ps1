@@ -1,11 +1,18 @@
 # PostgreSQL 16 설치 스크립트 (Windows PowerShell)
+# 수정일: 2024-09-17
 
 Write-Host "PostgreSQL 16 설치를 시작합니다..." -ForegroundColor Green
 
 # Chocolatey가 설치되어 있는지 확인
 if (Get-Command choco -ErrorAction SilentlyContinue) {
     Write-Host "Chocolatey를 사용하여 PostgreSQL 16을 설치합니다..." -ForegroundColor Yellow
-    choco install postgresql16 --params '/Password:postgres' -y
+    try {
+        choco install postgresql16 --params '/Password:postgres' -y
+        Write-Host "PostgreSQL 16 설치가 완료되었습니다." -ForegroundColor Green
+    } catch {
+        Write-Host "Chocolatey를 통한 설치에 실패했습니다." -ForegroundColor Red
+        Write-Host "수동 설치를 진행합니다." -ForegroundColor Yellow
+    }
 } else {
     Write-Host "Chocolatey가 설치되어 있지 않습니다." -ForegroundColor Red
     Write-Host "다음 방법 중 하나를 선택하세요:" -ForegroundColor Yellow
@@ -15,6 +22,7 @@ if (Get-Command choco -ErrorAction SilentlyContinue) {
     
     # 자동 설치 시도
     try {
+        Write-Host "Chocolatey를 자동으로 설치합니다..." -ForegroundColor Yellow
         Set-ExecutionPolicy Bypass -Scope Process -Force
         [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
         iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
@@ -24,6 +32,7 @@ if (Get-Command choco -ErrorAction SilentlyContinue) {
     } catch {
         Write-Host "자동 설치에 실패했습니다. 수동으로 설치해주세요." -ForegroundColor Red
         Write-Host "다운로드 링크: https://www.postgresql.org/download/windows/" -ForegroundColor Cyan
+        Write-Host "설치 시 비밀번호를 'postgres'로 설정해주세요." -ForegroundColor Yellow
     }
 }
 
@@ -34,6 +43,7 @@ try {
     Write-Host "PostgreSQL 서비스가 시작되었습니다." -ForegroundColor Green
 } catch {
     Write-Host "PostgreSQL 서비스 시작에 실패했습니다. 수동으로 시작해주세요." -ForegroundColor Red
+    Write-Host "서비스 이름: postgresql-x64-16" -ForegroundColor Cyan
 }
 
 # 데이터베이스 생성

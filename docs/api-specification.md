@@ -1,11 +1,13 @@
-# API 명세서
+# API 명세서 (2025-09-24 현행화)
 
 ## 기본 정보
 
-- **Base URL**: `http://localhost:8080/api/v1`
-- **인증 방식**: JWT Bearer Token
+- **Base URL**: `http://localhost:8080/api`
+- **인증 방식**: JWT Bearer Token + Session 기반
 - **Content-Type**: `application/json`
 - **문서화**: Swagger UI (`http://localhost:8080/swagger-ui.html`)
+- **ID 타입**: UUID 기반 식별자 사용
+- **로그인 ID**: `login_id` 필드 기반 인증 시스템
 
 ## 인증 API
 
@@ -15,7 +17,7 @@ POST /auth/login
 Content-Type: application/json
 
 {
-  "username": "string",
+  "username": "string",  // login_id 필드 값
   "password": "string"
 }
 ```
@@ -24,25 +26,29 @@ Content-Type: application/json
 ```json
 {
   "success": true,
+  "message": "로그인 성공",
   "data": {
     "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "tokenType": "Bearer",
     "expiresIn": 3600,
-    "user": {
-      "id": 1,
-      "username": "admin",
-      "email": "admin@cckbm.org",
+    "userInfo": {
+      "id": "ac31e829-d5c6-4a1d-92de-439178b12f5f",
+      "username": "admin",  // login_id 값
+      "loginId": "admin",   // 명시적 login_id 필드
+      "email": "admin@brotherhood.or.kr",
       "firstName": "관리자",
       "lastName": "김",
       "baptismalName": "요한",
-      "branch": {
-        "id": 1,
-        "name": "본원",
-        "code": "HQ"
-      },
-      "roles": ["ADMIN"]
-    }
-  }
+      "displayName": "관리자 김 (요한)",
+      "branchId": "433fec24-b2b8-4b3c-a9a4-af9d69e104e3",
+      "branchName": "본원",
+      "roles": ["ADMIN"],
+      "isActive": true
+    },
+    "loginTime": null
+  },
+  "timestamp": "2025-09-22T15:30:00.000Z"
 }
 ```
 
@@ -60,6 +66,48 @@ Content-Type: application/json
 ```http
 POST /auth/logout
 Authorization: Bearer {token}
+```
+
+**응답 (200 OK)**
+```json
+{
+  "success": true,
+  "message": "로그아웃 성공",
+  "data": null,
+  "timestamp": "2025-09-24T12:19:04.503Z"
+}
+```
+
+### 4. 현재 사용자 정보 조회
+```http
+GET /auth/me
+Authorization: Bearer {token}
+```
+
+**응답 (200 OK)**
+```json
+{
+  "success": true,
+  "message": "현재 사용자 정보 조회 성공",
+  "data": null,
+  "timestamp": "2025-09-24T12:18:02.064Z"
+}
+```
+
+### 5. 세션 검증
+```http
+GET /auth/session/validate
+Authorization: Bearer {token}
+```
+
+**응답 (200 OK)**
+```json
+{
+  "success": true,
+  "message": "세션 검증 성공",
+  "data": null,
+  "timestamp": "2025-09-24T12:18:02.064Z"
+}
 ```
 
 ## 사용자 관리 API
@@ -117,7 +165,7 @@ Authorization: Bearer {token}
 Content-Type: application/json
 
 {
-  "username": "newuser",
+  "loginId": "newuser",  // login_id 필드 (필수)
   "email": "newuser@cckbm.org",
   "password": "password123",
   "firstName": "새",
@@ -136,6 +184,7 @@ Authorization: Bearer {token}
 Content-Type: application/json
 
 {
+  "loginId": "updateduser",  // login_id 필드 (선택)
   "email": "updated@cckbm.org",
   "firstName": "수정된",
   "lastName": "사용자",

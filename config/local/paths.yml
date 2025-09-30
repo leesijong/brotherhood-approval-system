@@ -1,0 +1,92 @@
+# Brotherhood 결재 시스템 로컬 개발 환경 경로 설정
+
+paths:
+  # 프로젝트 루트 디렉토리
+  project_root: "C:\cckbm"
+  
+  # 백엔드 디렉토리
+  backend: "C:\cckbm\backend"
+  
+  # 프론트엔드 디렉토리
+  frontend: "C:\cckbm\brotherhood"
+  
+  # 스크립트 디렉토리
+  scripts: "C:\cckbm\scripts"
+  
+  # 문서 디렉토리
+  docs: "C:\cckbm\docs"
+  
+  # 데이터베이스 디렉토리
+  database: "C:\cckbm\db"
+
+# PostgreSQL 설정
+postgresql:
+  # PostgreSQL 설치 경로 (우선순위 순)
+  install_paths:
+    - "C:\Program Files\PostgreSQL\17\bin"
+    - "C:\Program Files\PostgreSQL\16\bin"
+    - "C:\Program Files\PostgreSQL\15\bin"
+    - "C:\Program Files\PostgreSQL\14\bin"
+  
+  # psql 실행 파일명
+  psql_exe: "psql.exe"
+  pg_dump_exe: "pg_dump.exe"
+  pg_restore_exe: "pg_restore.exe"
+  createdb_exe: "createdb.exe"
+  dropdb_exe: "dropdb.exe"
+
+# 데이터베이스 설정
+database:
+  # 데이터베이스 이름
+  name: "approval_system_dev"
+  
+  # 사용자명
+  user: "postgres"
+  
+  # 포트
+  port: 5432
+  
+  # 호스트
+  host: "localhost"
+
+# 애플리케이션 포트 설정
+ports:
+  # 백엔드 포트
+  backend: 8080
+  
+  # 프론트엔드 포트
+  frontend: 3000
+
+# 개발 도구 설정
+tools:
+  # Java 설정
+  java:
+    version: "17"
+    home_env: "JAVA_HOME"
+  
+  # Node.js 설정
+  node:
+    version: "18.x"
+    package_manager: "npm"
+  
+  # Gradle 설정
+  gradle:
+    version: "8.5"
+    wrapper: "gradlew"
+
+# 로그 설정
+logging:
+  # 로그 레벨
+  level: "DEBUG"
+  
+  # 로그 파일 경로
+  backend_log: "C:\cckbm\backend\logs\application.log"
+  frontend_log: "C:\cckbm\brotherhood\.next\build.log"
+
+# 백업 설정
+backup:
+  # 백업 디렉토리
+  directory: "C:\cckbm\backups"
+  
+  # 백업 파일명 형식
+  filename_format: "backup_%Y%m%d_%H%M%S.sql"

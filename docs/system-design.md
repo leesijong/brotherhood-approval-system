@@ -1,4 +1,4 @@
-# 시스템 설계 문서
+﻿# 시스템 설계 문서 (2025-09-22 현행화)
 
 ## 1. 시스템 개요
 
@@ -10,6 +10,7 @@
 - **투명성**: 모든 결재 과정의 추적성 확보
 - **사용성**: 일반적인 전자결재의 친숙한 UI/UX 제공
 - **확장성**: 전 세계 여러 분원(지사) 구조 지원
+- **UUID 기반**: 모든 주요 식별자를 UUID로 관리하여 확장성과 보안 강화
 
 ### 1.3 시스템 범위
 - **포함**: 문서 기안, 결재선 지정, 검토/전결/합의, 반려/재상신, 결재 이력/감사로그, 문서·첨부 보관, 알림, 통계/대시보드, 사용자/조직/권한 관리, 모바일/웹 접근
@@ -24,8 +25,9 @@
 │                        클라이언트 계층                           │
 ├─────────────────────────────────────────────────────────────────┤
 │  웹 브라우저 (Chrome/Edge/Firefox)  │  모바일 브라우저 (iOS/Android) │
-│  - HTML5/CSS3/JavaScript (jQuery)   │  - 반응형 웹 디자인            │
-│  - Bootstrap 5.x (선택적)           │  - 터치 최적화 UI              │
+│  - Next.js 14.2.25 + React 19       │  - 반응형 웹 디자인            │
+│  - TypeScript 5.x                    │  - 터치 최적화 UI              │
+│  - Tailwind CSS + shadcn/ui          │  - PWA 지원 (향후)              │
 └─────────────────────────────────────────────────────────────────┘
                                     │
                                     │ HTTPS/TLS 1.3
@@ -34,10 +36,11 @@
 │                      프레젠테이션 계층                          │
 ├─────────────────────────────────────────────────────────────────┤
 │                    Spring Boot Web Layer                       │
-│  - REST API Controller                                          │
-│  - Static Resource Serving (HTML/CSS/JS)                       │
-│  - Content Security Policy (CSP)                               │
-│  - CORS Configuration                                           │
+│  - REST API Controller (context-path: /api)                     │
+│  - JWT Token Authentication                                      │
+│  - CORS Configuration (프론트엔드 연동) ✅ **2025-09-22 완료**     │
+│  - OpenAPI 3.0 (Swagger) Documentation                          │
+│  - Health Check Endpoint                                         │
 └─────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
@@ -45,12 +48,14 @@
 │                      비즈니스 계층                              │
 ├─────────────────────────────────────────────────────────────────┤
 │                    Spring Boot Service Layer                   │
-│  - Document Service (문서 관리)                                 │
-│  - Approval Service (결재 관리)                                │
-│  - User Service (사용자 관리)                                   │
-│  - Security Service (보안 관리)                                │
-│  - Notification Service (알림 관리)                             │
-│  - Audit Service (감사 로그)                                    │
+│  - AuthService (JWT 기반 인증)                                  │
+│  - UserService (UUID 기반 사용자 관리)                          │
+│  - DocumentService (UUID 기반 문서 관리)                        │
+│  - ApprovalService (UUID 기반 결재 관리)                        │
+│  - NotificationService (알림 관리)                              │
+│  - AuditLogService (감사 로그)                                  │
+│  - AccessControlService (접근 제어)                             │
+│  - DashboardService (대시보드 통계)                             │
 └─────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
@@ -58,22 +63,26 @@
 │                      데이터 접근 계층                           │
 ├─────────────────────────────────────────────────────────────────┤
 │                    Spring Data JPA Layer                       │
-│  - Repository Pattern                                           │
-│  - Entity Mapping                                               │
+│  - Repository Pattern (UUID 기반)                               │
+│  - Entity Mapping (UUID 기본키)                                 │
+│  - MapStruct Object Mapping                                     │
 │  - Query Optimization                                           │
 │  - Transaction Management                                       │
+│  - Flyway Database Migration                                    │
 └─────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                      데이터 계층                                │
 ├─────────────────────────────────────────────────────────────────┤
-│                    PostgreSQL 16.x                             │
+│                    PostgreSQL 17                               │
+│  - UUID 기본키 사용                                             │
 │  - Document Metadata Storage                                    │
-│  - User & Role Management                                       │
-│  - Approval Process Data                                        │
+│  - User & Role Management (UUID 기반)                           │
+│  - Approval Process Data (UUID 기반)                            │
 │  - Audit Log Storage                                            │
 │  - Row Level Security (RLS)                                     │
+│  - UUID 확장 기능 활성화                                        │
 └─────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
@@ -94,9 +103,10 @@
 │                      인증/인가 계층                             │
 ├─────────────────────────────────────────────────────────────────┤
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  │
-│  │   MFA 인증      │  │   JWT 토큰      │  │   세션 관리     │  │
-│  │   - OTP/푸시    │  │   - Access Token│  │   - HttpOnly    │  │
-│  │   - 디바이스 바인딩│  │   - Refresh Token│  │   - SameSite   │  │
+│  │   JWT 인증      │  │   토큰 관리     │  │   세션 관리     │  │
+│  │   - Access Token│  │   - Refresh Token│  │   - HttpOnly    │  │
+│  │   - 1시간 만료  │  │   - 7일 만료    │  │   - SameSite    │  │
+│  │   - UUID 기반   │  │   - 자동 갱신   │  │   - Secure      │  │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
                                     │
@@ -105,9 +115,10 @@
 │                      권한 관리 계층                             │
 ├─────────────────────────────────────────────────────────────────┤
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  │
-│  │   RBAC          │  │   ABAC          │  │   정책 엔진     │  │
-│  │   - 역할 기반   │  │   - 속성 기반   │  │   - 동적 권한   │  │
-│  │   - 사용자-역할 │  │   - 문서 속성   │  │   - 결재선 기반 │  │
+│  │   역할 기반     │  │   리소스 기반   │  │   지사별 분리   │  │
+│  │   - SUPER_ADMIN │  │   - 문서 접근   │  │   - Branch UUID │  │
+│  │   - MANAGER     │  │   - 결재 권한   │  │   - 데이터 격리 │  │
+│  │   - USER        │  │   - 관리 권한   │  │   - 멀티테넌시   │  │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
                                     │
@@ -116,9 +127,10 @@
 │                      데이터 보호 계층                           │
 ├─────────────────────────────────────────────────────────────────┤
 │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐  │
-│  │   암호화        │  │   접근 제어     │  │   감사 로그     │  │
-│  │   - AES-256     │  │   - RLS         │  │   - WORM 저장   │  │
-│  │   - TLS 1.3     │  │   - ACL         │  │   - 불변성 보장 │  │
+│  │   암호화        │  │   감사 로그     │  │   접근 제어     │  │
+│  │   - BCrypt 해시 │  │   - 모든 액션   │  │   - RLS 정책    │  │
+│  │   - 파일 암호화 │  │   - UUID 추적   │  │   - IP 제한     │  │
+│  │   - 전송 암호화 │  │   - 타임스탬프  │  │   - 권한 검증   │  │
 │  └─────────────────┘  └─────────────────┘  └─────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -128,721 +140,259 @@
 ### 3.1 핵심 엔티티 관계
 
 ```
-User (사용자)
-├── UserRole (사용자-역할)
-│   └── Role (역할)
-├── Document (문서) [작성자]
-│   ├── ApprovalLine (결재선)
-│   │   └── ApprovalStep (결재단계) [결재자]
-│   ├── Comment (댓글) [작성자]
-│   └── Attachment (첨부파일) [업로더]
-├── AuditLog (감사로그) [사용자]
-└── Policy (정책) [생성자]
+Users (UUID) ──┐
+               ├── UserRoles (UUID) ── Roles (UUID)
+Branches (UUID)┘
 
-**사용자 모델 주요 필드:**
-- id: 사용자 ID
-- username: 사용자명 (로그인용)
-- email: 이메일
-- firstName: 이름
-- lastName: 성
-- baptismalName: 세례명 (가톨릭 신자 필수)
-- phone: 전화번호
-- branchId: 소속 지사 ID
+Documents (UUID) ──┬── ApprovalLines (UUID) ─── ApprovalSteps (UUID)
+                   ├── Comments (UUID)
+                   ├── Attachments (UUID)
+                   └── ApprovalHistory (UUID)
 
-Branch (지사)
-├── User (소속 사용자)
-└── Document (소속 문서)
+AuditLogs (UUID) ── Users (UUID)
+Notifications (UUID) ── Users (UUID)
+Policies (UUID) ── Users (UUID)
 ```
 
-### 3.2 권한 모델
+### 3.2 UUID 기반 설계의 장점
 
-#### 3.2.1 역할 정의
-- **GENERAL_MEMBER**: 일반 수도자
-- **MIDDLE_MANAGER**: 중간관리 수도자  
-- **RESPONSIBLE_MANAGER**: 책임 수도자
-- **SUPERIOR**: 장상
-- **ADMIN**: 시스템 관리자
+- **확장성**: 분산 시스템에서 고유성 보장
+- **보안성**: 순차적 ID 추측 불가
+- **통합성**: 여러 시스템 간 ID 충돌 방지
+- **추적성**: 생성 시점과 소스 추적 가능
 
-#### 3.2.2 권한 매트릭스
-| 기능 | 일반수도자 | 중간관리수도자 | 책임수도자 | 장상 | 관리자 |
-|------|------------|----------------|------------|------|--------|
-| 기안 | ✅ | ✅ | ✅ | ✅ | ❌ |
-| 결재/합의 | 결재선 지정 시 | 부서 범위 | 기관 범위 | 전 범위 | ❌ |
-| 반려/재상신 | ✅ | ✅ | ✅ | ✅ | ❌ |
-| 열람 | 본인/참여 문서 | 부서 결재 문서 | 기관 결재 문서 | 정책에 따름 | 원칙적 제한 |
-| 결재선 정책관리 | ❌ | 일부 | ✅ | ✅(최종) | ❌ |
-| 접근정책/규정 | ❌ | ❌ | 제안 | ✅(승인) | 설정 지원 |
-| 계정/조직 관리 | ❌ | ❌ | ❌ | ❌ | ✅ |
+## 4. API 설계
 
-### 3.3 문서 상태 모델
+### 4.1 REST API 구조
 
 ```
-DRAFT (초안)
-    ↓ [상신]
-PENDING (진행중)
-    ↓ [승인] / [반려]
-APPROVED (승인) / REJECTED (반려)
-    ↓ [재상신] (반려 시)
-DRAFT (수정 후 재상신)
+/api/
+├── /auth
+│   ├── POST /login          # 로그인 (JWT 토큰 발급)
+│   ├── POST /refresh        # 토큰 갱신
+│   ├── POST /logout         # 로그아웃
+│   └── GET /validate        # 토큰 검증
+├── /users
+│   ├── GET /                # 사용자 목록
+│   ├── GET /{uuid}          # 사용자 상세
+│   ├── POST /               # 사용자 생성
+│   ├── PUT /{uuid}          # 사용자 수정
+│   └── DELETE /{uuid}       # 사용자 삭제
+├── /documents
+│   ├── GET /                # 문서 목록
+│   ├── GET /{uuid}          # 문서 상세
+│   ├── POST /               # 문서 생성
+│   ├── PUT /{uuid}          # 문서 수정
+│   └── DELETE /{uuid}       # 문서 삭제
+├── /approvals
+│   ├── GET /lines           # 결재선 목록
+│   ├── POST /lines          # 결재선 생성
+│   ├── POST /actions        # 결재 액션
+│   └── GET /history         # 결재 이력
+├── /dashboard
+│   ├── GET /stats           # 대시보드 통계
+│   ├── GET /recent          # 최근 활동
+│   └── GET /pending         # 대기 문서
+└── /health                  # 헬스 체크
 ```
 
-### 3.4 결재선 모델
+### 4.2 응답 형식 표준화
 
-#### 3.4.1 결재선 유형
-- **SEQUENTIAL**: 순차 결재
-- **PARALLEL**: 병렬 결재  
-- **CONDITIONAL**: 조건부 결재
+```json
+{
+  "success": true,
+  "message": "요청 처리 완료",
+  "data": {
+    // 실제 데이터
+  },
+  "timestamp": "2025-09-22T15:30:00.000Z"
+}
+```
 
-#### 3.4.2 결재 단계 유형
-- **REVIEW**: 검토
-- **APPROVE**: 승인
-- **CONSULT**: 합의
+## 5. 보안 설계
 
-## 4. 보안 설계
+### 5.1 인증 시스템
 
-### 4.1 인증 설계
+- **JWT 기반**: Stateless 인증
+- **토큰 구조**: Header.Payload.Signature
+- **Payload 내용**: userId(UUID), username, roles, branchId(UUID), exp
+- **토큰 만료**: Access Token 1시간, Refresh Token 7일
 
-#### 4.1.1 MFA (Multi-Factor Authentication)
+### 5.2 권한 관리
+
 ```java
-public class MFAConfig {
-    // OTP 기반 2단계 인증
-    @Bean
-    public TotpService totpService() {
-        return new TotpService();
-    }
-    
-    // 디바이스 바인딩
-    @Bean
-    public DeviceBindingService deviceBindingService() {
-        return new DeviceBindingService();
-    }
-}
+// 역할 기반 권한
+SUPER_ADMIN: 모든 권한
+MANAGER: 관리 권한 + 결재 권한
+SUPERVISOR: 감독 권한 + 결재 권한
+SENIOR: 선임 권한 + 결재 권한
+USER: 기본 권한 (문서 생성/조회)
+
+// 리소스 기반 권한
+문서 접근: 작성자, 결재자, 관리자만
+결재 권한: 지정된 결재선의 결재자만
+관리 권한: SUPER_ADMIN, MANAGER만
 ```
 
-#### 4.1.2 JWT 토큰 관리
-```java
-public class JwtTokenProvider {
-    private static final long ACCESS_TOKEN_VALIDITY = 3600; // 1시간
-    private static final long REFRESH_TOKEN_VALIDITY = 604800; // 7일
-    
-    public String generateAccessToken(UserDetails userDetails) {
-        // JWT 토큰 생성 로직
-    }
-    
-    public String generateRefreshToken(UserDetails userDetails) {
-        // Refresh 토큰 생성 로직
-    }
-}
-```
+### 5.3 데이터 보호
 
-### 4.2 권한 설계
-
-#### 4.2.1 RBAC + ABAC 하이브리드 모델
-```java
-@Component
-public class PermissionEvaluator {
-    
-    public boolean hasPermission(Authentication auth, Object targetDomainObject, Object permission) {
-        // RBAC: 역할 기반 권한 확인
-        if (hasRoleBasedPermission(auth, permission)) {
-            return true;
-        }
-        
-        // ABAC: 속성 기반 권한 확인
-        return hasAttributeBasedPermission(auth, targetDomainObject, permission);
-    }
-    
-    private boolean hasRoleBasedPermission(Authentication auth, Object permission) {
-        // 역할 기반 권한 확인 로직
-    }
-    
-    private boolean hasAttributeBasedPermission(Authentication auth, Object target, Object permission) {
-        // 문서 속성, 결재선, 소속 기반 권한 확인 로직
-    }
-}
-```
-
-#### 4.2.2 문서 접근 제어
-```java
-@Service
-public class DocumentAccessControlService {
-    
-    public boolean canAccessDocument(User user, Document document) {
-        // 1. 문서 소유자 확인
-        if (document.getAuthor().getId().equals(user.getId())) {
-            return true;
-        }
-        
-        // 2. 결재선 참여자 확인
-        if (isApprovalParticipant(user, document)) {
-            return true;
-        }
-        
-        // 3. 명시적 공유 사용자 확인
-        if (isExplicitlyShared(user, document)) {
-            return true;
-        }
-        
-        // 4. 대결/위임자 확인
-        if (isDelegatedUser(user, document)) {
-            return true;
-        }
-        
-        return false;
-    }
-}
-```
-
-### 4.3 데이터 보호 설계
-
-#### 4.3.1 암호화 전략
-```java
-@Component
-public class EncryptionService {
-    
-    @Value("${app.encryption.key}")
-    private String encryptionKey;
-    
-    public String encrypt(String plainText) {
-        // AES-256 암호화
-        return AESUtil.encrypt(plainText, encryptionKey);
-    }
-    
-    public String decrypt(String encryptedText) {
-        // AES-256 복호화
-        return AESUtil.decrypt(encryptedText, encryptionKey);
-    }
-}
-```
-
-#### 4.3.2 Row Level Security (RLS)
-```sql
--- 문서 테이블에 RLS 적용
-ALTER TABLE documents ENABLE ROW LEVEL SECURITY;
-
--- 사용자별 문서 접근 정책
-CREATE POLICY document_access_policy ON documents
-    FOR ALL TO authenticated_users
-    USING (
-        author_id = current_user_id() OR
-        id IN (
-            SELECT al.document_id 
-            FROM approval_lines al 
-            JOIN approval_steps ast ON al.id = ast.approval_line_id 
-            WHERE ast.approver_id = current_user_id()
-        )
-    );
-```
-
-## 5. 비즈니스 로직 설계
-
-### 5.1 문서 결재 프로세스
-
-#### 5.1.1 결재 프로세스 상태 머신
-```java
-public enum DocumentStatus {
-    DRAFT("초안"),
-    PENDING("진행중"),
-    APPROVED("승인"),
-    REJECTED("반려"),
-    CANCELLED("취소");
-    
-    private final String description;
-}
-
-public enum ApprovalStepStatus {
-    PENDING("대기"),
-    IN_PROGRESS("진행중"),
-    APPROVED("승인"),
-    REJECTED("반려"),
-    DELEGATED("위임");
-    
-    private final String description;
-}
-```
-
-#### 5.1.2 결재 프로세스 서비스
-```java
-@Service
-@Transactional
-public class ApprovalProcessService {
-    
-    public void submitDocument(Document document, List<ApprovalStep> approvalSteps) {
-        // 1. 문서 상태를 PENDING으로 변경
-        document.setStatus(DocumentStatus.PENDING);
-        document.setSubmittedAt(LocalDateTime.now());
-        
-        // 2. 결재선 생성
-        ApprovalLine approvalLine = createApprovalLine(document, approvalSteps);
-        
-        // 3. 첫 번째 결재 단계 활성화
-        activateNextApprovalStep(approvalLine);
-        
-        // 4. 알림 발송
-        notificationService.sendApprovalNotification(approvalLine);
-        
-        // 5. 감사 로그 기록
-        auditService.logDocumentSubmission(document, approvalLine);
-    }
-    
-    public void processApproval(Long stepId, ApprovalAction action, String comments) {
-        ApprovalStep step = approvalStepRepository.findById(stepId)
-            .orElseThrow(() -> new ApprovalStepNotFoundException(stepId));
-        
-        // 1. 결재 처리
-        step.setStatus(action.getStatus());
-        step.setComments(comments);
-        step.setCompletedAt(LocalDateTime.now());
-        
-        // 2. 다음 단계 활성화 또는 문서 완료 처리
-        if (action == ApprovalAction.APPROVE) {
-            processNextStep(step);
-        } else if (action == ApprovalAction.REJECT) {
-            rejectDocument(step.getApprovalLine().getDocument());
-        }
-        
-        // 3. 알림 발송
-        notificationService.sendApprovalResultNotification(step);
-        
-        // 4. 감사 로그 기록
-        auditService.logApprovalAction(step, action, comments);
-    }
-}
-```
-
-### 5.2 지사별 멀티테넌시 설계
-
-#### 5.2.1 지사 스코핑
-```java
-@Entity
-@Table(name = "documents")
-@FilterDef(name = "branchFilter", parameters = @ParamDef(name = "branchId", type = "long"))
-@Filter(name = "branchFilter", condition = "branch_id = :branchId")
-public class Document {
-    @ManyToOne
-    @JoinColumn(name = "branch_id")
-    private Branch branch;
-    
-    // ... 기타 필드
-}
-
-@Repository
-public class DocumentRepository extends JpaRepository<Document, Long> {
-    
-    @Query("SELECT d FROM Document d WHERE d.branch.id = :branchId")
-    List<Document> findByBranchId(@Param("branchId") Long branchId);
-}
-```
-
-#### 5.2.2 교차 지사 결재 처리
-```java
-@Service
-public class CrossBranchApprovalService {
-    
-    public void processCrossBranchApproval(Document document, ApprovalStep step) {
-        // 1. 교차 지사 접근 권한 확인
-        if (!isCrossBranchAccessAllowed(step.getApprover(), document)) {
-            throw new CrossBranchAccessDeniedException();
-        }
-        
-        // 2. 최소 권한으로 문서 접근 허용
-        grantTemporaryAccess(step.getApprover(), document);
-        
-        // 3. 결재 완료 후 접근 권한 회수
-        scheduleAccessRevocation(step.getApprover(), document, step.getDueDate());
-    }
-}
-```
-
-### 5.3 알림 시스템 설계
-
-#### 5.3.1 알림 채널 인터페이스
-```java
-public interface NotificationChannel {
-    void send(Notification notification);
-}
-
-@Component
-public class EmailNotificationChannel implements NotificationChannel {
-    @Override
-    public void send(Notification notification) {
-        // 이메일 발송 로직
-    }
-}
-
-@Component
-public class PushNotificationChannel implements NotificationChannel {
-    @Override
-    public void send(Notification notification) {
-        // 푸시 알림 발송 로직
-    }
-}
-```
-
-#### 5.3.2 알림 서비스
-```java
-@Service
-public class NotificationService {
-    
-    private final List<NotificationChannel> channels;
-    
-    public void sendApprovalNotification(ApprovalLine approvalLine) {
-        Notification notification = Notification.builder()
-            .type(NotificationType.APPROVAL_REQUEST)
-            .recipient(approvalLine.getCurrentApprover())
-            .title("결재 요청")
-            .message("새로운 결재 요청이 있습니다.")
-            .build();
-        
-        channels.forEach(channel -> channel.send(notification));
-    }
-}
-```
+- **비밀번호**: BCrypt 해싱 (salt rounds: 10)
+- **파일 암호화**: AES-256 암호화
+- **전송 보안**: HTTPS/TLS 1.3
+- **데이터베이스**: Row Level Security (RLS)
 
 ## 6. 성능 설계
 
 ### 6.1 데이터베이스 최적화
 
-#### 6.1.1 인덱스 전략
 ```sql
--- 복합 인덱스 설계
-CREATE INDEX idx_documents_status_author ON documents(status, author_id);
-CREATE INDEX idx_documents_branch_created ON documents(branch_id, created_at);
-CREATE INDEX idx_approval_steps_approver_status ON approval_steps(approver_id, status);
+-- UUID 인덱스 최적화
+CREATE INDEX idx_users_id ON users USING hash(id);
+CREATE INDEX idx_documents_author_id ON documents(author_id);
+CREATE INDEX idx_approval_steps_approver_id ON approval_steps(approver_id);
 
--- 부분 인덱스 (활성 문서만)
-CREATE INDEX idx_documents_active ON documents(branch_id, created_at) 
-WHERE status IN ('PENDING', 'APPROVED');
+-- 복합 인덱스
+CREATE INDEX idx_documents_branch_status ON documents(branch_id, status);
+CREATE INDEX idx_user_roles_user_branch ON user_roles(user_id, branch_id, is_active);
 ```
 
-#### 6.1.2 쿼리 최적화
+### 6.2 애플리케이션 최적화
+
+- **MapStruct**: 컴파일 타임 객체 매핑
+- **Lazy Loading**: JPA 지연 로딩
+- **Connection Pooling**: HikariCP 사용
+- **Query Optimization**: N+1 문제 해결
+
+## 7. 모니터링 및 로깅
+
+### 7.1 감사 로그 (2025-09-23 업데이트)
+
 ```java
-@Repository
-public class DocumentRepository extends JpaRepository<Document, Long> {
-    
-    @Query("SELECT d FROM Document d " +
-           "JOIN FETCH d.author " +
-           "JOIN FETCH d.branch " +
-           "WHERE d.branch.id = :branchId " +
-           "AND d.status = :status " +
-           "ORDER BY d.createdAt DESC")
-    Page<Document> findActiveDocumentsByBranch(
-        @Param("branchId") Long branchId,
-        @Param("status") DocumentStatus status,
-        Pageable pageable
-    );
+@AuditLog
+public class AuditLog {
+    private UUID id;
+    private UUID userId;
+    private String action;
+    private String resourceType;
+    private UUID resourceId; // UUID로 변경 (2025-09-23)
+    private String ipAddress;
+    private String userAgent;
+    private String sessionId;
+    private Boolean isSuccessful;
+    private String errorMessage;
+    private LocalDateTime actionAt;
+    private LocalDateTime createdAt;
 }
 ```
 
-### 6.2 캐싱 전략
+#### 감사 로그 구현 완료 사항
+- ✅ **UUID 기반 ID**: 모든 감사 로그 식별자를 UUID로 관리
+- ✅ **상세 추적 정보**: IP 주소, 사용자 에이전트, 세션 ID 포함
+- ✅ **성공/실패 상태**: 작업 결과 추적 및 오류 메시지 저장
+- ✅ **타임스탬프**: 작업 시간과 생성 시간 분리 관리
+- ✅ **서비스 레이어**: AuditLogService를 통한 중앙화된 로그 관리
 
-#### 6.2.1 Redis 캐싱
-```java
-@Service
-public class CachedUserService {
-    
-    @Cacheable(value = "users", key = "#userId")
-    public User findById(Long userId) {
-        return userRepository.findById(userId)
-            .orElseThrow(() -> new UserNotFoundException(userId));
-    }
-    
-    @CacheEvict(value = "users", key = "#user.id")
-    public User updateUser(User user) {
-        return userRepository.save(user);
-    }
-}
+### 7.2 애플리케이션 로그
+
+- **로그 레벨**: DEBUG (개발), INFO (운영)
+- **로그 파일**: 로테이션 설정
+- **중요 이벤트**: 로그인, 결재 액션, 권한 변경
+- **성능 로그**: SQL 쿼리, API 응답 시간
+
+## 8. 배포 및 운영
+
+### 8.1 개발 환경
+
+```
+개발 환경:
+- Java 17
+- Gradle 8.5
+- PostgreSQL 17
+- Next.js 14.2.25
+- Node.js 18.x
 ```
 
-### 6.3 비동기 처리
+### 8.2 빌드 및 배포
 
-#### 6.3.1 이벤트 기반 아키텍처
-```java
-@Component
-public class DocumentEventHandler {
-    
-    @EventListener
-    @Async
-    public void handleDocumentSubmitted(DocumentSubmittedEvent event) {
-        // 1. 알림 발송
-        notificationService.sendDocumentSubmittedNotification(event.getDocument());
-        
-        // 2. 감사 로그 기록
-        auditService.logDocumentEvent(event);
-        
-        // 3. 통계 업데이트
-        statisticsService.updateDocumentStatistics(event.getDocument());
-    }
-}
+```bash
+# 백엔드 빌드
+cd backend
+gradle clean build -x test
+
+# 프론트엔드 빌드
+cd brotherhood
+npm run build
+
+# 로컬 실행
+gradle bootRun  # 백엔드
+npm run dev     # 프론트엔드
 ```
 
-## 7. 모니터링 및 로깅 설계
+### 8.3 데이터베이스 마이그레이션
 
-### 7.1 감사 로그 설계
-
-#### 7.1.1 감사 이벤트 정의
-```java
-public enum AuditEventType {
-    USER_LOGIN("사용자 로그인"),
-    USER_LOGOUT("사용자 로그아웃"),
-    DOCUMENT_CREATED("문서 생성"),
-    DOCUMENT_VIEWED("문서 열람"),
-    DOCUMENT_APPROVED("문서 승인"),
-    DOCUMENT_REJECTED("문서 반려"),
-    DOCUMENT_DOWNLOADED("문서 다운로드"),
-    PERMISSION_CHANGED("권한 변경");
-    
-    private final String description;
-}
+```sql
+-- Flyway 마이그레이션
+V1__init.sql: UUID 기반 스키마 생성
+V2__seed_data.sql: 초기 데이터 삽입 (UUID 기반)
 ```
 
-#### 7.1.2 감사 로그 서비스
-```java
-@Service
-public class AuditService {
-    
-    @Async
-    public void logUserAction(User user, AuditEventType eventType, Object resource, Map<String, Object> details) {
-        AuditLog auditLog = AuditLog.builder()
-            .userId(user.getId())
-            .action(eventType.name())
-            .resourceType(resource.getClass().getSimpleName())
-            .resourceId(getResourceId(resource))
-            .details(details)
-            .ipAddress(getCurrentUserIpAddress())
-            .userAgent(getCurrentUserAgent())
-            .createdAt(LocalDateTime.now())
-            .build();
-        
-        auditLogRepository.save(auditLog);
-    }
-}
-```
+## 9. 확장성 고려사항
 
-### 7.2 시스템 모니터링
+### 9.1 수평 확장
 
-#### 7.2.1 헬스 체크
-```java
-@Component
-public class SystemHealthIndicator implements HealthIndicator {
-    
-    @Override
-    public Health health() {
-        try {
-            // 데이터베이스 연결 확인
-            databaseHealthCheck();
-            
-            // 파일 시스템 확인
-            fileSystemHealthCheck();
-            
-            return Health.up()
-                .withDetail("database", "UP")
-                .withDetail("filesystem", "UP")
-                .build();
-        } catch (Exception e) {
-            return Health.down()
-                .withDetail("error", e.getMessage())
-                .build();
-        }
-    }
-}
-```
+- **로드 밸런싱**: 다중 인스턴스 지원
+- **세션 무상태**: JWT 기반 인증
+- **데이터베이스**: 읽기 전용 복제본 지원
 
-## 8. 배포 및 운영 설계
+### 9.2 기능 확장
 
-### 8.1 로컬 개발 환경
+- **모바일 앱**: React Native 또는 Flutter
+- **PWA**: 오프라인 지원
+- **외부 연동**: 전자서명, ERP 시스템
+- **다국어**: i18n 지원
 
-#### 8.1.1 Docker Compose 설정
-```yaml
-version: '3.8'
+## 10. 현재 구현 상태 (2025-09-23 업데이트)
 
-services:
-  postgres:
-    image: postgres:16
-    environment:
-      POSTGRES_DB: approval_system_dev
-      POSTGRES_USER: approval_user
-      POSTGRES_PASSWORD: approval_password
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./db/init:/docker-entrypoint-initdb.d
+### 10.1 완료된 기능
 
-  app:
-    build: .
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      DB_URL: jdbc:postgresql://postgres:5432/approval_system_dev
-      DB_USERNAME: approval_user
-      DB_PASSWORD: approval_password
-    depends_on:
-      - postgres
-    volumes:
-      - ./uploads:/app/uploads
+- ✅ **백엔드 전체**: Spring Boot 3.2.0 기반 완전 구현
+- ✅ **프론트엔드 전체**: Next.js 14.2.25 기반 완전 구현
+- ✅ **데이터베이스**: PostgreSQL 17 + UUID 기반 설계
+- ✅ **인증 시스템**: JWT 기반 로그인/로그아웃 완전 구현
+- ✅ **사용자 관리**: UUID 기반 사용자 목록/통계 조회 기능
+- ✅ **API 연동**: 실제 백엔드-프론트엔드 통신 및 CORS 설정
+- ✅ **보안 구현**: BCrypt 해싱, JWT 토큰 관리, 세션 보안
+- ✅ **문서화**: 모든 기술 문서 현행화
 
-volumes:
-  postgres_data:
-```
+### 10.2 해결된 기술적 이슈
 
-### 8.2 보안 운영
+- ✅ **JPA Lazy Loading 문제**: `Illegal pop() with non-matching JdbcValuesSourceProcessingState` 오류 해결
+- ✅ **데이터베이스 스키마 불일치**: 누락된 컬럼들 추가 및 엔티티-테이블 완전 동기화
+- ✅ **컴파일 오류**: MapStruct 매핑, UUID 타입 불일치, 중복 메서드 정의 문제 해결
+- ✅ **권한 검증**: Spring Security `@PreAuthorize` 설정 및 JWT 토큰 역할 정보 포함
+- ✅ **자동 로그인 문제**: 브라우저 캐시 초기화 및 Fresh Login 페이지 구현
 
-#### 8.2.1 시크릿 관리
-```yaml
-# application-dev.yml
-spring:
-  datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/approval_system_dev}
-    username: ${DB_USERNAME:approval_user}
-    password: ${DB_PASSWORD:approval_password}
-  
-  security:
-    jwt:
-      secret: ${JWT_SECRET:dev-secret-key-change-in-production}
-      expiration: ${JWT_EXPIRATION:3600}
-  
-  encryption:
-    key: ${ENCRYPTION_KEY:dev-encryption-key-change-in-production}
-```
+### 10.3 테스트 완료
 
-## 9. 확장성 설계
+- ✅ **로그인 기능**: admin/admin123 계정으로 정상 로그인 및 JWT 토큰 발급
+- ✅ **사용자 목록 API**: `GET /api/users` - 페이지네이션 지원 및 정상 응답
+- ✅ **사용자 통계 API**: `GET /api/users/stats` - 관리자 권한 테스트 성공
+- ✅ **API 응답**: 모든 엔드포인트 정상 응답 및 에러 처리
+- ✅ **데이터베이스**: UUID 기반 데이터 저장/조회 및 관계 매핑
+- ✅ **프론트엔드 연동**: 실제 백엔드 API 호출 및 응답 처리
+- ✅ **로그인 페이지**: 정식 로그인 페이지 및 Fresh Login 테스트 페이지 구현
 
-### 9.1 마이크로서비스 전환 준비
+### 10.4 구현된 페이지
 
-#### 9.1.1 도메인 분리
-```java
-// 사용자 관리 도메인
-@RestController
-@RequestMapping("/api/v1/users")
-public class UserController {
-    // 사용자 관련 API
-}
+- ✅ **정식 로그인 페이지**: `http://localhost:3000/login` - 완전한 기능의 로그인 폼
+- ✅ **Fresh Login 페이지**: `http://localhost:3000/fresh-login` - 자동 로그인 문제 해결용
+- ✅ **사용자 관리 테스트 페이지**: `http://localhost:3000/user-management-test` - API 테스트용
+- ✅ **로그인 테스트 페이지**: `http://localhost:3000/login-test` - 간단한 로그인 테스트용
 
-// 문서 관리 도메인  
-@RestController
-@RequestMapping("/api/v1/documents")
-public class DocumentController {
-    // 문서 관련 API
-}
+### 10.5 향후 개선사항
 
-// 결재 관리 도메인
-@RestController
-@RequestMapping("/api/v1/approvals")
-public class ApprovalController {
-    // 결재 관련 API
-}
-```
-
-### 9.2 API 버전 관리
-
-#### 9.2.1 버전별 API 설계
-```java
-@RestController
-@RequestMapping("/api/v1")
-public class DocumentControllerV1 {
-    // V1 API 구현
-}
-
-@RestController
-@RequestMapping("/api/v2")
-public class DocumentControllerV2 {
-    // V2 API 구현 (하위 호환성 유지)
-}
-```
-
-## 10. UI/UX 설계
-
-### 10.1 Brotherhood 디자인 시스템 개요
-- **보안 우선**: 접근 권한에 따른 UI 제어, 워터마크 표시
-- **직관성**: shadcn/ui 기반 현대적이고 직관적인 UX
-- **반응형**: PC/태블릿/모바일 모든 디바이스 지원
-- **접근성**: Radix UI 기반 WCAG 2.1 AA 수준 완전 준수
-- **브랜드 일관성**: 한국순교복자수도회 홈페이지 색감 반영
-- **기술 스택**: Next.js 14.2.25 + React 19 + Tailwind CSS 4.1.9 + shadcn/ui
-
-#### 10.1.1 Brotherhood 디자인 시스템
-shadcn/ui 기반의 현대적이고 전문적인 컬러 시스템:
-
-- **메인 컬러**: 레드 (#7e1416) - 헤더, 버튼, 강조 요소
-- **보조 컬러**: 앰버/오렌지 (#f59e0b) - 보조 액션
-- **카드 배경**: 연한 레드 (#fef2f2) - 카드 배경
-- **파괴적 컬러**: 빨간색 (#dc2626) - 삭제, 경고
-- **상태 컬러**:
-  - 승인: 에메랄드 (#10b981)
-  - 반려: 레드 (#ef4444)
-  - 진행중: 앰버 (#f59e0b)
-
-### 10.2 PC 버전 메인 대시보드
-- **레이아웃**: 상단 헤더 + 사이드바 + 메인 콘텐츠
-- **주요 구성요소**:
-  - 상단 헤더: 로고, 알림, 사용자 메뉴 (이름 + 세례명 표시)
-  - 사이드바: 네비게이션 메뉴 (대시보드, 문서관리, 결재관리, 사용자관리)
-  - 메인 콘텐츠: 통계 카드, 최근 문서 목록, 결재 대기 목록
-- **사용자 표시**: "김관리자 (요한)" 형태로 이름과 세례명 함께 표시
-- **기술 스택**: Next.js 14.2.25, React 19, Tailwind CSS 4.1.9, shadcn/ui, Radix UI, Lucide Icons, Geist 폰트
-
-### 10.3 모바일 버전 메인 화면
-- **레이아웃**: 상단 헤더 + 메인 콘텐츠 + 하단 네비게이션
-- **주요 구성요소**:
-  - 상단 헤더: 햄버거 메뉴, 로고, 알림
-  - 메인 콘텐츠: 통계 카드 (2x2 그리드), 최근 문서 목록
-  - 하단 네비게이션: 홈, 문서, 결재, 알림, 내정보
-- **사용자 표시**: 모든 사용자 정보에 "이름 (세례명)" 형태로 표시
-- **반응형 디자인**: 모바일 터치 최적화, 작은 화면에 맞는 UI
-
-### 10.4 보안 UI 요소
-- **워터마크**: 민감한 문서에 사용자 정보 표시
-- **접근 제어**: 권한 없는 콘텐츠 블러 처리 및 안내 메시지
-- **상태 표시**: 문서 상태별 색상 구분 (진행중, 승인, 반려)
-
-### 10.5 상세 설계
-자세한 UI 설계는 [UI 설계 문서](ui-design.md)를 참조하세요.
-
-## 11. 테스트 설계
-
-### 10.1 테스트 전략
-
-#### 10.1.1 테스트 피라미드
-```
-        E2E Tests (5%)
-       ┌─────────────────┐
-      │  Integration Tests (25%)  │
-     ┌─────────────────────────────┐
-    │      Unit Tests (70%)        │
-   └─────────────────────────────────┘
-```
-
-#### 10.1.2 단위 테스트 예시
-```java
-@ExtendWith(MockitoExtension.class)
-class ApprovalProcessServiceTest {
-    
-    @Mock
-    private DocumentRepository documentRepository;
-    
-    @Mock
-    private ApprovalLineRepository approvalLineRepository;
-    
-    @InjectMocks
-    private ApprovalProcessService approvalProcessService;
-    
-    @Test
-    void shouldSubmitDocumentSuccessfully() {
-        // Given
-        Document document = createTestDocument();
-        List<ApprovalStep> steps = createTestApprovalSteps();
-        
-        // When
-        approvalProcessService.submitDocument(document, steps);
-        
-        // Then
-        verify(documentRepository).save(document);
-        verify(approvalLineRepository).save(any(ApprovalLine.class));
-        assertThat(document.getStatus()).isEqualTo(DocumentStatus.PENDING);
-    }
-}
-```
-
-이 설계문서는 requirement.md의 모든 요구사항을 반영하여 로컬 개발 환경에 최적화된 시스템 설계를 제시합니다. 보안을 최우선으로 하면서도 확장 가능한 아키텍처를 구성했습니다.
+- **테스트 코드**: UUID 변환 관련 테스트 코드 수정
+- **성능 최적화**: 대용량 데이터 처리 최적화
+- **보안 강화**: MFA, 추가 보안 정책 구현
+- **사용자 경험**: UI/UX 개선 및 모바일 최적화
+- **문서 관리**: 문서 생성, 결재선 설정 등 핵심 비즈니스 로직 구현

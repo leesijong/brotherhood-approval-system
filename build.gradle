@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+allprojects {
+    group = 'com.brotherhood'
+    version = '0.0.1-SNAPSHOT'
+    
+    repositories {
+        mavenCentral()
+    }
+}
+
+// 루트 프로젝트에서는 빌드하지 않음
+jar.enabled = false
+
