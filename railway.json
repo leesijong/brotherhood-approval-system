@@ -4,6 +4,6 @@
     "dockerfilePath": "backend/Dockerfile"
   },
   "deploy": {
-    "healthcheckPath": "/health"
+    "healthcheckPath": "/actuator/health"
   }
 }
