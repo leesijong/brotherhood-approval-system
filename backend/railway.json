@@ -3,6 +3,6 @@
     "builder": "DOCKERFILE"
   },
   "deploy": {
-    "healthcheckPath": "/api/health"
+    "healthcheckPath": "/health"
   }
 }
