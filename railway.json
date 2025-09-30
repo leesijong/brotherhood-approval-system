@@ -3,7 +3,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "./gradlew bootRun -Dspring.profiles.active=prod",
+    "startCommand": "cd backend && ./gradlew bootRun -Dspring.profiles.active=prod",
     "healthcheckPath": "/api/health"
   }
 }

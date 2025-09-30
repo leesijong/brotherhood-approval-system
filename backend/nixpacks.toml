@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["jdk17", "gradle"]
+
+[phases.install]
+cmds = ["./gradlew dependencies --no-daemon"]
+
+[phases.build]
+cmds = ["./gradlew build -x test --no-daemon"]
+
+[start]
+cmd = "./gradlew bootRun -Dspring.profiles.active=prod"
