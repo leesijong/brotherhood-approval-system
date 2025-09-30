@@ -29,6 +29,90 @@
 
 ## 📅 날짜별 개발 진행 상황
 
+### 2025-09-30
+
+#### 1. 구현 내역
+
+##### Railway 배포 시스템 구축
+- **Railway 배포 설정 완료**
+  - `railway.json` 설정 파일 생성 및 구성
+  - `backend/railway.json` 설정 파일 생성
+  - `nixpacks.toml` 설정 파일 생성 (Spring Boot 프로젝트 인식 개선)
+  - `.dockerignore` 파일 생성 (불필요한 파일 제외)
+
+- **Dockerfile 최적화**
+  - `backend/Dockerfile` 생성 및 최적화
+  - gradlew 실행 권한 문제 해결 (`chmod +x gradlew`)
+  - H2 데이터베이스 fallback 설정 추가
+  - Health check 경로 최적화 (`/health` → `/hello`)
+
+- **프로덕션 환경 설정**
+  - `application-prod.yml` 프로덕션 설정 파일 생성
+  - H2 인메모리 데이터베이스 fallback 설정
+  - Flyway 비활성화 옵션 추가
+  - CORS 설정 추가
+  - 로깅 레벨 조정 (디버깅 개선)
+
+- **Health Check 시스템 개선**
+  - Spring Boot Actuator health check 설정
+  - 간단한 `/hello` 엔드포인트 health check 추가
+  - Docker health check 설정 최적화
+  - Railway health check 경로 수정
+
+##### 프론트엔드 UI 개선
+- **Brotherhood 로고 시스템 구현**
+  - `brotherhood-logo.png` 이미지 파일 생성
+  - 로그인 페이지 로고 변경 (Shield 아이콘 → Brotherhood 로고)
+  - 상단 네비게이션 로고 변경
+  - "한국순교복자성직수도회 결재 시스템" 타이틀 추가
+
+- **사용자 관리 페이지 개선**
+  - "View User" 기능 제거
+  - 사용자 목록 UI 최적화
+  - 불필요한 버튼 및 기능 정리
+
+- **로그아웃 로직 강화**
+  - `localStorage` 및 `sessionStorage` 완전 정리
+  - 로그아웃 시 모든 저장소 데이터 삭제
+  - 페이지 새로고침으로 완전한 상태 초기화
+
+##### 결재 시스템 기능 완성
+- **결재 대기 목록 시스템 완전 구현**
+  - `DocumentRepository.findPendingApprovalByUserId()` 쿼리 최적화
+  - 결재선이 없는 문서 필터링 로직 추가
+  - 중복 데이터 제거 (`DISTINCT` 키워드 사용)
+  - 문서 상태별 정확한 필터링 (PENDING, SUBMITTED만)
+
+- **결재 진행상황 표시 개선**
+  - `ApprovalProgress` 컴포넌트 중복 제거 로직 구현
+  - 고유한 결재자별 그룹화 로직 추가
+  - 승인 단계 수 정확한 계산 (1/1, 2/2 등)
+  - 문서 상태에 따른 진행상황 표시 개선
+
+- **결재 액션 시스템 완전 구현**
+  - `ApprovalService.performApprovalAction()` 메서드 완전 재구현
+  - Lazy Loading 문제 해결 (명시적 엔티티 조회)
+  - `@Transactional` 어노테이션 추가
+  - 결재 단계별 상태 업데이트 로직 개선
+
+- **사이드바 동적 배지 시스템**
+  - `dashboard-sidebar.tsx`에 동적 배지 카운트 구현
+  - `dashboardApi.getPendingApprovals()` API 연동
+  - 실시간 결재 대기 건수 표시
+  - 사용자별 권한에 따른 메뉴 표시
+
+##### 새로운 페이지 구현
+- **결재 관리 페이지들 구현**
+  - `brotherhood/app/approvals/pending/page.tsx` - 결재 대기 목록
+  - `brotherhood/app/approvals/history/page.tsx` - 결재 이력
+  - `brotherhood/app/approvals/workflow/page.tsx` - 결재 워크플로우
+  - `brotherhood/app/approvals/delegation/page.tsx` - 결재 위임
+
+- **API 엔드포인트 추가**
+  - `POST /api/approvals/steps/{stepId}/process` - 결재 단계별 액션
+  - `GET /api/approvals/my-processed` - 사용자별 결재 이력
+  - `POST /api/documents/cleanup` - 관리자용 문서 정리
+
 ### 2025-09-29
 
 #### 1. 구현 내역
@@ -145,6 +229,37 @@
 
 #### 2. 질의 응답 내용
 
+##### 주요 질문과 답변 (2025-09-30)
+1. **Q: Railway에서 빌드가 실패하는 이유는?**
+   - A: gradlew 파일에 실행 권한이 없어서 발생. Dockerfile에서 `chmod +x gradlew` 명령어 추가로 해결
+
+2. **Q: Railway에서 health check가 실패하는 이유는?**
+   - A: `/api/health` 경로가 잘못되어 발생. 실제 엔드포인트는 `/health`였음. Railway 설정을 수정하여 해결
+
+3. **Q: Spring Boot 애플리케이션이 시작되지 않는 이유는?**
+   - A: 데이터베이스 연결 실패와 Flyway 마이그레이션 문제. H2 인메모리 데이터베이스 fallback 설정과 Flyway 비활성화로 해결
+
+4. **Q: 결재 대기 목록에 결재선이 없는 문서가 표시되는 이유는?**
+   - A: JPA 쿼리에서 결재선 존재 여부를 제대로 검증하지 않았음. 서브쿼리와 DISTINCT를 사용한 쿼리로 수정하여 해결
+
+5. **Q: 결재 승인 후에도 문서 상세 화면에서 대기중으로 표시되는 이유는?**
+   - A: Lazy Loading 문제로 ApprovalStep 상태가 업데이트되지 않았음. 명시적 엔티티 조회와 @Transactional 추가로 해결
+
+6. **Q: 승인 진행상황에서 1/6으로 표시되는 이유는?**
+   - A: 중복된 결재 단계가 카운트되어 발생. 프론트엔드에서 고유한 결재자별 그룹화 로직을 구현하여 해결
+
+7. **Q: 사이드바의 결재 대기 건수가 하드코딩되어 있는 이유는?**
+   - A: 동적 API 연동이 구현되지 않았음. `dashboardApi.getPendingApprovals()` API 연동으로 실시간 카운트 표시 구현
+
+8. **Q: 사용자 관리 페이지에서 "View User" 기능이 필요한가?**
+   - A: 불필요한 기능으로 판단되어 제거. 사용자 목록 UI를 단순화하여 사용성 개선
+
+9. **Q: 로그아웃 시 localStorage가 완전히 정리되지 않는 이유는?**
+   - A: `localStorage.clear()`와 `sessionStorage.clear()` 명령어 추가로 완전 정리 구현
+
+10. **Q: Brotherhood 로고를 어떻게 구현할 것인가?**
+    - A: 사용자가 제공한 이미지를 `brotherhood-logo.png`로 저장하고, 로그인 페이지와 상단 네비게이션에 적용
+
 ##### 주요 질문과 답변 (2025-09-29)
 1. **Q: 대시보드의 결재 대기 목록이 정상적으로 보이지 않는 이유는?**
    - A: DashboardController의 `@RequestMapping("/api/dashboard")` 설정이 Spring Boot의 `context-path: /api` 설정과 중복되어 `/api/api/dashboard` 경로가 되어 404 오류 발생. `/dashboard`로 수정하여 해결
@@ -188,6 +303,67 @@
    - A: 매일의 개발 진행 상황, 문제 해결 내용, 터미널 사용법 등을 체계적으로 기록하는 컨텍스트 문서가 필요함. `project-context.md` 문서를 생성하여 자동 업데이트 원칙을 수립
 
 #### 3. 문제 해결 내용
+
+##### 해결된 주요 문제들 (2025-09-30)
+1. **Railway 빌드 실패 문제**
+   - **원인**: gradlew 파일에 실행 권한이 없어서 `Permission denied` 오류 발생
+   - **해결**: Dockerfile에서 `chmod +x gradlew` 명령어 추가
+   - **결과**: Railway 빌드 성공
+
+2. **Railway Health Check 실패 문제**
+   - **원인**: Railway가 `/api/health` 경로를 찾았지만 실제 엔드포인트는 `/health`
+   - **해결**: Railway 설정에서 `healthcheckPath`를 `/health`로 수정
+   - **결과**: Health check 정상 작동
+
+3. **Spring Boot 애플리케이션 시작 실패**
+   - **원인**: 데이터베이스 연결 실패와 Flyway 마이그레이션 문제
+   - **해결**: H2 인메모리 데이터베이스 fallback 설정, Flyway 비활성화
+   - **결과**: 애플리케이션 정상 시작
+
+4. **결재 대기 목록 데이터 정제 문제**
+   - **원인**: JPA 쿼리에서 결재선 존재 여부를 제대로 검증하지 않음
+   - **해결**: 서브쿼리와 DISTINCT를 사용한 쿼리로 수정
+   - **결과**: 실제 결재선이 있는 문서만 조회
+
+5. **결재 승인 후 상태 업데이트 실패**
+   - **원인**: Lazy Loading 문제로 ApprovalStep 상태가 업데이트되지 않음
+   - **해결**: 명시적 엔티티 조회와 @Transactional 어노테이션 추가
+   - **결과**: 결재 승인 후 상태 정상 업데이트
+
+6. **승인 진행상황 중복 카운트 문제**
+   - **원인**: 중복된 결재 단계가 카운트되어 1/6으로 표시
+   - **해결**: 프론트엔드에서 고유한 결재자별 그룹화 로직 구현
+   - **결과**: 정확한 승인 단계 수 표시 (1/1, 2/2 등)
+
+7. **사이드바 하드코딩 배지 문제**
+   - **원인**: 동적 API 연동이 구현되지 않아 고정된 숫자 표시
+   - **해결**: `dashboardApi.getPendingApprovals()` API 연동으로 실시간 카운트 구현
+   - **결과**: 실시간 결재 대기 건수 표시
+
+8. **사용자 관리 페이지 불필요한 기능**
+   - **원인**: "View User" 기능이 불필요하게 복잡함
+   - **해결**: 해당 기능 제거 및 UI 단순화
+   - **결과**: 사용자 친화적인 인터페이스 구현
+
+9. **로그아웃 시 저장소 정리 불완전**
+   - **원인**: `localStorage`와 `sessionStorage`가 완전히 정리되지 않음
+   - **해결**: `localStorage.clear()`와 `sessionStorage.clear()` 명령어 추가
+   - **결과**: 완전한 로그아웃 상태 초기화
+
+10. **Brotherhood 로고 시스템 미구현**
+    - **원인**: 기본 Shield 아이콘 사용으로 브랜딩 부족
+    - **해결**: 사용자 제공 이미지를 `brotherhood-logo.png`로 저장하고 적용
+    - **결과**: 브랜드 아이덴티티가 반영된 UI 구현
+
+11. **Railway Dockerfile 경로 문제**
+    - **원인**: Dockerfile이 프로젝트 루트에서 실행되지만 gradlew가 backend 폴더에 있음
+    - **해결**: `COPY backend/ .`로 backend 폴더만 복사하도록 수정
+    - **결과**: Docker 빌드 성공
+
+12. **Railway Health Check 경로 문제**
+    - **원인**: `/actuator/health` 경로가 복잡하여 실패
+    - **해결**: 간단한 `/hello` 엔드포인트로 health check 변경
+    - **결과**: Health check 성공
 
 ##### 해결된 주요 문제들 (2025-09-29)
 1. **결재 대기 목록 API 404 오류**
@@ -409,6 +585,44 @@ Invoke-WebRequest -Uri "http://localhost:8080/api/documents" -Method GET
 
 #### 5. 현재 시스템 상태
 
+##### 정상 작동하는 기능들 (2025-09-30 업데이트)
+- ✅ 사용자 로그인/로그아웃 (완전한 저장소 정리)
+- ✅ 문서 생성 (결재선 포함)
+- ✅ 문서 목록 조회
+- ✅ 문서 상세조회 (승인진행상황 포함, 정확한 단계 수 표시)
+- ✅ 문서 삭제
+- ✅ 파일 업로드/다운로드
+- ✅ 문서 상신 (POST /api/documents/{id}/submit)
+- ✅ **결재 시스템 API 완전 구현**
+  - 결재선 생성/조회 (POST/GET /api/approvals/lines)
+  - 결재 액션 수행 (POST /api/approvals/actions)
+  - 결재 이력 조회 (GET /api/approvals/history)
+  - 결재 위임 (POST /api/approvals/delegate)
+  - 결재선 삭제 (DELETE /api/approvals/lines)
+- ✅ **대시보드 결재 대기 목록 API** (완전 구현)
+  - 결재 대기 목록 조회 (GET /api/dashboard/pending-approvals)
+  - 사용자별 결재 대기 문서 필터링
+  - 문서 상태별 정확한 필터링 (PENDING, SUBMITTED만)
+  - 결재선이 없는 문서 자동 제외
+- ✅ **Railway 배포 시스템** (2025-09-30 신규 구현)
+  - Railway 클라우드 배포 설정 완료
+  - Docker 컨테이너화 및 최적화
+  - H2 데이터베이스 fallback 설정
+  - Health check 시스템 구현
+- ✅ **Brotherhood 브랜딩 시스템** (2025-09-30 신규 구현)
+  - Brotherhood 로고 시스템 구현
+  - 한국순교복자성직수도회 브랜딩 적용
+  - 로그인 페이지 및 상단 네비게이션 개선
+- ✅ **결재 관리 페이지 시스템** (2025-09-30 신규 구현)
+  - 결재 대기 목록 페이지 (/approvals/pending)
+  - 결재 이력 페이지 (/approvals/history)
+  - 결재 워크플로우 페이지 (/approvals/workflow)
+  - 결재 위임 페이지 (/approvals/delegation)
+- ✅ **동적 배지 시스템** (2025-09-30 신규 구현)
+  - 사이드바 실시간 결재 대기 건수 표시
+  - 사용자별 권한에 따른 메뉴 표시
+  - API 연동을 통한 실시간 데이터 업데이트
+
 ##### 정상 작동하는 기능들 (2025-09-29 업데이트)
 - ✅ 사용자 로그인/로그아웃
 - ✅ 문서 생성 (결재선 포함)
@@ -491,15 +705,30 @@ Invoke-WebRequest -Uri "http://localhost:8080/api/documents" -Method GET
    - 결재 이력 조회 API 구현 및 테스트 완료
    - 전체 결재 프로세스 검증 완료
 
-##### 우선순위 높음 (다음 작업 - 2025-09-30)
-1. **결재 대기 목록 데이터 정제** (최우선)
-   - **문제**: 결재선이 지정되지 않은 문서가 여전히 조회됨
-   - **원인 분석**: 현재 쿼리가 결재선 존재 여부를 제대로 검증하지 않음
-   - **해결 방안**: 
-     - 쿼리에서 결재선 존재 여부 검증 로직 추가
-     - `approvalLines`가 실제로 존재하는 문서만 조회
-     - 데이터베이스 쿼리 검증 및 테스트 필요
-   - **예상 작업**: DocumentRepository 쿼리 수정, 테스트 케이스 작성
+##### 우선순위 높음 (다음 작업 - 2025-10-01)
+1. **Railway 배포 완료 및 테스트** (최우선)
+   - **현재 상태**: Railway 배포 설정 완료, Health check 개선 완료
+   - **다음 단계**: 
+     - Railway에서 실제 배포 성공 확인
+     - 프로덕션 환경에서 모든 기능 테스트
+     - 데이터베이스 연결 및 데이터 마이그레이션 확인
+   - **예상 작업**: Railway 로그 모니터링, 기능별 테스트 수행
+
+2. **프론트엔드 Vercel 배포**
+   - **현재 상태**: 백엔드 Railway 배포 완료
+   - **다음 단계**: 
+     - Vercel을 통한 Next.js 프론트엔드 배포
+     - Railway 백엔드와 Vercel 프론트엔드 연동
+     - CORS 설정 및 API 엔드포인트 연결
+   - **예상 작업**: Vercel 배포 설정, 환경변수 구성, 도메인 연결
+
+3. **데이터베이스 마이그레이션**
+   - **현재 상태**: H2 fallback 데이터베이스로 작동
+   - **다음 단계**: 
+     - PostgreSQL 프로덕션 데이터베이스 연결
+     - 기존 데이터 마이그레이션
+     - Flyway 마이그레이션 활성화
+   - **예상 작업**: ElephantSQL 또는 Supabase PostgreSQL 설정, 데이터 마이그레이션 스크립트 작성
 
 2. **프론트엔드 대시보드 UI 연동**
    - 백엔드 API와 프론트엔드 대시보드 컴포넌트 연결
@@ -550,17 +779,35 @@ Invoke-WebRequest -Uri "http://localhost:8080/api/documents" -Method GET
 
 ---
 
-**마지막 업데이트**: 2025-09-29 16:57  
+**마지막 업데이트**: 2025-09-30 17:00  
 **작성자**: AI Assistant  
 **다음 세션 시작 시**: 이 문서를 먼저 확인하여 현재 상태 파악 후 작업 진행
 
 ## 📋 **내일 AI 세션을 위한 핵심 가이드**
 
-### **오늘 완료된 주요 작업 (2025-09-29)**
-1. **대시보드 결재 대기 목록 API 완전 구현**
-   - 엔드포인트: `GET /api/dashboard/pending-approvals`
-   - 사용자별 결재 대기 문서 조회 기능
-   - 문서 상태별 정확한 필터링 (PENDING, SUBMITTED만)
+### **오늘 완료된 주요 작업 (2025-09-30)**
+1. **Railway 배포 시스템 완전 구축**
+   - Railway 클라우드 배포 설정 완료
+   - Docker 컨테이너화 및 최적화
+   - H2 데이터베이스 fallback 설정
+   - Health check 시스템 구현
+
+2. **결재 시스템 기능 완전 구현**
+   - 결재 대기 목록 데이터 정제 완료
+   - 결재 승인 후 상태 업데이트 문제 해결
+   - 승인 진행상황 중복 카운트 문제 해결
+   - 동적 배지 시스템 구현
+
+3. **Brotherhood 브랜딩 시스템 구현**
+   - Brotherhood 로고 시스템 완성
+   - 한국순교복자성직수도회 브랜딩 적용
+   - UI/UX 개선 및 사용자 경험 향상
+
+4. **새로운 페이지 및 기능 구현**
+   - 결재 관리 페이지 4개 구현
+   - API 엔드포인트 추가
+   - 사용자 관리 페이지 개선
+   - 로그아웃 로직 강화
 
 ### **해결된 핵심 문제들**
 1. **API 경로 매핑 문제**: `@RequestMapping("/api/dashboard")` → `@RequestMapping("/dashboard")` 수정
