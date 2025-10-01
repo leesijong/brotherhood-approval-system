@@ -16,14 +16,11 @@ RUN chmod +x gradlew
 # Download dependencies
 RUN ./gradlew dependencies --no-daemon
 
-# Build the application
+# Build the application (JAR 파일이 app.jar로 생성됨)
 RUN ./gradlew build -x test --no-daemon
-
-# Copy the built JAR to a fixed location
-RUN cp build/libs/*.jar app.jar
 
 # Expose port
 EXPOSE 8080
 
 # Run the application
-CMD ["java", "-Dspring.profiles.active=prod", "-Dserver.port=${PORT:-8080}", "-jar", "app.jar"]
+CMD ["java", "-Dspring.profiles.active=prod", "-Dserver.port=${PORT:-8080}", "-jar", "build/libs/app.jar"]

@@ -66,6 +66,11 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+// JAR 파일 이름 고정
+bootJar {
+    archiveFileName = 'app.jar'
+}
+
 // Flyway configuration
 flyway {
     url = 'jdbc:postgresql://localhost:5432/approval_system_dev'
