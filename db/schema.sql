@@ -1,13 +1,20 @@
--- 결재 시스템 데이터베이스 스키마 (PostgreSQL 16)
+-- 결재 시스템 데이터베이스 스키마 (PostgreSQL 17)
 -- 생성일: 2024-09-17
--- 버전: 1.0
-
--- 데이터베이스 생성 (이미 생성되어 있다면 무시)
--- CREATE DATABASE approval_system_dev;
+-- 최종 업데이트: 2025-10-01
+-- 버전: 2.0 (현행화)
 
 -- 확장 기능 활성화
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- 트리거 함수: updated_at 자동 업데이트
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
 
 -- 1. 지사(Branch) 테이블
 CREATE TABLE branches (
@@ -37,8 +44,8 @@ CREATE TABLE roles (
 -- 3. 사용자(User) 테이블
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(100) NOT NULL,  -- 사용자 이름
-    login_id VARCHAR(50) NOT NULL UNIQUE,  -- 로그인 ID
+    name VARCHAR(100) NOT NULL,
+    login_id VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
     baptismal_name VARCHAR(50) NOT NULL,
@@ -83,7 +90,8 @@ CREATE TABLE documents (
     submitted_at TIMESTAMP WITH TIME ZONE,
     approved_at TIMESTAMP WITH TIME ZONE,
     rejected_at TIMESTAMP WITH TIME ZONE,
-    rejection_reason TEXT
+    rejection_reason TEXT,
+    due_date TIMESTAMP WITHOUT TIME ZONE
 );
 
 -- 6. 결재선(ApprovalLine) 테이블
@@ -96,7 +104,8 @@ CREATE TABLE approval_lines (
     is_conditional BOOLEAN DEFAULT false,
     condition_expression TEXT,
     created_by UUID NOT NULL REFERENCES users(id),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 7. 결재 단계(ApprovalStep) 테이블
@@ -109,6 +118,15 @@ CREATE TABLE approval_steps (
     is_required BOOLEAN DEFAULT true,
     is_delegatable BOOLEAN DEFAULT true,
     max_delegation_level INTEGER DEFAULT 1,
+    alternate_approver_id UUID REFERENCES users(id),
+    status VARCHAR(20) DEFAULT 'PENDING',
+    is_conditional BOOLEAN DEFAULT false,
+    condition_expression TEXT,
+    comments TEXT,
+    approved_at TIMESTAMP WITH TIME ZONE,
+    rejected_at TIMESTAMP WITH TIME ZONE,
+    delegated_at TIMESTAMP WITH TIME ZONE,
+    due_date DATE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -134,6 +152,7 @@ CREATE TABLE comments (
     content TEXT NOT NULL,
     parent_comment_id UUID REFERENCES comments(id),
     is_internal BOOLEAN DEFAULT false,
+    is_edited BOOLEAN DEFAULT false,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -144,6 +163,7 @@ CREATE TABLE attachments (
     document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
     filename VARCHAR(255) NOT NULL,
     original_filename VARCHAR(255) NOT NULL,
+    stored_filename VARCHAR(255) NOT NULL,
     file_path VARCHAR(500) NOT NULL,
     file_size BIGINT NOT NULL,
     mime_type VARCHAR(100) NOT NULL,
@@ -151,7 +171,9 @@ CREATE TABLE attachments (
     uploaded_by UUID NOT NULL REFERENCES users(id),
     uploaded_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     is_encrypted BOOLEAN DEFAULT false,
-    encryption_key_id VARCHAR(100)
+    encryption_key_id VARCHAR(100),
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 -- 11. 감사 로그(AuditLog) 테이블
@@ -160,11 +182,15 @@ CREATE TABLE audit_logs (
     user_id UUID REFERENCES users(id),
     action VARCHAR(50) NOT NULL,
     resource_type VARCHAR(50) NOT NULL,
-    resource_id UUID NOT NULL,
+    resource_id VARCHAR(255) NOT NULL,
     old_values JSONB,
     new_values JSONB,
     ip_address INET,
     user_agent TEXT,
+    session_id VARCHAR(255),
+    is_successful BOOLEAN,
+    error_message TEXT,
+    action_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -185,29 +211,32 @@ CREATE TABLE policies (
 CREATE INDEX idx_users_branch_id ON users(branch_id);
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_users_login_id ON users(login_id);
+CREATE INDEX idx_users_name ON users(name);
+
 CREATE INDEX idx_documents_author_id ON documents(author_id);
 CREATE INDEX idx_documents_branch_id ON documents(branch_id);
 CREATE INDEX idx_documents_status ON documents(status);
 CREATE INDEX idx_documents_created_at ON documents(created_at);
+
 CREATE INDEX idx_approval_lines_document_id ON approval_lines(document_id);
+
 CREATE INDEX idx_approval_steps_approval_line_id ON approval_steps(approval_line_id);
 CREATE INDEX idx_approval_steps_approver_id ON approval_steps(approver_id);
+CREATE INDEX idx_approval_steps_alternate_approver_id ON approval_steps(alternate_approver_id);
+CREATE INDEX idx_approval_steps_status ON approval_steps(status);
+
 CREATE INDEX idx_approval_histories_document_id ON approval_histories(document_id);
 CREATE INDEX idx_approval_histories_approver_id ON approval_histories(approver_id);
+
 CREATE INDEX idx_comments_document_id ON comments(document_id);
+
 CREATE INDEX idx_attachments_document_id ON attachments(document_id);
+
 CREATE INDEX idx_audit_logs_user_id ON audit_logs(user_id);
 CREATE INDEX idx_audit_logs_created_at ON audit_logs(created_at);
+CREATE INDEX idx_audit_logs_action_at ON audit_logs(action_at);
+CREATE INDEX idx_audit_logs_resource_type ON audit_logs(resource_type);
 CREATE INDEX idx_audit_logs_resource ON audit_logs(resource_type, resource_id);
-
--- 트리거 함수: updated_at 자동 업데이트
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = CURRENT_TIMESTAMP;
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
 
 -- 트리거 적용
 CREATE TRIGGER update_branches_updated_at BEFORE UPDATE ON branches FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -216,6 +245,7 @@ CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECU
 CREATE TRIGGER update_documents_updated_at BEFORE UPDATE ON documents FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_comments_updated_at BEFORE UPDATE ON comments FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER update_policies_updated_at BEFORE UPDATE ON policies FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_approval_lines_updated_at BEFORE UPDATE ON approval_lines FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- RLS (Row Level Security) 활성화
 ALTER TABLE branches ENABLE ROW LEVEL SECURITY;
@@ -230,7 +260,6 @@ ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE policies ENABLE ROW LEVEL SECURITY;
 
 -- 기본 RLS 정책 (개발용 - 모든 접근 허용)
--- 운영 환경에서는 더 엄격한 정책 적용 필요
 CREATE POLICY "Allow all for development" ON branches FOR ALL TO PUBLIC;
 CREATE POLICY "Allow all for development" ON users FOR ALL TO PUBLIC;
 CREATE POLICY "Allow all for development" ON documents FOR ALL TO PUBLIC;
@@ -241,4 +270,3 @@ CREATE POLICY "Allow all for development" ON comments FOR ALL TO PUBLIC;
 CREATE POLICY "Allow all for development" ON attachments FOR ALL TO PUBLIC;
 CREATE POLICY "Allow all for development" ON audit_logs FOR ALL TO PUBLIC;
 CREATE POLICY "Allow all for development" ON policies FOR ALL TO PUBLIC;
-
