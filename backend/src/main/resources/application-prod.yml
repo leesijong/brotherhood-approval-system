@@ -26,6 +26,8 @@ spring:
       
   # CORS 설정
   web:
+    resources:
+      add-mappings: true  # static resource 매핑 활성화 (application.yml 오버라이드)
     cors:
       allowed-origins: "*"
       allowed-methods: "*"
