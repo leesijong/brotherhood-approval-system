@@ -1,15 +1,5 @@
 spring:
-  # Railway PostgreSQL 사용
-  datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/approval_system}
-    username: ${PGUSER:postgres}
-    password: ${PGPASSWORD:postgres}
-    driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: 10
-      minimum-idle: 5
-      connection-timeout: 30000
-    
+  # Railway PostgreSQL 사용 (DatabaseConfig.java에서 DataSource 설정)
   jpa:
     hibernate:
       ddl-auto: update
