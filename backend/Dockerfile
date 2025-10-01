@@ -19,8 +19,11 @@ RUN ./gradlew dependencies --no-daemon
 # Build the application
 RUN ./gradlew build -x test --no-daemon
 
+# Copy the built JAR to a fixed location
+RUN cp build/libs/*.jar app.jar
+
 # Expose port
 EXPOSE 8080
 
-# Run the application using the built JAR
-CMD ["java", "-Dspring.profiles.active=prod", "-Dserver.port=${PORT:-8080}", "-jar", "build/libs/approval-system-0.0.1-SNAPSHOT.jar"]
+# Run the application
+CMD ["java", "-Dspring.profiles.active=prod", "-Dserver.port=${PORT:-8080}", "-jar", "app.jar"]
