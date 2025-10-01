@@ -108,7 +108,7 @@ export default function ApprovalsPage() {
         if (pendingApprovalsResponse.success && pendingApprovalsResponse.data) {
           const approvalItems: ApprovalItem[] = pendingApprovalsResponse.data.map(doc => ({
             id: doc.documentId || doc.id,
-            title: doc.documentTitle || doc.title,
+            title: doc.documentTitle,
             author: doc.authorName || '알 수 없음',
             authorId: doc.authorId || '',
             submittedAt: doc.submittedAt || new Date().toISOString(),
