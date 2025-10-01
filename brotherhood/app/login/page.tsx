@@ -13,7 +13,8 @@ import {
   User, 
   Mail, 
   AlertCircle, 
-  CheckCircle
+  CheckCircle,
+  Shield
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { authApi } from '@/services/authApi';

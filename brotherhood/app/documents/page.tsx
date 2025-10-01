@@ -190,7 +190,7 @@ export default function DocumentsPage() {
         
         if (result.success && result.data) {
           console.log('실제 데이터 로드 성공:', result.data.content?.length || 0, '개');
-          setDocuments(result.data.content || []);
+          setDocuments(result.data.content as any || []);
         } else {
           console.error('문서 목록 조회 실패:', result.message);
           console.log('API 실패 - 빈 배열 설정');

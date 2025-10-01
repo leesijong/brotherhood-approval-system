@@ -62,9 +62,9 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
 
   // 임시 해결책: admin 사용자에게 ADMIN 역할 강제 추가
   const userRoles = user?.roles || [];
-  const isAdminUser = user?.username === 'admin' || user?.loginId === 'admin';
-  const effectiveRoles = isAdminUser && !userRoles.includes('ADMIN') 
-    ? [...userRoles, 'ADMIN'] 
+  const isAdminUser = user?.username === 'admin';
+  const effectiveRoles = isAdminUser && !userRoles.includes('ADMIN')
+    ? [...userRoles, 'ADMIN']
     : userRoles;
 
   // 디버깅을 위한 사용자 정보 로그
@@ -442,7 +442,7 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
     }
     
     const userRoles = user.roles || [];
-    const isAdminUser = user.username === 'admin' || user.loginId === 'admin';
+    const isAdminUser = user.username === 'admin';
     const effectiveRoles = isAdminUser && !userRoles.includes('ADMIN') 
       ? [...userRoles, 'ADMIN'] 
       : userRoles;

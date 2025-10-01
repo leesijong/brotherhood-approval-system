@@ -602,7 +602,7 @@ export default function DocumentDetailPage() {
         // 문서 데이터 새로고침
         const documentResponse = await documentApi.getDocument(document.id);
         if (documentResponse.success && documentResponse.data) {
-          setDocument(documentResponse.data);
+          setDocument(documentResponse.data as any);
         }
         toast({ title: '문서가 승인되었습니다.', variant: 'success' });
       } else {
@@ -641,7 +641,7 @@ export default function DocumentDetailPage() {
         // 문서 데이터 새로고침
         const documentResponse = await documentApi.getDocument(document.id);
         if (documentResponse.success && documentResponse.data) {
-          setDocument(documentResponse.data);
+          setDocument(documentResponse.data as any);
         }
         toast({ title: '문서가 반려되었습니다.', variant: 'success' });
       } else {

@@ -100,7 +100,7 @@ export default function CreateDocumentPage() {
   });
   const [newTag, setNewTag] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<Partial<DocumentFormData>>({});
+  const [errors, setErrors] = useState<Record<string, string | undefined>>({});
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // 테스트용 사용자 초기화
@@ -141,7 +141,7 @@ export default function CreateDocumentPage() {
 
   // 폼 유효성 검사
   const validateForm = (): boolean => {
-    const newErrors: Partial<DocumentFormData> = {};
+    const newErrors: Record<string, string> = {};
 
     if (!formData.title.trim()) {
       newErrors.title = '제목을 입력해주세요';
