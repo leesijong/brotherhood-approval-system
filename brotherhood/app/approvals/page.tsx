@@ -79,7 +79,7 @@ export default function ApprovalsPage() {
 
       try {
         // 사용자 권한에 따라 통계 조회 방식 결정
-        const isAdmin = user.roles?.some(role => role.name === 'ADMIN' || role.name === 'SUPER_ADMIN');
+        const isAdmin = user.roles?.some(role => role === 'ADMIN' || role === 'SUPER_ADMIN');
         
         let statsResponse;
         if (isAdmin) {
