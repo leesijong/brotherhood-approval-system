@@ -23,10 +23,8 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/public/**")
                 .addResourceLocations("classpath:/public/");
         
-        // API 경로는 정적 리소스가 아님을 명시
-        registry.addResourceHandler("/api/**")
-                .addResourceLocations("classpath:/static/")
-                .setCachePeriod(0);
+        // API 경로는 리소스 핸들러에서 제외 (Controller가 처리)
+        // registry.addResourceHandler("/api/**") 제거!
     }
 }
 
