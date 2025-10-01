@@ -22,9 +22,5 @@ RUN ./gradlew build -x test --no-daemon
 # Expose port
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
-  CMD curl -f http://localhost:8080/hello || exit 1
-
-# Run the application
-CMD ["./gradlew", "bootRun", "-Dspring.profiles.active=prod", "--info"]
+# Run the application using the built JAR
+CMD ["java", "-Dspring.profiles.active=prod", "-Dserver.port=${PORT:-8080}", "-jar", "build/libs/approval-system-0.0.1-SNAPSHOT.jar"]
