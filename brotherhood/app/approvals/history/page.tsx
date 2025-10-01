@@ -63,7 +63,7 @@ export default function ApprovalHistoryPage() {
           const historyItems: ApprovalHistoryItem[] = response.data.content.map(item => ({
             id: item.id,
             action: item.action as 'APPROVE' | 'REJECT' | 'DELEGATE' | 'RETURN',
-            comment: item.comment,
+            comment: item.comments,
             approverName: item.approverName || '알 수 없음',
             approverDisplayName: item.approverDisplayName || '알 수 없음',
             documentId: item.documentId || '',
