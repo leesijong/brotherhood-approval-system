@@ -33,6 +33,21 @@ spring:
       
 server:
   port: ${PORT:8080}
+
+# Management & Actuator 설정
+management:
+  metrics:
+    enable:
+      jvm: false
+      process: false
+      system: false
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
   
 logging:
   level:
