@@ -53,6 +53,14 @@ public class Branch {
     @Builder.Default
     private Boolean isActive = true;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Branch parent;
+    
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<Branch> childBranches = new HashSet<>();
+    
     @OneToMany(mappedBy = "branch", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private Set<User> users = new HashSet<>();
