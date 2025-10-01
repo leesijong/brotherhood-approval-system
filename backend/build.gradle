@@ -2,7 +2,6 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.0'
     id 'io.spring.dependency-management' version '1.1.4'
-    id 'org.flywaydb.flyway' version '10.8.1'
 }
 
 group = 'com.brotherhood'
@@ -33,8 +32,9 @@ dependencies {
     // Database
     implementation 'org.postgresql:postgresql'
     implementation 'com.h2database:h2'
-    implementation 'org.flywaydb:flyway-core:10.8.1'
-    implementation 'org.flywaydb:flyway-database-postgresql:10.8.1'
+    // Flyway는 로컬 개발 환경에서만 사용 (Railway 배포 시 제외)
+    // implementation 'org.flywaydb:flyway-core:10.8.1'
+    // implementation 'org.flywaydb:flyway-database-postgresql:10.8.1'
     
     // Security
     implementation 'org.springframework.security:spring-security-oauth2-jose'
@@ -71,10 +71,10 @@ bootJar {
     archiveFileName = 'app.jar'
 }
 
-// Flyway configuration
-flyway {
-    url = 'jdbc:postgresql://localhost:5432/approval_system_dev'
-    user = 'approval_user'
-    password = 'approval_password'
-    locations = ['classpath:db/migration']
-}
+// Flyway configuration (Railway 배포 시 사용 안 함)
+// flyway {
+//     url = 'jdbc:postgresql://localhost:5432/approval_system_dev'
+//     user = 'approval_user'
+//     password = 'approval_password'
+//     locations = ['classpath:db/migration']
+// }
