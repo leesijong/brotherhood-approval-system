@@ -40,10 +40,10 @@ spring:
   encryption:
     key: ${ENCRYPTION_KEY:brotherhood-encryption-key-change-in-production}
     
-  # Web Configuration
-  web:
-    resources:
-      add-mappings: false
+  # Web Configuration (Railway 배포 시 주석 처리)
+  # web:
+  #   resources:
+  #     add-mappings: false
   
   # File Upload Configuration
   servlet:
