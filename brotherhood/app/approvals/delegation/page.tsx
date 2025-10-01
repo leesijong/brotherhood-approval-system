@@ -74,7 +74,7 @@ export default function DelegationPage() {
         // 사용자 목록 조회
         const usersResponse = await userApi.getUsers();
         if (usersResponse.success && usersResponse.data) {
-          setUsers(usersResponse.data);
+          setUsers(usersResponse.data.content);
         }
 
         // 위임 목록 조회 (임시 데이터)
