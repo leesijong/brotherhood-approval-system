@@ -7,6 +7,10 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  // 이미지 최적화 설정
+  images: {
+    unoptimized: true, // Railway 배포 시 이미지 최적화 비활성화
+  },
 };
 
 export default nextConfig;

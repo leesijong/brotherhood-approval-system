@@ -92,18 +92,21 @@ export default function LoginPage() {
 
     setIsLoading(true);
     try {
-      // 직접 fetch를 사용한 로그인 요청 (임시)
-      const response = await fetch('http://localhost:8080/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          password: formData.password,
-          rememberMe: formData.rememberMe
-        }),
+      // authApi 서비스를 사용한 로그인 요청
+      const loginResponse = await authApi.login({
+        username: formData.username,
+        password: formData.password,
+        rememberMe: formData.rememberMe
       });
+      
+      if (!loginResponse.success) {
+        throw new Error(loginResponse.message || '로그인에 실패했습니다.');
+      }
+
+      const response = {
+        ok: true,
+        json: async () => loginResponse
+      } as any;
 
       const data = await response.json();
 
