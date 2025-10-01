@@ -1,5 +1,10 @@
 spring:
   # Railway PostgreSQL 사용 (DatabaseConfig.java에서 DataSource 설정)
+  mvc:
+    throw-exception-if-no-handler-found: true
+  web:
+    resources:
+      add-mappings: false  # static resource 매핑 비활성화
   jpa:
     hibernate:
       ddl-auto: update
