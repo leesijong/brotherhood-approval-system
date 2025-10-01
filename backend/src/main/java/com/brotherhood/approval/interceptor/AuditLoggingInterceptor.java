@@ -194,11 +194,16 @@ public class AuditLoggingInterceptor implements HandlerInterceptor {
             String userId = getCurrentUserId(request);
             String resourceType = determineResourceType(request);
             String resourceIdStr = extractResourceId(request);
-            UUID resourceId = null;
-            try {
-                resourceId = UUID.fromString(resourceIdStr);
-            } catch (IllegalArgumentException e) {
-                log.warn("Invalid UUID format for resourceId: {}", resourceIdStr);
+            UUID resourceId = UUID.randomUUID(); // 기본값 설정 (리소스 ID가 없는 경우)
+            
+            // resourceIdStr이 있으면 UUID로 변환 시도
+            if (resourceIdStr != null && !resourceIdStr.isEmpty()) {
+                try {
+                    resourceId = UUID.fromString(resourceIdStr);
+                } catch (IllegalArgumentException e) {
+                    log.warn("Invalid UUID format for resourceId: {}, using random UUID", resourceIdStr);
+                    resourceId = UUID.randomUUID();
+                }
             }
             
             AuditLog auditLog = AuditLog.builder()
@@ -208,7 +213,7 @@ public class AuditLoggingInterceptor implements HandlerInterceptor {
                     .resourceId(resourceId)
                     .ipAddress(getClientIpAddress(request))
                     .userAgent(request.getHeader("User-Agent"))
-                    .sessionId(request.getSession().getId())
+                    .sessionId(request.getSession(false) != null ? request.getSession().getId() : "NO_SESSION")
                     .isSuccessful(true) // 기본적으로 성공으로 설정
                     .errorMessage(details != null ? (String) details.get("errorMessage") : null)
                     .oldValues(null) // 필요시 이전 값 설정
