@@ -24,14 +24,8 @@ spring:
       secret: ${JWT_SECRET:brotherhood-approval-system-secret-key-change-in-production-2024}
       expiration: 86400000 # 24 hours
       
-  # CORS 설정
-  web:
-    resources:
-      add-mappings: true  # static resource 매핑 활성화 (application.yml 오버라이드)
-    cors:
-      allowed-origins: "*"
-      allowed-methods: "*"
-      allowed-headers: "*"
+  # CORS 설정 (CORS는 SecurityConfig.java에서 처리)
+  # web.resources.add-mappings 제거 - Spring Boot 기본 설정 사용
       
 server:
   port: ${PORT:8080}
