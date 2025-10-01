@@ -34,17 +34,8 @@ public class DatabaseConfig {
         if (databaseUrl != null && !databaseUrl.isEmpty() && databaseUrl.startsWith("postgresql://")) {
             log.info("Railway PostgreSQL 감지됨. URL 변환 중...");
             
-            // postgresql:// -> jdbc:postgresql:// 변환
-            String jdbcUrl = databaseUrl.replace("postgresql://", "jdbc:postgresql://");
-            
-            log.info("변환된 JDBC URL: {}", jdbcUrl.replaceAll(":[^:@]+@", ":****@")); // 비밀번호 마스킹
-            
-            config.setJdbcUrl(jdbcUrl);
-            
-            // Railway는 URL에 사용자명/비밀번호가 포함되어 있으므로 별도 설정 불필요
-            // 하지만 명시적으로 추출하여 설정
             try {
-                // URL 파싱: postgresql://user:password@host:port/database
+                // postgresql://user:password@host:port/database 파싱
                 String urlWithoutProtocol = databaseUrl.replace("postgresql://", "");
                 String[] parts = urlWithoutProtocol.split("@");
                 
@@ -52,14 +43,24 @@ public class DatabaseConfig {
                     String[] credentials = parts[0].split(":");
                     String username = credentials[0];
                     String password = credentials.length > 1 ? credentials[1] : "";
+                    String hostAndDb = parts[1];
                     
+                    // jdbc:postgresql://host:port/database 형식으로 재구성
+                    String jdbcUrl = "jdbc:postgresql://" + hostAndDb;
+                    
+                    config.setJdbcUrl(jdbcUrl);
                     config.setUsername(username);
                     config.setPassword(password);
                     
+                    log.info("변환된 JDBC URL: {}", jdbcUrl);
                     log.info("PostgreSQL 연결 정보 설정 완료: username={}", username);
+                } else {
+                    log.error("DATABASE_URL 형식이 올바르지 않습니다: {}", databaseUrl);
+                    throw new IllegalArgumentException("Invalid DATABASE_URL format");
                 }
             } catch (Exception e) {
-                log.warn("URL 파싱 중 오류 발생 (URL에 credentials 포함되어 있을 수 있음): {}", e.getMessage());
+                log.error("URL 파싱 중 오류 발생: {}", e.getMessage(), e);
+                throw e;
             }
             
         } else {
