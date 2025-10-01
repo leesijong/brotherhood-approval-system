@@ -37,7 +37,7 @@ public class ApprovalHistory {
     @Column(name = "comment", columnDefinition = "TEXT")
     private String comment;
     
-    @Column(name = "ip_address", columnDefinition = "INET")
+    @Column(name = "ip_address", length = 50)
     private String ipAddress;
     
     @Column(name = "user_agent", columnDefinition = "TEXT")

@@ -40,13 +40,13 @@ public class AuditLog {
     @Column(name = "resource_id", nullable = false)
     private UUID resourceId;
     
-    @Column(name = "old_values", columnDefinition = "JSONB")
+    @Column(name = "old_values", columnDefinition = "TEXT")
     private String oldValues;
     
-    @Column(name = "new_values", columnDefinition = "JSONB")
+    @Column(name = "new_values", columnDefinition = "TEXT")
     private String newValues;
     
-    @Column(name = "ip_address", columnDefinition = "INET")
+    @Column(name = "ip_address", length = 50)
     private String ipAddress;
     
     @Column(name = "user_agent", columnDefinition = "TEXT")

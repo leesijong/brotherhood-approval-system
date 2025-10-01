@@ -40,7 +40,7 @@ public class Policy {
     @Column(name = "policy_type", nullable = false)
     private String policyType;
     
-    @Column(name = "policy_data", columnDefinition = "JSONB", nullable = false)
+    @Column(name = "policy_data", columnDefinition = "TEXT", nullable = false)
     private String policyData;
     
     @Column(name = "is_active", nullable = false)
