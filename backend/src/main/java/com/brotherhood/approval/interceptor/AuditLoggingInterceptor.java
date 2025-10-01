@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -218,6 +219,7 @@ public class AuditLoggingInterceptor implements HandlerInterceptor {
                     .errorMessage(details != null ? (String) details.get("errorMessage") : null)
                     .oldValues(null) // 필요시 이전 값 설정
                     .newValues(details != null ? convertToJsonString(details) : null)
+                    .actionAt(LocalDateTime.now()) // 액션 발생 시간 설정
                     .build();
             
             auditLogService.saveAuditLog(auditLog);
