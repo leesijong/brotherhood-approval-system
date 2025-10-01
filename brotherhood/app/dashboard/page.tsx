@@ -91,7 +91,7 @@ export default function DashboardPage() {
 
       try {
         // 사용자 권한에 따라 통계 조회 방식 결정
-        const isAdmin = user.roles?.some(role => role.name === 'ADMIN' || role.name === 'SUPER_ADMIN');
+        const isAdmin = user.roles?.some(role => role === 'ADMIN' || role === 'SUPER_ADMIN');
         
         let statsResponse;
         if (isAdmin) {
@@ -146,7 +146,7 @@ export default function DashboardPage() {
           if (pendingApprovalsResponse.success && pendingApprovalsResponse.data) {
             const pendingApprovals = pendingApprovalsResponse.data.map(doc => ({
               id: doc.documentId || doc.id,
-              title: doc.documentTitle || doc.title,
+              title: doc.documentTitle,
               author: doc.authorName || '알 수 없음',
               submittedAt: doc.submittedAt || new Date().toISOString(),
               dueDate: doc.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),

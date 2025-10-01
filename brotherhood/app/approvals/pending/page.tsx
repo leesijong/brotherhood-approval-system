@@ -76,7 +76,7 @@ export default function PendingApprovalsPage() {
 
       try {
         // 사용자 권한에 따라 통계 조회 방식 결정
-        const isAdmin = user.roles?.some(role => role.name === 'ADMIN' || role.name === 'SUPER_ADMIN');
+        const isAdmin = user.roles?.some(role => role === 'ADMIN' || role === 'SUPER_ADMIN');
         
         let statsResponse;
         if (isAdmin) {
@@ -105,16 +105,16 @@ export default function PendingApprovalsPage() {
         if (pendingApprovalsResponse.success && pendingApprovalsResponse.data) {
           const approvalItems: ApprovalItem[] = pendingApprovalsResponse.data.map(doc => ({
             id: doc.documentId || doc.id,
-            title: doc.documentTitle || doc.title,
+            title: doc.documentTitle,
             author: doc.authorName || '알 수 없음',
-            authorId: doc.authorId || '',
+            authorId: '',  // PendingApprovalItem에 authorId 필드 없음
             submittedAt: doc.submittedAt || new Date().toISOString(),
             dueDate: doc.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
             status: 'PENDING' as const,
             priority: (doc.priority || 'MEDIUM') as 'LOW' | 'MEDIUM' | 'HIGH',
             currentStep: 1, // 임시값
             totalSteps: 1, // 임시값
-            currentApprover: doc.approverName || '알 수 없음',
+            currentApprover: '알 수 없음',  // PendingApprovalItem에 approverName 필드 없음
             category: doc.documentType || '일반',
             isUrgent: doc.priority === 'HIGH',
             documentId: doc.documentId || doc.id

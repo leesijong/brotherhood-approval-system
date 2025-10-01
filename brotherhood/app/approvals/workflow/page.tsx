@@ -68,9 +68,9 @@ export default function WorkflowPage() {
           const workflowItems: WorkflowItem[] = response.data.map(doc => ({
             id: doc.documentId || doc.id,
             documentId: doc.documentId || doc.id,
-            documentTitle: doc.documentTitle || doc.title,
+            documentTitle: doc.documentTitle,
             currentStep: '1단계', // 임시값
-            currentApprover: doc.approverName || '알 수 없음',
+            currentApprover: '알 수 없음',  // PendingApprovalItem에 approverName 필드 없음
             startedAt: doc.submittedAt || new Date().toISOString(),
             estimatedCompletion: doc.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
             isOverdue: false, // 임시값
