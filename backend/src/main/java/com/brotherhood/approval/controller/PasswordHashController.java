@@ -4,7 +4,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/password")
+@RequestMapping("/api/password")
 public class PasswordHashController {
     
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

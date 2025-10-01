@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@RequestMapping("")
+@RequestMapping("/api/approvals")
 @RequiredArgsConstructor
 @Tag(name = "결재 관리", description = "결재 관련 API")
 public class ApprovalController {

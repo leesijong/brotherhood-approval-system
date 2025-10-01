@@ -25,7 +25,7 @@ import java.util.UUID;
  */
 @Slf4j
 @RestController
-@RequestMapping("/dashboard")
+@RequestMapping("/api/dashboard")
 @RequiredArgsConstructor
 @Tag(name = "대시보드", description = "대시보드 관련 API")
 public class DashboardController {

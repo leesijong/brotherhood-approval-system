@@ -31,7 +31,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @Tag(name = "인증", description = "사용자 인증 관련 API")
 public class AuthController {
     

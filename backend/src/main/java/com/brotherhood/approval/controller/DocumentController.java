@@ -45,7 +45,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RestController
-@RequestMapping("/documents")
+@RequestMapping("/api/documents")
 @RequiredArgsConstructor
 @Tag(name = "문서", description = "문서 관리 관련 API")
 public class DocumentController {
