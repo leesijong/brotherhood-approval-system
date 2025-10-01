@@ -1,5 +1,8 @@
 'use client';
 
+// Next.js 동적 렌더링 강제 (useSearchParams 사용으로 인한 오류 방지)
+export const dynamic = 'force-dynamic';
+
 import React, { useState, useEffect, useRef } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { DataTable, Column } from '@/components/DataTable';
@@ -27,7 +30,6 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { useToast } from '@/components/Toast';
-import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { documentApi } from '@/services/documentApi';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
@@ -91,7 +93,6 @@ const priorityLabels: Record<string, string> = {
 export default function DocumentsPage() {
   const { isAuthenticated, user } = useAuthStore();
   const { toast } = useToast();
-  const searchParams = useSearchParams();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -167,14 +168,16 @@ export default function DocumentsPage() {
 
   // URL 파라미터 확인하여 새로고침 트리거
   useEffect(() => {
-    if (searchParams?.get('refresh') === 'true') {
-      refreshDocuments();
-      // URL에서 refresh 파라미터 제거
+    if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
-      url.searchParams.delete('refresh');
-      window.history.replaceState({}, '', url.toString());
+      if (url.searchParams.get('refresh') === 'true') {
+        refreshDocuments();
+        // URL에서 refresh 파라미터 제거
+        url.searchParams.delete('refresh');
+        window.history.replaceState({}, '', url.toString());
+      }
     }
-  }, [searchParams]);
+  }, []);
 
   // 실제 API에서 문서 목록 조회
   useEffect(() => {
