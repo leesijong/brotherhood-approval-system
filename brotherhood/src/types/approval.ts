@@ -63,12 +63,19 @@ export interface PendingApprovalItem {
 // 결재 이력 항목
 export interface ApprovalHistoryItem {
   id: string
-  stepId: string
-  approverId: string
+  stepId?: string
+  approverId?: string
   approverName: string
+  approverDisplayName?: string
   action: ApprovalAction
+  comment?: string
   comments?: string
-  completedAt: string
+  completedAt?: string
+  actionAt?: string
+  documentId?: string
+  documentTitle?: string
+  ipAddress?: string
+  userAgent?: string
   delegatedFromId?: string
   delegatedFromName?: string
 }
