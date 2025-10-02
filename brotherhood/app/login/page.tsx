@@ -174,8 +174,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-6">
         {/* 로고 및 제목 */}
         <div className="text-center space-y-2">
-          <div className="mx-auto w-16 h-16 rounded-2xl flex items-center justify-center bg-primary/10">
-            <Shield className="w-8 h-8 text-primary" />
+          <div className="mx-auto w-16 h-16 rounded-2xl flex items-center justify-center bg-red-100 border-2 border-red-200">
+            <Shield className="w-8 h-8 text-red-600" />
           </div>
           <h1 className="text-3xl font-bold tracking-tight">Brotherhood</h1>
           <p className="text-muted-foreground">
