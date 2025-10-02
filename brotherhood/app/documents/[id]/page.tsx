@@ -720,28 +720,29 @@ export default function DocumentDetailPage() {
     <AppLayout>
       <div className="max-w-6xl mx-auto space-y-6">
         {/* 헤더 */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" asChild>
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <Button variant="ghost" size="sm" asChild className="w-full sm:w-auto">
               <Link href="/documents">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 목록으로
               </Link>
             </Button>
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">{document.title}</h1>
-              <p className="text-muted-foreground">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight break-words">{document.title}</h1>
+              <p className="text-sm md:text-base text-muted-foreground">
                 작성자: {document.authorDisplayName || document.authorName || document.author} • {new Date(document.createdAt).toLocaleDateString('ko-KR')}
               </p>
             </div>
           </div>
           
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-2">
             {/* 상태 변경 버튼들 */}
             {document.status === 'DRAFT' && document.authorId === user?.id && (
-              <Button onClick={handleSubmitDocument} size="sm">
+              <Button onClick={handleSubmitDocument} size="sm" className="min-h-[44px]">
                 <Send className="mr-2 h-4 w-4" />
-                상신
+                <span className="hidden sm:inline">상신</span>
+                <span className="sm:hidden">상신</span>
               </Button>
             )}
             
@@ -750,40 +751,46 @@ export default function DocumentDetailPage() {
                 {/* 승인/반려는 작성자가 아닌 다른 사용자만 가능하고, 결재할 수 있는 단계가 있을 때만 */}
                 {document.authorId !== user?.id && user && findPendingApprovalStepForUser(document, user.id) && (
                   <>
-                    <Button onClick={handleApproveDocument} size="sm" className="bg-green-600 hover:bg-green-700">
+                    <Button onClick={handleApproveDocument} size="sm" className="bg-green-600 hover:bg-green-700 min-h-[44px]">
                       <Check className="mr-2 h-4 w-4" />
-                      승인
+                      <span className="hidden sm:inline">승인</span>
+                      <span className="sm:hidden">승인</span>
                     </Button>
-                    <Button onClick={handleRejectDocument} size="sm" variant="destructive">
+                    <Button onClick={handleRejectDocument} size="sm" variant="destructive" className="min-h-[44px]">
                       <X className="mr-2 h-4 w-4" />
-                      반려
+                      <span className="hidden sm:inline">반려</span>
+                      <span className="sm:hidden">반려</span>
                     </Button>
                   </>
                 )}
                 {/* 회수는 작성자만 가능 */}
                 {document.authorId === user?.id && (
-                  <Button onClick={handleRecallDocument} size="sm" variant="outline">
+                  <Button onClick={handleRecallDocument} size="sm" variant="outline" className="min-h-[44px]">
                     <RotateCcw className="mr-2 h-4 w-4" />
-                    회수
+                    <span className="hidden sm:inline">회수</span>
+                    <span className="sm:hidden">회수</span>
                   </Button>
                 )}
               </>
             )}
             
             {/* 기존 버튼들 */}
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="min-h-[44px]">
               <Printer className="mr-2 h-4 w-4" />
-              인쇄
+              <span className="hidden sm:inline">인쇄</span>
+              <span className="sm:hidden">인쇄</span>
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="min-h-[44px]">
               <Share className="mr-2 h-4 w-4" />
-              공유
+              <span className="hidden sm:inline">공유</span>
+              <span className="sm:hidden">공유</span>
             </Button>
             {document.status === 'DRAFT' && (
-              <Button variant="outline" size="sm" asChild>
+              <Button variant="outline" size="sm" asChild className="min-h-[44px]">
                 <Link href={`/documents/${document.id}/edit`}>
                   <Edit className="mr-2 h-4 w-4" />
-                  수정
+                  <span className="hidden sm:inline">수정</span>
+                  <span className="sm:hidden">수정</span>
                 </Link>
               </Button>
             )}
@@ -814,28 +821,36 @@ export default function DocumentDetailPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center space-x-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">작성일:</span>
-                    <span>{new Date(document.createdAt).toLocaleString('ko-KR')}</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 text-sm">
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">작성일:</span>
+                    </div>
+                    <span className="text-sm">{new Date(document.createdAt).toLocaleString('ko-KR')}</span>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <Clock className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">수정일:</span>
-                    <span>{new Date(document.updatedAt).toLocaleString('ko-KR')}</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                    <div className="flex items-center space-x-2">
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">수정일:</span>
+                    </div>
+                    <span className="text-sm">{new Date(document.updatedAt).toLocaleString('ko-KR')}</span>
                   </div>
                   {document.dueDate && (
-                    <div className="flex items-center space-x-2">
-                      <AlertCircle className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-muted-foreground">마감일:</span>
-                      <span>{new Date(document.dueDate).toLocaleString('ko-KR')}</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                      <div className="flex items-center space-x-2">
+                        <AlertCircle className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">마감일:</span>
+                      </div>
+                      <span className="text-sm">{new Date(document.dueDate).toLocaleString('ko-KR')}</span>
                     </div>
                   )}
-                  <div className="flex items-center space-x-2">
-                    <Tag className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-muted-foreground">카테고리:</span>
-                    <span>{document.documentType || document.category}</span>
+                  <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                    <div className="flex items-center space-x-2">
+                      <Tag className="h-4 w-4 text-muted-foreground" />
+                      <span className="text-muted-foreground">카테고리:</span>
+                    </div>
+                    <span className="text-sm">{document.documentType || document.category}</span>
                   </div>
                 </div>
                 
@@ -860,7 +875,7 @@ export default function DocumentDetailPage() {
               </CardHeader>
               <CardContent>
                 <div className="prose max-w-none">
-                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
+                  <pre className="whitespace-pre-wrap font-sans text-sm md:text-base leading-relaxed break-words overflow-x-auto">
                     {document.content}
                   </pre>
                 </div>
@@ -887,11 +902,11 @@ export default function DocumentDetailPage() {
                 ) : attachments && attachments.length > 0 ? (
                   <div className="space-y-2">
                     {attachments.map((attachment) => (
-                      <div key={attachment.id} className="flex items-center justify-between p-3 border rounded-lg bg-muted/50">
-                        <div className="flex items-center gap-3">
-                          <FileText className="h-4 w-4 text-muted-foreground" />
-                          <div>
-                            <div className="font-medium text-sm">
+                      <div key={attachment.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 border rounded-lg bg-muted/50 space-y-2 sm:space-y-0">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium text-sm break-words">
                               {attachment.originalFilename}
                             </div>
                             <div className="text-xs text-muted-foreground">
@@ -899,9 +914,10 @@ export default function DocumentDetailPage() {
                             </div>
                           </div>
                         </div>
-                        <AttachmentDownloader 
-                          attachment={attachment}
-                          userId={user?.id}
+                        <div className="flex-shrink-0">
+                          <AttachmentDownloader 
+                            attachment={attachment}
+                            userId={user?.id}
                         />
                       </div>
                     ))}
@@ -950,12 +966,13 @@ export default function DocumentDetailPage() {
                     placeholder="댓글을 입력하세요..."
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
-                    className="mb-3"
+                    className="mb-3 min-h-[80px]"
                   />
                   <Button
                     onClick={handleAddComment}
                     disabled={isAddingComment || !newComment.trim()}
                     size="sm"
+                    className="min-h-[44px]"
                   >
                     {isAddingComment ? (
                       <>
@@ -987,25 +1004,25 @@ export default function DocumentDetailPage() {
                 <CardTitle>문서 작업</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full" variant="outline">
+                <Button className="w-full min-h-[44px]" variant="outline">
                   <Download className="mr-2 h-4 w-4" />
                   문서 다운로드
                 </Button>
                 
                 {document.status === 'PENDING' && (
                   <>
-                    <Button className="w-full">
+                    <Button className="w-full min-h-[44px]">
                       <CheckCircle className="mr-2 h-4 w-4" />
                       승인
                     </Button>
-                    <Button className="w-full" variant="destructive">
+                    <Button className="w-full min-h-[44px]" variant="destructive">
                       <XCircle className="mr-2 h-4 w-4" />
                       반려
                     </Button>
                   </>
                 )}
 
-                <Button className="w-full" variant="outline">
+                <Button className="w-full min-h-[44px]" variant="outline">
                   <History className="mr-2 h-4 w-4" />
                   이력 보기
                 </Button>
