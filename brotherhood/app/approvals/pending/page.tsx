@@ -115,17 +115,17 @@ export default function PendingApprovalsPage() {
         if (pendingApprovalsResponse.success && pendingApprovalsResponse.data) {
           const approvalItems: ApprovalItem[] = pendingApprovalsResponse.data.map(doc => ({
             id: doc.documentId || doc.id || '',
-            title: doc.documentTitle || '제목 없음',
-            author: doc.authorName || '알 수 없음',
-            authorId: '',  // PendingApprovalItem에 authorId 필드 없음
-            submittedAt: doc.submittedAt || new Date().toISOString(),
-            dueDate: doc.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+            title: doc.documentTitle || (doc as any).title || '제목 없음',
+            author: doc.authorName || (doc as any).author || (doc as any).authorDisplayName || '알 수 없음',
+            authorId: (doc as any).authorId || '',  
+            submittedAt: doc.submittedAt || (doc as any).createdAt || new Date().toISOString(),
+            dueDate: doc.dueDate || (doc as any).dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
             status: 'PENDING' as const,
             priority: (doc.priority || 'MEDIUM') as 'LOW' | 'MEDIUM' | 'HIGH',
             currentStep: 1, // 임시값
             totalSteps: 1, // 임시값
-            currentApprover: '알 수 없음',  // PendingApprovalItem에 approverName 필드 없음
-            category: doc.documentType || '일반',
+            currentApprover: (doc as any).currentApprover || '알 수 없음',
+            category: doc.documentType || (doc as any).category || '일반',
             isUrgent: doc.priority === 'HIGH',
             documentId: doc.documentId || doc.id || ''
           }));
