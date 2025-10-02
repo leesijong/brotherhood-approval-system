@@ -28,6 +28,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { dashboardApi } from '@/services/dashboardApi';
 import { documentApi } from '@/services/documentApi';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 // 결재 항목 타입
 interface ApprovalItem {
@@ -59,6 +60,7 @@ interface ApprovalStats {
 
 export default function PendingApprovalsPage() {
   const { isAuthenticated, user } = useAuthStore();
+  const router = useRouter();
   const [approvals, setApprovals] = useState<ApprovalItem[]>([]);
   const [stats, setStats] = useState<ApprovalStats | null>(null);
   const [loading, setLoading] = useState(true);
