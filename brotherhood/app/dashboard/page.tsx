@@ -143,17 +143,24 @@ export default function DashboardPage() {
         // 결재 대기 목록 조회 (백엔드 API 호출)
         try {
           const pendingApprovalsResponse = await dashboardApi.getPendingApprovals();
+          console.log('대시보드 결재대기목록 응답:', pendingApprovalsResponse);
+          
           if (pendingApprovalsResponse.success && pendingApprovalsResponse.data) {
-            const pendingApprovals = pendingApprovalsResponse.data.map(doc => ({
-              id: doc.documentId || doc.id,
-              title: doc.documentTitle,
-              author: doc.authorName || '알 수 없음',
-              submittedAt: doc.submittedAt || new Date().toISOString(),
-              dueDate: doc.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-              priority: (doc.priority || 'MEDIUM') as 'LOW' | 'MEDIUM' | 'HIGH',
-              step: 1, // 임시값
-              totalSteps: 1 // 임시값
-            }));
+            console.log('결재대기목록 데이터:', pendingApprovalsResponse.data);
+            
+            const pendingApprovals = pendingApprovalsResponse.data.map(doc => {
+              console.log('개별 문서 데이터:', doc);
+              return {
+                id: doc.documentId || doc.id,
+                title: doc.documentTitle || doc.title || '제목 없음',
+                author: doc.authorName || doc.author || '알 수 없음',
+                submittedAt: doc.submittedAt || new Date().toISOString(),
+                dueDate: doc.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+                priority: (doc.priority || 'MEDIUM') as 'LOW' | 'MEDIUM' | 'HIGH',
+                step: 1, // 임시값
+                totalSteps: 1 // 임시값
+              };
+            });
             setPendingApprovals(pendingApprovals);
           } else {
             console.log('결재 대기 목록이 비어있습니다:', pendingApprovalsResponse.message);
