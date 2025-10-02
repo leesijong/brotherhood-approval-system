@@ -19,7 +19,7 @@ import { useUIStore } from '@/stores/uiStore';
 import { authApi } from '@/services/authApi';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import brotherhoodLogo from 'public/images/brotherhood-logo.png';
+import brotherhoodLogo from '../../../public/images/brotherhood-logo.png';
 import { LogoutConfirmDialog } from '@/components/ConfirmDialog';
 
 interface TopNavigationProps {
