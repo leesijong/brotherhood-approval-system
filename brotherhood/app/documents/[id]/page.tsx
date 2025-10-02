@@ -918,7 +918,8 @@ export default function DocumentDetailPage() {
                           <AttachmentDownloader 
                             attachment={attachment}
                             userId={user?.id}
-                        />
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>
