@@ -31,6 +31,7 @@ import {
 import { useAuthStore } from '@/stores/authStore';
 import { useToast } from '@/components/Toast';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { documentApi } from '@/services/documentApi';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 
@@ -93,6 +94,7 @@ const priorityLabels: Record<string, string> = {
 export default function DocumentsPage() {
   const { isAuthenticated, user } = useAuthStore();
   const { toast } = useToast();
+  const router = useRouter();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
