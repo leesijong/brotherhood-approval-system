@@ -29,7 +29,7 @@ const nextConfig = {
     const timestamp = Date.now();
     const random = Math.random().toString(36).substr(2, 9);
     const hash = require('crypto').createHash('md5').update(`${timestamp}-${random}`).digest('hex').substr(0, 8);
-    return `nuclear-cache-buster-${timestamp}-${hash}`;
+    return `railway-docker-fix-${timestamp}-${hash}`;
   },
 };
 

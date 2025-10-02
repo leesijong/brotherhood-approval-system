@@ -1,6 +1,6 @@
 {
   "name": "my-v0-project",
-  "version": "8.0.0-cache-nuclear",
+  "version": "8.1.0-docker-fix",
   "private": true,
   "scripts": {
     "dev": "next dev",
