@@ -119,7 +119,7 @@ export default function DocumentEditPage() {
         if (!params?.id) {
           throw new Error('문서 ID가 없습니다.');
         }
-        const response = await fetch(`http://localhost:8080/api/documents/${params.id}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://brotherhood-approval-system-production.up.railway.app/api'}/documents/${params.id}`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

@@ -190,7 +190,7 @@ export default function DocumentDetailPage() {
     
     try {
       setLoadingAttachments(true);
-      const response = await fetch(`http://localhost:8080/api/documents/${documentId}/attachments`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://brotherhood-approval-system-production.up.railway.app/api'}/documents/${documentId}/attachments`, {
         headers: { 'X-User-Id': user.id || 'ac31e829-d5c6-4a1d-92de-439178b12f5f' }
       });
       const result = await response.json();
@@ -224,14 +224,25 @@ export default function DocumentDetailPage() {
         if (!params?.id) {
           throw new Error('문서 ID가 없습니다.');
         }
-        const response = await fetch(`http://localhost:8080/api/documents/${params.id}`);
+        
+        console.log('문서 상세 조회 시작:', { 
+          documentId: params.id, 
+          apiUrl: `${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://brotherhood-approval-system-production.up.railway.app/api'}/documents/${params.id}` 
+        });
+        
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://brotherhood-approval-system-production.up.railway.app/api'}/documents/${params.id}`);
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const result = await response.json();
-        console.log('문서 상세 API 응답:', result);
+        console.log('문서 데이터 응답:', { 
+          success: result.success, 
+          documentId: result.data?.id, 
+          title: result.data?.title,
+          fullResponse: result 
+        });
         
         if (result.success && result.data) {
           const apiDocument = result.data;
