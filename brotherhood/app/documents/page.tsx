@@ -635,7 +635,7 @@ export default function DocumentsPage() {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleDelete(document)}
+                        onClick={() => handleDeleteDocument(document)}
                         className="h-8 px-2 text-xs text-destructive hover:text-destructive"
                       >
                         <Trash2 className="h-3 w-3 mr-1" />
