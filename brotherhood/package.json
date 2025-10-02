@@ -1,6 +1,6 @@
 {
   "name": "my-v0-project",
-  "version": "4.0.0-railway-cache-fix",
+  "version": "5.0.0-build-fix",
   "private": true,
   "scripts": {
     "dev": "next dev",
