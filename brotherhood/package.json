@@ -1,12 +1,10 @@
 {
   "name": "my-v0-project",
-  "version": "8.5.0-no-lock",
+  "version": "8.6.0-nixpacks",
   "private": true,
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
+    "node": ">=18.0.0"
   },
-  "packageManager": "npm@8.19.4",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
