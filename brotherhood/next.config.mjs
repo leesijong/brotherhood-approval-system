@@ -24,13 +24,6 @@ const nextConfig = {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
     BUILD_VERSION: 'v3.0-elements-fix', // 빌드 버전 추가
   },
-  // 빌드 캐시 무효화 - Railway 전용
-  generateBuildId: async () => {
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substr(2, 9);
-    const hash = require('crypto').createHash('md5').update(`${timestamp}-${random}`).digest('hex').substr(0, 8);
-    return `railway-docker-fix-${timestamp}-${hash}`;
-  },
 };
 
 export default nextConfig;

@@ -1,6 +1,6 @@
 {
   "name": "my-v0-project",
-  "version": "8.2.0-npm-fix",
+  "version": "8.3.0-simple",
   "private": true,
   "scripts": {
     "dev": "next dev",
