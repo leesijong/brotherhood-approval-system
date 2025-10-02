@@ -172,21 +172,21 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
+      <div className="w-full max-w-md space-y-4 md:space-y-6">
         {/* 로고 및 제목 */}
         <div className="text-center space-y-2">
-          <div className="mx-auto w-16 h-16 rounded-2xl flex items-center justify-center">
+          <div className="mx-auto w-12 h-12 md:w-16 md:h-16 rounded-2xl flex items-center justify-center">
             <Image 
               src={brotherhoodLogo} 
               alt="한국순교복자성직수도회" 
               width={64}
               height={64}
-              className="w-16 h-16"
+              className="w-12 h-12 md:w-16 md:h-16"
               priority
             />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">한국순교복자성직수도회</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-xl md:text-3xl font-bold tracking-tight">한국순교복자성직수도회</h1>
+          <p className="text-sm md:text-base text-muted-foreground">
             한국순교복자성직수도회 결재 시스템
           </p>
         </div>
@@ -231,7 +231,7 @@ export default function LoginPage() {
                       placeholder="로그인 ID를 입력하세요"
                       value={formData.username}
                       onChange={(e) => updateFormData('username', e.target.value)}
-                      className={`pl-10 ${errors.username ? 'border-red-500' : ''}`}
+                      className={`pl-10 min-h-[44px] ${errors.username ? 'border-red-500' : ''}`}
                       disabled={isLoading}
                     />
                   </div>
@@ -250,13 +250,13 @@ export default function LoginPage() {
                       placeholder="비밀번호를 입력하세요"
                       value={formData.password}
                       onChange={(e) => updateFormData('password', e.target.value)}
-                      className={`pl-10 pr-10 ${errors.password ? 'border-red-500' : ''}`}
+                      className={`pl-10 pr-10 min-h-[44px] ${errors.password ? 'border-red-500' : ''}`}
                       disabled={isLoading}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground min-h-[44px] min-w-[44px] flex items-center justify-center"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -278,7 +278,7 @@ export default function LoginPage() {
                         placeholder="123456"
                         value={formData.mfaCode}
                         onChange={(e) => updateFormData('mfaCode', e.target.value)}
-                        className={`pl-10 ${errors.mfaCode ? 'border-red-500' : ''}`}
+                        className={`pl-10 min-h-[44px] ${errors.mfaCode ? 'border-red-500' : ''}`}
                         disabled={isLoading}
                         maxLength={6}
                       />
@@ -317,7 +317,7 @@ export default function LoginPage() {
                 {/* 로그인 버튼 */}
                 <Button
                   type="submit"
-                  className="w-full"
+                  className="w-full min-h-[44px]"
                   disabled={isLoading}
                 >
                   {isLoading ? (

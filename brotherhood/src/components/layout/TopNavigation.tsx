@@ -88,38 +88,38 @@ export function TopNavigation({ onMenuClick }: TopNavigationProps) {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
-      <div className="flex items-center justify-between h-16 px-4">
+      <div className="flex items-center justify-between h-16 px-3 md:px-4">
         {/* Left Section */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-2 md:space-x-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={onMenuClick}
-            className="md:hidden"
+            className="md:hidden min-h-[44px] min-w-[44px]" // 터치 친화적 크기
           >
             <Menu className="h-5 w-5" />
           </Button>
 
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center">
+            <div className="w-6 h-6 md:w-8 md:h-8 rounded-lg flex items-center justify-center">
               <Image 
                 src={brotherhoodLogo} 
                 alt="한국순교복자성직수도회" 
                 width={32}
                 height={32}
-                className="w-8 h-8"
+                className="w-6 h-6 md:w-8 md:h-8"
                 priority
               />
             </div>
-            <span className="font-semibold text-lg text-foreground">
+            <span className="font-semibold text-base md:text-lg text-foreground hidden sm:block">
               Brotherhood
             </span>
           </div>
         </div>
 
-        {/* Center Section - Search */}
-        <div className="flex-1 max-w-md mx-4 hidden md:block">
+        {/* Center Section - Search (모바일에서는 숨김) */}
+        <div className="flex-1 max-w-md mx-4 hidden lg:block">
           <form onSubmit={handleSearch} className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
@@ -133,9 +133,13 @@ export function TopNavigation({ onMenuClick }: TopNavigationProps) {
         </div>
 
         {/* Right Section */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1 md:space-x-2">
           {/* Notifications */}
-          <Button variant="ghost" size="icon" className="relative">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="relative min-h-[44px] min-w-[44px] md:min-h-auto md:min-w-auto"
+          >
             <Bell className="h-5 w-5" />
             {unreadNotifications > 0 && (
               <Badge 
@@ -150,7 +154,10 @@ export function TopNavigation({ onMenuClick }: TopNavigationProps) {
           {/* User Menu */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <Button 
+                variant="ghost" 
+                className="relative h-8 w-8 md:h-8 md:w-8 rounded-full min-h-[44px] min-w-[44px] md:min-h-auto md:min-w-auto"
+              >
                 <Avatar className="h-8 w-8">
                   <AvatarImage src="" alt={user?.displayName} />
                   <AvatarFallback>

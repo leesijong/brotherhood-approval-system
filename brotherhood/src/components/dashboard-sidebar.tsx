@@ -534,12 +534,18 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
         <Button
           variant={isActive ? "secondary" : "ghost"}
           className={cn(
-            "w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors",
+            "w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors min-h-[44px]",
             isActive && "bg-sidebar-primary text-sidebar-primary-foreground",
             level > 0 && "ml-4 text-sm"
           )}
           size="sm"
-          onClick={() => handleItemClick(item)}
+          onClick={() => {
+            handleItemClick(item);
+            // 모바일에서 메뉴 클릭 시 사이드바 닫기
+            if (window.innerWidth < 768) {
+              onClose();
+            }
+          }}
           aria-expanded={hasChildren ? isExpanded : undefined}
           aria-current={isActive ? "page" : undefined}
         >
@@ -581,6 +587,15 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
         />
       )}
 
+      {/* Mobile Backdrop */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Sidebar */}
       <aside 
         className={cn(
@@ -593,26 +608,29 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
       >
         <div className="flex flex-col h-full">
           {/* Quick Actions */}
-          <div className="p-4 border-b border-sidebar-border">
+          <div className="p-3 md:p-4 border-b border-sidebar-border">
             <Button 
-              className="w-full justify-start gap-2" 
+              className="w-full justify-start gap-2 min-h-[44px]" 
               size="sm"
-              onClick={() => router.push('/documents/create')}
+              onClick={() => {
+                router.push('/documents/create');
+                onClose(); // 모바일에서 메뉴 클릭 후 사이드바 닫기
+              }}
             >
               <Plus className="h-4 w-4" />
-              새 문서 작성
+              <span className="text-sm md:text-base">새 문서 작성</span>
             </Button>
           </div>
 
           {/* Navigation Menu */}
-          <nav className="flex-1 overflow-y-auto p-4 space-y-2" role="menubar">
+          <nav className="flex-1 overflow-y-auto p-3 md:p-4 space-y-1 md:space-y-2" role="menubar">
             {filteredMenuItems.map(item => renderMenuItem(item))}
           </nav>
 
           {/* User Info */}
-          <div className="p-4 border-t border-sidebar-border">
+          <div className="p-3 md:p-4 border-t border-sidebar-border">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
                 <span className="text-primary-foreground text-sm font-medium">
                   {user?.displayName?.charAt(0) || 'U'}
                 </span>

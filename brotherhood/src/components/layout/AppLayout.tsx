@@ -45,11 +45,15 @@ export function AppLayout({
         <main 
           className={cn(
             "flex-1 transition-all duration-300 ease-in-out",
-            showSidebar && sidebarOpen ? "ml-64" : "ml-0",
+            // 모바일에서는 사이드바가 오버레이이므로 margin-left 없음
+            "md:ml-64",
             showTopNav ? "pt-16" : "pt-0"
           )}
         >
-          <div className={cn("p-6", contentClassName)}>
+          <div className={cn(
+            "p-4 md:p-6", // 모바일에서 패딩 줄임
+            contentClassName
+          )}>
             {children}
           </div>
         </main>
