@@ -601,9 +601,9 @@ export default function DocumentsPage() {
                   </div>
 
                   {/* 분류 */}
-                  {document.classification && (
+                  {(document as any).classification && (
                     <div className="text-xs text-muted-foreground">
-                      분류: {document.classification}
+                      분류: {(document as any).classification}
                     </div>
                   )}
 
