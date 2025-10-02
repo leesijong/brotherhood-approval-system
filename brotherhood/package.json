@@ -1,6 +1,6 @@
 {
   "name": "my-v0-project",
-  "version": "6.0.0-cache-buster",
+  "version": "7.0.0-force-refresh",
   "private": true,
   "scripts": {
     "dev": "next dev",
