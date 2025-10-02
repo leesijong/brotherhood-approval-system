@@ -20,7 +20,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { authApi } from '@/services/authApi';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import brotherhoodLogo from '/public/images/brotherhood-logo.png';
+import brotherhoodLogo from 'public/images/brotherhood-logo.png';
 
 // 로그인 폼 데이터 타입
 interface LoginFormData {
