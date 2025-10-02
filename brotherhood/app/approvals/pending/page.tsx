@@ -114,8 +114,8 @@ export default function PendingApprovalsPage() {
         
         if (pendingApprovalsResponse.success && pendingApprovalsResponse.data) {
           const approvalItems: ApprovalItem[] = pendingApprovalsResponse.data.map(doc => ({
-            id: doc.documentId || doc.id,
-            title: doc.documentTitle,
+            id: doc.documentId || doc.id || '',
+            title: doc.documentTitle || '제목 없음',
             author: doc.authorName || '알 수 없음',
             authorId: '',  // PendingApprovalItem에 authorId 필드 없음
             submittedAt: doc.submittedAt || new Date().toISOString(),
@@ -127,7 +127,7 @@ export default function PendingApprovalsPage() {
             currentApprover: '알 수 없음',  // PendingApprovalItem에 approverName 필드 없음
             category: doc.documentType || '일반',
             isUrgent: doc.priority === 'HIGH',
-            documentId: doc.documentId || doc.id
+            documentId: doc.documentId || doc.id || ''
           }));
           setApprovals(approvalItems);
         }
@@ -153,8 +153,10 @@ export default function PendingApprovalsPage() {
 
   // 필터링된 결재 목록
   const filteredApprovals = approvals.filter(item => {
-    const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.author.toLowerCase().includes(searchQuery.toLowerCase());
+    const title = item.title || '';
+    const author = item.author || '';
+    const matchesSearch = title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         author.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'ALL' || item.status === statusFilter;
     const matchesPriority = priorityFilter === 'ALL' || item.priority === priorityFilter;
     
