@@ -186,7 +186,7 @@ export default function CreateDocumentPage() {
     setIsSubmitting(true);
     try {
       // 실제 API 호출
-      const response = await fetch('http://localhost:8080/api/documents', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://brotherhood-approval-system-production.up.railway.app/api'}/documents`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
