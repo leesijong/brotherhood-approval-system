@@ -185,7 +185,7 @@ export default function LoginPage() {
               priority
             />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">Brotherhood v4.0</h1>
+          <h1 className="text-3xl font-bold tracking-tight">With brotherhood</h1>
           <p className="text-muted-foreground">
             한국순교복자성직수도회 결재 시스템 - Railway 캐시 무효화 테스트
           </p>
