@@ -101,8 +101,15 @@ export function TopNavigation({ onMenuClick }: TopNavigationProps) {
 
           {/* Logo */}
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-red-100 border border-red-200">
-              <Shield className="w-5 h-5 text-red-600" />
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center">
+              <Image 
+                src="/images/brotherhood-logo.png" 
+                alt="한국순교복자성직수도회" 
+                width={32}
+                height={32}
+                className="w-8 h-8"
+                priority
+              />
             </div>
             <span className="font-semibold text-lg text-foreground">
               Brotherhood
