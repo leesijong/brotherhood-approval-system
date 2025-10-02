@@ -24,9 +24,9 @@ const nextConfig = {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
     BUILD_VERSION: 'v3.0-elements-fix', // 빌드 버전 추가
   },
-  // 빌드 캐시 무효화
+  // 빌드 캐시 무효화 - Railway 전용
   generateBuildId: async () => {
-    return `build-${Date.now()}`;
+    return `railway-cache-buster-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   },
 };
 

@@ -1,6 +1,6 @@
 {
   "name": "my-v0-project",
-  "version": "5.0.0-build-fix",
+  "version": "6.0.0-cache-buster",
   "private": true,
   "scripts": {
     "dev": "next dev",
