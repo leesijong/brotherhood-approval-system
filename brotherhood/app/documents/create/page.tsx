@@ -240,15 +240,15 @@ export default function CreateDocumentPage() {
     <AppLayout>
       <div className="max-w-4xl mx-auto space-y-6">
         {/* 헤더 */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">새 문서 작성</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">새 문서 작성</h1>
+            <p className="text-sm md:text-base text-muted-foreground">
               새로운 문서를 작성하고 제출하세요
             </p>
           </div>
           <div className="flex items-center space-x-2">
-            <Button variant="outline" asChild>
+            <Button variant="outline" asChild className="w-full sm:w-auto">
               <Link href="/documents">
                 <X className="mr-2 h-4 w-4" />
                 취소
@@ -295,7 +295,7 @@ export default function CreateDocumentPage() {
                       value={formData.category} 
                       onValueChange={(value) => updateFormData('category', value)}
                     >
-                      <SelectTrigger className={errors.category ? 'border-red-500' : ''}>
+                      <SelectTrigger className={`min-h-[44px] ${errors.category ? 'border-red-500' : ''}`}>
                         <SelectValue placeholder="카테고리 선택" />
                       </SelectTrigger>
                       <SelectContent>
@@ -313,7 +313,7 @@ export default function CreateDocumentPage() {
                       value={formData.priority} 
                       onValueChange={(value: 'LOW' | 'MEDIUM' | 'HIGH') => updateFormData('priority', value)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="min-h-[44px]">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -340,7 +340,7 @@ export default function CreateDocumentPage() {
                       type="date"
                       value={formData.dueDate}
                       onChange={(e) => updateFormData('dueDate', e.target.value)}
-                      className="pl-10"
+                      className="pl-10 min-h-[44px]"
                     />
                   </div>
                 </FormField>
@@ -355,8 +355,9 @@ export default function CreateDocumentPage() {
                         value={newTag}
                         onChange={(e) => setNewTag(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+                        className="min-h-[44px]"
                       />
-                      <Button type="button" variant="outline" onClick={addTag}>
+                      <Button type="button" variant="outline" onClick={addTag} className="min-h-[44px] min-w-[44px]">
                         <Plus className="h-4 w-4" />
                       </Button>
                     </div>
@@ -400,7 +401,7 @@ export default function CreateDocumentPage() {
                     placeholder="문서 내용을 입력하세요..."
                     value={formData.content}
                     onChange={(e) => updateFormData('content', e.target.value)}
-                    className={`min-h-[300px] ${errors.content ? 'border-red-500' : ''}`}
+                    className={`min-h-[200px] md:min-h-[300px] ${errors.content ? 'border-red-500' : ''}`}
                   />
                 </FormField>
               </CardContent>
@@ -544,7 +545,7 @@ export default function CreateDocumentPage() {
                 <Button
                   onClick={handleSaveDraft}
                   disabled={isSubmitting}
-                  className="w-full"
+                  className="w-full min-h-[44px]"
                   variant="outline"
                 >
                   <Save className="mr-2 h-4 w-4" />
@@ -554,7 +555,7 @@ export default function CreateDocumentPage() {
                 <Button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="w-full"
+                  className="w-full min-h-[44px]"
                 >
                   {isSubmitting ? (
                     <>

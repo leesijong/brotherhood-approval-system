@@ -444,17 +444,17 @@ export default function DocumentEditPage() {
     <AppLayout>
       <div className="max-w-4xl mx-auto space-y-6">
         {/* 헤더 */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" asChild>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+          <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+            <Button variant="ghost" size="sm" asChild className="w-full sm:w-auto">
               <Link href={`/documents/${params?.id || ''}`}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 돌아가기
               </Link>
             </Button>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">문서 수정</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">문서 수정</h1>
+              <p className="text-sm md:text-base text-muted-foreground">
                 {document.documentNumber && `문서번호: ${document.documentNumber}`} • 
                 버전: {document.version || 1}
               </p>
