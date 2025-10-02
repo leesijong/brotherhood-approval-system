@@ -506,7 +506,7 @@ export default function DocumentsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex flex-col md:flex-row gap-3 md:gap-4">
               {/* 검색 */}
               <div className="flex-1">
                 <div className="relative">
@@ -515,17 +515,17 @@ export default function DocumentsPage() {
                     placeholder="제목, 내용, 작성자로 검색..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
+                    className="pl-10 min-h-[44px]"
                   />
                 </div>
               </div>
 
               {/* 상태 필터 */}
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value as DocumentStatus | 'ALL')}
-                  className="px-3 py-2 border border-input bg-background rounded-md text-sm"
+                  className="px-3 py-2 border border-input bg-background rounded-md text-sm min-h-[44px]"
                 >
                   <option value="ALL">전체 상태</option>
                   <option value="DRAFT">초안</option>
@@ -538,7 +538,7 @@ export default function DocumentsPage() {
                 <select
                   value={priorityFilter}
                   onChange={(e) => setPriorityFilter(e.target.value)}
-                  className="px-3 py-2 border border-input bg-background rounded-md text-sm"
+                  className="px-3 py-2 border border-input bg-background rounded-md text-sm min-h-[44px]"
                 >
                   <option value="ALL">전체 우선순위</option>
                   <option value="HIGH">높음</option>
@@ -550,7 +550,7 @@ export default function DocumentsPage() {
           </CardContent>
         </Card>
 
-        {/* 문서 목록 테이블 */}
+        {/* 문서 목록 - 데스크톱 테이블 / 모바일 카드 */}
         <Card>
           <CardHeader>
             <CardTitle>문서 목록</CardTitle>
@@ -559,16 +559,91 @@ export default function DocumentsPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <DataTable
-              data={filteredDocuments}
-              columns={columns}
-              searchable={false} // 이미 상단에서 검색 기능 제공
-              pagination={{
-                pageSize: 10,
-                showSizeChanger: true,
-                pageSizeOptions: [10, 20, 50]
-              }}
-            />
+            {/* 데스크톱 테이블 */}
+            <div className="hidden md:block">
+              <DataTable
+                data={filteredDocuments}
+                columns={columns}
+                searchable={false} // 이미 상단에서 검색 기능 제공
+                pagination={{
+                  pageSize: 10,
+                  showSizeChanger: true,
+                  pageSizeOptions: [10, 20, 50]
+                }}
+              />
+            </div>
+
+            {/* 모바일 카드 리스트 */}
+            <div className="block md:hidden space-y-3">
+              {filteredDocuments.map((document) => (
+                <div key={document.id} className="border rounded-lg p-4 space-y-3 hover:bg-muted/50 transition-colors">
+                  {/* 제목과 상태 */}
+                  <div className="flex items-start justify-between">
+                    <h3 className="font-medium text-sm leading-tight flex-1 pr-2">
+                      {document.title}
+                    </h3>
+                    <div className="flex items-center space-x-2 flex-shrink-0">
+                      <Badge variant="outline" className={statusColors[document.status]}>
+                        {statusLabels[document.status]}
+                      </Badge>
+                      {document.priority && (
+                        <Badge variant="outline" className={priorityColors[document.priority]}>
+                          {priorityLabels[document.priority]}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 작성자와 날짜 */}
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{document.authorDisplayName || document.authorName || '알 수 없음'}</span>
+                    <span>{new Date(document.createdAt).toLocaleDateString('ko-KR')}</span>
+                  </div>
+
+                  {/* 분류 */}
+                  {document.classification && (
+                    <div className="text-xs text-muted-foreground">
+                      분류: {document.classification}
+                    </div>
+                  )}
+
+                  {/* 액션 버튼들 */}
+                  <div className="flex items-center justify-end space-x-2 pt-2 border-t">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => router.push(`/documents/${document.id}`)}
+                      className="h-8 px-2 text-xs"
+                    >
+                      <Eye className="h-3 w-3 mr-1" />
+                      보기
+                    </Button>
+                    {document.status === 'DRAFT' && document.authorId === user?.id && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => router.push(`/documents/${document.id}/edit`)}
+                        className="h-8 px-2 text-xs"
+                      >
+                        <Edit className="h-3 w-3 mr-1" />
+                        수정
+                      </Button>
+                    )}
+                    {document.authorId === user?.id && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(document)}
+                        className="h-8 px-2 text-xs text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="h-3 w-3 mr-1" />
+                        삭제
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
       </div>

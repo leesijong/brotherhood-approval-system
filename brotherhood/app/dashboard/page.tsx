@@ -262,7 +262,7 @@ export default function DashboardPage() {
         </div>
 
         {/* 통계 카드 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
           <StatCard
             title="전체 문서"
             value={stats?.totalDocuments || 0}
@@ -326,41 +326,48 @@ export default function DashboardPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-3 md:space-y-4">
                 {pendingApprovals.map((approval) => (
-                  <div key={approval.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        <h4 className="font-medium">{approval.title}</h4>
-                        <Badge variant="outline" className={priorityColors[approval.priority]}>
-                          {priorityLabels[approval.priority]}
-                        </Badge>
-                      </div>
-                      <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                        <span>{approval.author}</span>
-                        <span>•</span>
-                        <span>{new Date(approval.submittedAt).toLocaleDateString('ko-KR')}</span>
-                        <span>•</span>
-                        <span>단계 {approval.step}/{approval.totalSteps}</span>
-                      </div>
-                      <div className="mt-2">
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div 
-                            className="bg-primary h-2 rounded-full" 
-                            style={{ width: `${(approval.step / approval.totalSteps) * 100}%` }}
-                          />
+                  <div key={approval.id} className="border rounded-lg p-3 hover:bg-muted/50 transition-colors">
+                    {/* 모바일: 세로 레이아웃, 데스크톱: 가로 레이아웃 */}
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start space-x-2 mb-1">
+                          <h4 className="font-medium text-sm md:text-base leading-tight flex-1 pr-2">
+                            {approval.title}
+                          </h4>
+                          <Badge variant="outline" className={`${priorityColors[approval.priority]} text-xs flex-shrink-0`}>
+                            {priorityLabels[approval.priority]}
+                          </Badge>
+                        </div>
+                        <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4 text-xs md:text-sm text-muted-foreground">
+                          <span>{approval.author}</span>
+                          <span className="hidden sm:inline">•</span>
+                          <span>{new Date(approval.submittedAt).toLocaleDateString('ko-KR')}</span>
+                          <span className="hidden sm:inline">•</span>
+                          <span>단계 {approval.step}/{approval.totalSteps}</span>
+                        </div>
+                        <div className="mt-2">
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-primary h-2 rounded-full transition-all duration-300" 
+                              style={{ width: `${(approval.step / approval.totalSteps) * 100}%` }}
+                            />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/documents/${approval.id}`}>
-                          <Eye className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <CheckCircle className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center justify-end space-x-1 md:space-x-2 md:ml-4 pt-2 md:pt-0 border-t md:border-t-0">
+                        <Button variant="ghost" size="sm" asChild className="h-8 w-8 md:h-9 md:w-auto md:px-3">
+                          <Link href={`/documents/${approval.id}`}>
+                            <Eye className="h-3 w-3 md:h-4 md:w-4" />
+                            <span className="hidden md:inline ml-1">보기</span>
+                          </Link>
+                        </Button>
+                        <Button variant="default" size="sm" className="h-8 w-8 md:h-9 md:w-auto md:px-3">
+                          <CheckCircle className="h-3 w-3 md:h-4 md:w-4" />
+                          <span className="hidden md:inline ml-1">승인</span>
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
