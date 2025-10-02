@@ -22,6 +22,11 @@ const nextConfig = {
   // Railway 환경 변수 설정
   env: {
     CUSTOM_KEY: process.env.CUSTOM_KEY,
+    BUILD_VERSION: 'v3.0-elements-fix', // 빌드 버전 추가
+  },
+  // 빌드 캐시 무효화
+  generateBuildId: async () => {
+    return `build-${Date.now()}`;
   },
 };
 
