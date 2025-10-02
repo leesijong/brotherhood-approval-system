@@ -152,8 +152,8 @@ export default function DashboardPage() {
               console.log('개별 문서 데이터:', doc);
               return {
                 id: doc.documentId || doc.id,
-                title: doc.documentTitle || doc.title || '제목 없음',
-                author: doc.authorName || doc.author || '알 수 없음',
+                title: doc.documentTitle || (doc as any).title || '제목 없음',
+                author: doc.authorName || (doc as any).author || '알 수 없음',
                 submittedAt: doc.submittedAt || new Date().toISOString(),
                 dueDate: doc.dueDate || new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
                 priority: (doc.priority || 'MEDIUM') as 'LOW' | 'MEDIUM' | 'HIGH',
