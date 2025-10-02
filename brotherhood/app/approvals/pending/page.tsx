@@ -75,17 +75,24 @@ export default function PendingApprovalsPage() {
       }
 
       try {
+        console.log('결재 데이터 로드 시작:', { userId: user.id, roles: user.roles });
+        
         // 사용자 권한에 따라 통계 조회 방식 결정
         const isAdmin = user.roles?.some(role => role === 'ADMIN' || role === 'SUPER_ADMIN');
+        console.log('사용자 권한 확인:', { isAdmin, roles: user.roles });
         
         let statsResponse;
         if (isAdmin) {
           // 관리자/슈퍼관리자: 전체 시스템 통계
+          console.log('관리자 통계 조회 시작');
           statsResponse = await dashboardApi.getDashboardStats();
         } else {
           // 일반 사용자: 사용자별 통계
+          console.log('사용자별 통계 조회 시작');
           statsResponse = await dashboardApi.getDashboardStatsByUser(user.id);
         }
+
+        console.log('통계 응답:', statsResponse);
 
         if (statsResponse.success && statsResponse.data) {
           const statsData = statsResponse.data;
@@ -101,7 +108,10 @@ export default function PendingApprovalsPage() {
         }
 
         // 결재 대기 목록 조회
+        console.log('결재 대기 목록 조회 시작');
         const pendingApprovalsResponse = await dashboardApi.getPendingApprovals();
+        console.log('결재 대기 목록 응답:', pendingApprovalsResponse);
+        
         if (pendingApprovalsResponse.success && pendingApprovalsResponse.data) {
           const approvalItems: ApprovalItem[] = pendingApprovalsResponse.data.map(doc => ({
             id: doc.documentId || doc.id,
@@ -123,6 +133,16 @@ export default function PendingApprovalsPage() {
         }
       } catch (error) {
         console.error('결재 데이터 로드 실패:', error);
+        // 에러 발생 시 빈 배열로 설정
+        setApprovals([]);
+        setStats({
+          totalPending: 0,
+          myPending: 0,
+          approvedToday: 0,
+          overdue: 0,
+          averageTime: 0,
+          completionRate: 0,
+        });
       } finally {
         setLoading(false);
       }
