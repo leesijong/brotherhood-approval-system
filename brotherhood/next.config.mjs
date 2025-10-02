@@ -15,8 +15,8 @@ const nextConfig = {
   },
   // 정적 파일 서빙 최적화
   trailingSlash: false,
-  // Railway 배포 최적화
-  output: 'standalone',
+  // Railway 배포 최적화 - standalone 모드 비활성화
+  // output: 'standalone', // Railway에서 npm start와 충돌하므로 주석 처리
   // 정적 파일 서빙 강화
   assetPrefix: '',
   // Railway 환경 변수 설정
