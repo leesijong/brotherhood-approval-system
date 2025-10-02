@@ -20,6 +20,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { authApi } from '@/services/authApi';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import brotherhoodLogo from '../../elements/brotherhood-logo.png';
 
 // 로그인 폼 데이터 타입
 interface LoginFormData {
@@ -176,7 +177,7 @@ export default function LoginPage() {
         <div className="text-center space-y-2">
           <div className="mx-auto w-16 h-16 rounded-2xl flex items-center justify-center">
             <Image 
-              src="/images/brotherhood-logo.png" 
+              src={brotherhoodLogo} 
               alt="한국순교복자성직수도회" 
               width={64}
               height={64}
