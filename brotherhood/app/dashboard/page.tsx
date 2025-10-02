@@ -235,7 +235,7 @@ export default function DashboardPage() {
         {/* 헤더 */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">DashBoard</h1>
+            <h1 className="text-3xl font-bold tracking-tight">🚀 NUCLEAR DASHBOARD v8.0</h1>
             <p className="text-muted-foreground">
               안녕하세요, {user?.displayName || '사용자'}님! 오늘도 좋은 하루 되세요.
             </p>

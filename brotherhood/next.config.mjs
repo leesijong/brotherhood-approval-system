@@ -26,7 +26,10 @@ const nextConfig = {
   },
   // 빌드 캐시 무효화 - Railway 전용
   generateBuildId: async () => {
-    return `railway-cache-buster-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substr(2, 9);
+    const hash = require('crypto').createHash('md5').update(`${timestamp}-${random}`).digest('hex').substr(0, 8);
+    return `nuclear-cache-buster-${timestamp}-${hash}`;
   },
 };
 

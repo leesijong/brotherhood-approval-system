@@ -1,6 +1,6 @@
 {
   "name": "my-v0-project",
-  "version": "7.0.0-force-refresh",
+  "version": "8.0.0-cache-nuclear",
   "private": true,
   "scripts": {
     "dev": "next dev",
