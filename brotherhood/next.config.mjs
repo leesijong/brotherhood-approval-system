@@ -12,8 +12,6 @@ const nextConfig = {
     unoptimized: true, // Railway 배포 시 이미지 최적화 비활성화
     domains: [], // 외부 도메인 허용 (필요시 추가)
     formats: ['image/webp', 'image/avif'], // 지원 형식
-    loader: 'custom', // 커스텀 로더 사용
-    loaderFile: './src/lib/imageLoader.js', // 커스텀 이미지 로더
   },
   // 정적 파일 서빙 최적화
   trailingSlash: false,

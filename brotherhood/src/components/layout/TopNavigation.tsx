@@ -19,6 +19,7 @@ import { useUIStore } from '@/stores/uiStore';
 import { authApi } from '@/services/authApi';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import brotherhoodLogo from '/public/images/brotherhood-logo.png';
 import { LogoutConfirmDialog } from '@/components/ConfirmDialog';
 
 interface TopNavigationProps {
@@ -103,7 +104,7 @@ export function TopNavigation({ onMenuClick }: TopNavigationProps) {
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 rounded-lg flex items-center justify-center">
               <Image 
-                src="/images/brotherhood-logo.png" 
+                src={brotherhoodLogo} 
                 alt="한국순교복자성직수도회" 
                 width={32}
                 height={32}
