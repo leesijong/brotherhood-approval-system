@@ -30,7 +30,7 @@ import {
   X
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { documentApi } from '@/services/documentApi';
 import { approvalApi } from '@/services/approvalApi';
@@ -173,6 +173,7 @@ const priorityLabels: Record<string, string> = {
 export default function DocumentDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { isAuthenticated, user } = useAuthStore();
   const { toast } = useToast();
   const [document, setDocument] = useState<Document | null>(null);
@@ -183,6 +184,58 @@ export default function DocumentDetailPage() {
   const [loadingAttachments, setLoadingAttachments] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
+
+  // 이전 페이지 URL 결정 함수
+  const getBackUrl = () => {
+    const from = searchParams?.get('from');
+    
+    switch (from) {
+      case 'approval-history':
+        return '/approvals/history';
+      case 'pending-approvals':
+        return '/dashboard?tab=pending-approvals';
+      case 'my-documents':
+        return '/documents?tab=my-documents';
+      case 'all-documents':
+        return '/documents?tab=all-documents';
+      case 'draft-documents':
+        return '/documents?tab=draft-documents';
+      case 'approved-documents':
+        return '/documents?tab=approved-documents';
+      case 'rejected-documents':
+        return '/documents?tab=rejected-documents';
+      case 'dashboard':
+        return '/dashboard';
+      default:
+        return '/documents';
+    }
+  };
+
+  // 이전 페이지 라벨 결정 함수
+  const getBackLabel = () => {
+    const from = searchParams?.get('from');
+    
+    switch (from) {
+      case 'approval-history':
+        return '결재 이력으로';
+      case 'pending-approvals':
+        return '결재 대기 목록으로';
+      case 'my-documents':
+        return '내 문서 목록으로';
+      case 'all-documents':
+        return '전체 문서 목록으로';
+      case 'draft-documents':
+        return '임시저장 목록으로';
+      case 'approved-documents':
+        return '승인된 문서 목록으로';
+      case 'rejected-documents':
+        return '반려된 문서 목록으로';
+      case 'dashboard':
+        return '대시보드로';
+      default:
+        return '문서 목록으로';
+    }
+  };
 
   // 화면 크기 감지 훅
   useEffect(() => {
@@ -729,9 +782,9 @@ export default function DocumentDetailPage() {
               요청하신 문서가 존재하지 않거나 삭제되었습니다.
             </p>
             <Button asChild>
-              <Link href="/documents">
+              <Link href={getBackUrl()}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                문서 목록으로 돌아가기
+                {getBackLabel()}
               </Link>
             </Button>
           </div>
@@ -747,9 +800,9 @@ export default function DocumentDetailPage() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
             <Button variant="ghost" size="sm" asChild className="w-full sm:w-auto">
-              <Link href="/documents">
+              <Link href={getBackUrl()}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                목록으로
+                {getBackLabel()}
               </Link>
             </Button>
             <div className="min-w-0 flex-1">

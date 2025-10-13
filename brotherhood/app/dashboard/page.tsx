@@ -358,7 +358,7 @@ export default function DashboardPage() {
                       </div>
                       <div className="flex items-center justify-end space-x-1 md:space-x-2 md:ml-4 pt-2 md:pt-0 border-t md:border-t-0">
                         <Button variant="ghost" size="sm" asChild className="h-8 w-8 md:h-9 md:w-auto md:px-3">
-                          <Link href={`/documents/${approval.id}`}>
+                          <Link href={`/documents/${approval.id}?from=pending-approvals`}>
                             <Eye className="h-3 w-3 md:h-4 md:w-4" />
                             <span className="hidden md:inline ml-1">보기</span>
                           </Link>
@@ -401,7 +401,7 @@ export default function DashboardPage() {
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-1">
                         <Link 
-                          href={`/documents/${doc.id}`}
+                          href={`/documents/${doc.id}?from=my-documents`}
                           className="font-medium hover:text-primary hover:underline"
                         >
                           {doc.title}
@@ -418,7 +418,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex items-center space-x-1">
                       <Button variant="ghost" size="sm" asChild>
-                        <Link href={`/documents/${doc.id}`}>
+                        <Link href={`/documents/${doc.id}?from=my-documents`}>
                           <Eye className="h-4 w-4" />
                         </Link>
                       </Button>
@@ -471,7 +471,7 @@ export default function DashboardPage() {
                   </div>
                   {activity.documentId && (
                     <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/documents/${activity.documentId}`}>
+                      <Link href={`/documents/${activity.documentId}?from=dashboard`}>
                         <Eye className="h-4 w-4" />
                       </Link>
                     </Button>

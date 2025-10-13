@@ -25,6 +25,7 @@ import {
   Clock
 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
+import { userApi } from '@/services/userApi';
 
 // 사용자 타입
 interface User {
@@ -107,35 +108,6 @@ export default function UsersPage() {
     { value: 'SYSTEM_ADMIN', label: '관리자', description: '운영 및 계정/조직 관리' },
   ];
 
-  // 관리자 로그인 함수
-  const loginAsAdmin = async () => {
-    try {
-      console.log('=== 관리자 로그인 시도 ===');
-      const loginResponse = await fetch('http://localhost:8080/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // 쿠키 포함
-        body: JSON.stringify({
-          username: 'admin',
-          password: 'admin123'
-        }),
-      });
-      
-      if (!loginResponse.ok) {
-        throw new Error('로그인 실패');
-      }
-      
-      const loginData = await loginResponse.json();
-      console.log('✅ 관리자 로그인 성공, 세션 생성됨');
-      setIsLoggedIn(true);
-      return true;
-    } catch (error) {
-      console.error('❌ 관리자 로그인 실패:', error);
-      throw error;
-    }
-  };
 
   // 사용자 데이터 로드
   useEffect(() => {
@@ -143,10 +115,7 @@ export default function UsersPage() {
       try {
         console.log('=== 사용자 관리 페이지: 실제 API 호출 시작 ===');
         
-        // 1. 관리자 로그인
-        await loginAsAdmin();
-        
-        // 2. 사용자 통계 조회
+        // 1. 사용자 통계 조회
         console.log('2. 사용자 통계 조회 API 호출...');
         const statsResponse = await fetch('http://localhost:8080/api/users/stats', {
           method: 'GET',
@@ -173,20 +142,13 @@ export default function UsersPage() {
 
         // 3. 사용자 목록 조회
         console.log('3. 사용자 목록 조회 API 호출...');
-        const usersResponse = await fetch('http://localhost:8080/api/users?page=0&size=20', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include', // 쿠키 포함
-        });
+        const usersResponse = await userApi.getUsers({ page: 0, size: 20 });
         
-        if (usersResponse.ok) {
-          const usersData = await usersResponse.json();
-          console.log('✅ 사용자 목록 조회 성공:', usersData);
+        if (usersResponse.success) {
+          console.log('✅ 사용자 목록 조회 성공:', usersResponse.data);
           
           // 백엔드 응답을 프론트엔드 형식으로 변환
-          const mappedUsers: User[] = usersData.data.content.map((user: any) => ({
+          const mappedUsers: User[] = usersResponse.data.content.map((user: any) => ({
             id: user.id,
             username: user.username,
             email: user.email,
@@ -208,8 +170,7 @@ export default function UsersPage() {
           
           setUsers(mappedUsers);
         } else {
-          console.error('❌ 사용자 목록 조회 실패:', usersResponse.status);
-          // API 실패 시 목업 데이터 사용
+          console.error('❌ 사용자 목록 조회 실패:', usersResponse.message);
           setUsers([]);
         }
         
@@ -347,7 +308,6 @@ export default function UsersPage() {
       // 1. 관리자 로그인 확인
       if (!isLoggedIn) {
         console.log('1. 관리자 로그인 시도...');
-        await loginAsAdmin();
       } else {
         console.log('1. 이미 로그인된 상태');
       }
@@ -417,7 +377,6 @@ export default function UsersPage() {
       // 1. 관리자 로그인 확인
       if (!isLoggedIn) {
         console.log('1. 관리자 로그인 시도...');
-        await loginAsAdmin();
       } else {
         console.log('1. 이미 로그인된 상태');
       }

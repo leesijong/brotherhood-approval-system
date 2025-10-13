@@ -285,7 +285,7 @@ export default function DocumentsPage() {
         return (
           <div className="space-y-1">
             <Link 
-              href={`/documents/${doc.id}`}
+              href={`/documents/${doc.id}?from=my-documents`}
               className="font-medium text-primary hover:underline"
             >
               {doc.title || '제목 없음'}
@@ -387,7 +387,7 @@ export default function DocumentsPage() {
               size="sm"
               asChild
             >
-              <Link href={`/documents/${doc.id}`}>
+              <Link href={`/documents/${doc.id}?from=my-documents`}>
                 <Eye className="h-4 w-4" />
               </Link>
             </Button>

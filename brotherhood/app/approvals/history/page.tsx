@@ -132,7 +132,7 @@ export default function ApprovalHistoryPage() {
       render: (value: any, record: ApprovalHistoryItem) => (
         <div className="space-y-1">
           <Link 
-            href={`/documents/${record.documentId}`}
+            href={`/documents/${record.documentId}?from=approval-history`}
             className="font-medium text-primary hover:underline"
           >
             {record.documentTitle}
@@ -197,7 +197,7 @@ export default function ApprovalHistoryPage() {
       render: (value: any, record: ApprovalHistoryItem) => (
         <div className="flex items-center space-x-1">
           <Button variant="ghost" size="sm" asChild>
-            <Link href={`/documents/${record.documentId}`}>
+            <Link href={`/documents/${record.documentId}?from=approval-history`}>
               <Eye className="h-4 w-4" />
             </Link>
           </Button>
