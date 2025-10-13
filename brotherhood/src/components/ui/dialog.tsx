@@ -45,7 +45,21 @@ const DialogContent = React.forwardRef<
     >
       {children}
       <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-        <X className="h-4 w-4" />
+        {/* 가톨릭 십자가 형태의 닫기 아이콘 */}
+        <svg 
+          className="h-5 w-5" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          {/* 세로 십자가 선 (더 길게) */}
+          <line x1="12" y1="4" x2="12" y2="20" />
+          {/* 가로 십자가 선 (위쪽에 위치) */}
+          <line x1="7" y1="9" x2="17" y2="9" />
+        </svg>
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
     </DialogPrimitive.Content>
