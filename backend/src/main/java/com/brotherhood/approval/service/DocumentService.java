@@ -492,6 +492,37 @@ public class DocumentService {
     }
     
     /**
+     * 결재선 상태 복원 (테스트용)
+     */
+    @Transactional
+    public void restoreApprovalSteps(String id, String userId) {
+        log.info("결재선 상태 복원 요청: {}", id);
+        
+        Document document = documentRepository.findById(UUID.fromString(id))
+                .orElseThrow(() -> new IllegalArgumentException("문서를 찾을 수 없습니다: " + id));
+        
+        // 관련 결재선의 모든 결재단계 상태를 PENDING으로 복원
+        List<ApprovalLine> approvalLines = approvalLineRepository.findByDocumentId(document.getId());
+        int restoredCount = 0;
+        
+        for (ApprovalLine approvalLine : approvalLines) {
+            List<ApprovalStep> approvalSteps = approvalStepRepository.findByApprovalLineId(approvalLine.getId().toString());
+            for (ApprovalStep approvalStep : approvalSteps) {
+                if ("REJECTED".equals(approvalStep.getStatus()) || "APPROVED".equals(approvalStep.getStatus())) {
+                    approvalStep.setStatus("PENDING");
+                    approvalStep.setApprovedAt(null);
+                    approvalStep.setRejectedAt(null);
+                    approvalStepRepository.save(approvalStep);
+                    restoredCount++;
+                    log.info("결재단계 복원: {} ({} -> PENDING)", approvalStep.getId(), approvalStep.getStatus());
+                }
+            }
+        }
+        
+        log.info("결재선 상태 복원 완료: {} (복원된 결재단계: {}개)", document.getId(), restoredCount);
+    }
+    
+    /**
      * 문서 삭제
      */
     @Transactional
