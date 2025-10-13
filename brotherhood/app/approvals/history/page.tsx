@@ -232,50 +232,109 @@ export default function ApprovalHistoryPage() {
           </div>
         </div>
 
-        {/* 통계 카드 */}
+        {/* 액션별 통계 카드 */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
+          {/* 승인 카드 */}
+          <Card 
+            className={`cursor-pointer transition-all hover:shadow-md ${actionFilter === 'APPROVE' ? 'ring-2 ring-green-500 bg-green-50' : ''}`}
+            onClick={() => setActionFilter(actionFilter === 'APPROVE' ? 'ALL' : 'APPROVE')}
+          >
             <CardContent className="p-6">
-              <div className="flex items-center space-x-2">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">승인</p>
-                  <p className="text-2xl font-bold">{history.filter(h => h.action === 'APPROVE').length}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <CheckCircle className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">승인</p>
+                    <p className="text-3xl font-bold text-green-600">{history.filter(h => h.action === 'APPROVE').length}</p>
+                  </div>
                 </div>
+                {actionFilter === 'APPROVE' && (
+                  <Badge variant="secondary" className="bg-green-100 text-green-800">
+                    선택됨
+                  </Badge>
+                )}
               </div>
+              <p className="text-xs text-muted-foreground mt-2">처리한 승인 건수</p>
             </CardContent>
           </Card>
-          <Card>
+
+          {/* 반려 카드 */}
+          <Card 
+            className={`cursor-pointer transition-all hover:shadow-md ${actionFilter === 'REJECT' ? 'ring-2 ring-red-500 bg-red-50' : ''}`}
+            onClick={() => setActionFilter(actionFilter === 'REJECT' ? 'ALL' : 'REJECT')}
+          >
             <CardContent className="p-6">
-              <div className="flex items-center space-x-2">
-                <XCircle className="h-4 w-4 text-red-600" />
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">반려</p>
-                  <p className="text-2xl font-bold">{history.filter(h => h.action === 'REJECT').length}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-red-100 rounded-lg">
+                    <XCircle className="h-6 w-6 text-red-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">반려</p>
+                    <p className="text-3xl font-bold text-red-600">{history.filter(h => h.action === 'REJECT').length}</p>
+                  </div>
                 </div>
+                {actionFilter === 'REJECT' && (
+                  <Badge variant="secondary" className="bg-red-100 text-red-800">
+                    선택됨
+                  </Badge>
+                )}
               </div>
+              <p className="text-xs text-muted-foreground mt-2">처리한 반려 건수</p>
             </CardContent>
           </Card>
-          <Card>
+
+          {/* 위임 카드 */}
+          <Card 
+            className={`cursor-pointer transition-all hover:shadow-md ${actionFilter === 'DELEGATE' ? 'ring-2 ring-blue-500 bg-blue-50' : ''}`}
+            onClick={() => setActionFilter(actionFilter === 'DELEGATE' ? 'ALL' : 'DELEGATE')}
+          >
             <CardContent className="p-6">
-              <div className="flex items-center space-x-2">
-                <User className="h-4 w-4 text-blue-600" />
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">위임</p>
-                  <p className="text-2xl font-bold">{history.filter(h => h.action === 'DELEGATE').length}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-blue-100 rounded-lg">
+                    <User className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">위임</p>
+                    <p className="text-3xl font-bold text-blue-600">{history.filter(h => h.action === 'DELEGATE').length}</p>
+                  </div>
                 </div>
+                {actionFilter === 'DELEGATE' && (
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                    선택됨
+                  </Badge>
+                )}
               </div>
+              <p className="text-xs text-muted-foreground mt-2">처리한 위임 건수</p>
             </CardContent>
           </Card>
-          <Card>
+
+          {/* 반송 카드 */}
+          <Card 
+            className={`cursor-pointer transition-all hover:shadow-md ${actionFilter === 'RETURN' ? 'ring-2 ring-yellow-500 bg-yellow-50' : ''}`}
+            onClick={() => setActionFilter(actionFilter === 'RETURN' ? 'ALL' : 'RETURN')}
+          >
             <CardContent className="p-6">
-              <div className="flex items-center space-x-2">
-                <AlertTriangle className="h-4 w-4 text-yellow-600" />
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">반송</p>
-                  <p className="text-2xl font-bold">{history.filter(h => h.action === 'RETURN').length}</p>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="p-2 bg-yellow-100 rounded-lg">
+                    <AlertTriangle className="h-6 w-6 text-yellow-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-muted-foreground">반송</p>
+                    <p className="text-3xl font-bold text-yellow-600">{history.filter(h => h.action === 'RETURN').length}</p>
+                  </div>
                 </div>
+                {actionFilter === 'RETURN' && (
+                  <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                    선택됨
+                  </Badge>
+                )}
               </div>
+              <p className="text-xs text-muted-foreground mt-2">처리한 반송 건수</p>
             </CardContent>
           </Card>
         </div>
@@ -283,10 +342,29 @@ export default function ApprovalHistoryPage() {
         {/* 검색 및 필터 */}
         <Card>
           <CardHeader>
-            <CardTitle>검색 및 필터</CardTitle>
-            <CardDescription>
-              결재 이력을 검색하고 필터링하세요
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>검색 및 필터</CardTitle>
+                <CardDescription>
+                  결재 이력을 검색하고 필터링하세요
+                </CardDescription>
+              </div>
+              {actionFilter !== 'ALL' && (
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-muted-foreground">현재 필터:</span>
+                  <Badge className={actionColors[actionFilter]}>
+                    {actionLabels[actionFilter]}
+                  </Badge>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setActionFilter('ALL')}
+                  >
+                    전체 보기
+                  </Button>
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col md:flex-row gap-4">
@@ -303,24 +381,12 @@ export default function ApprovalHistoryPage() {
                 </div>
               </div>
 
-              {/* 필터 */}
+              {/* 기간 필터 */}
               <div className="flex gap-2">
-                <select
-                  value={actionFilter}
-                  onChange={(e) => setActionFilter(e.target.value)}
-                  className="px-3 py-2 border border-input bg-background rounded-md text-sm"
-                >
-                  <option value="ALL">전체 액션</option>
-                  <option value="APPROVE">승인</option>
-                  <option value="REJECT">반려</option>
-                  <option value="DELEGATE">위임</option>
-                  <option value="RETURN">반송</option>
-                </select>
-
                 <select
                   value={dateFilter}
                   onChange={(e) => setDateFilter(e.target.value)}
-                  className="px-3 py-2 border border-input bg-background rounded-md text-sm"
+                  className="px-3 py-2 border border-input bg-background rounded-md text-sm min-w-[120px]"
                 >
                   <option value="ALL">전체 기간</option>
                   <option value="7DAYS">최근 7일</option>
@@ -329,28 +395,99 @@ export default function ApprovalHistoryPage() {
                 </select>
               </div>
             </div>
+            
+            {/* 액션별 빠른 필터 버튼 */}
+            <div className="mt-4 pt-4 border-t">
+              <div className="flex flex-wrap gap-2">
+                <span className="text-sm font-medium text-muted-foreground mr-2">빠른 필터:</span>
+                {['ALL', 'APPROVE', 'REJECT', 'DELEGATE', 'RETURN'].map((action) => (
+                  <Button
+                    key={action}
+                    variant={actionFilter === action ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setActionFilter(action)}
+                    className={`${
+                      actionFilter === action 
+                        ? actionColors[action] 
+                        : 'hover:bg-muted'
+                    }`}
+                  >
+                    {action === 'ALL' ? '전체' : actionLabels[action]}
+                    {action !== 'ALL' && (
+                      <span className="ml-1 text-xs opacity-75">
+                        ({history.filter(h => h.action === action).length})
+                      </span>
+                    )}
+                  </Button>
+                ))}
+              </div>
+            </div>
           </CardContent>
         </Card>
 
         {/* 결재 이력 테이블 */}
         <Card>
           <CardHeader>
-            <CardTitle>결재 이력 목록</CardTitle>
-            <CardDescription>
-              총 {filteredHistory.length}개의 결재 이력이 있습니다
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>결재 이력 목록</CardTitle>
+                <CardDescription>
+                  {actionFilter === 'ALL' 
+                    ? `총 ${filteredHistory.length}개의 결재 이력이 있습니다`
+                    : `${actionLabels[actionFilter]} 처리 건: ${filteredHistory.length}개`
+                  }
+                </CardDescription>
+              </div>
+              <div className="flex items-center space-x-2">
+                {actionFilter !== 'ALL' && (
+                  <Badge variant="outline" className={actionColors[actionFilter]}>
+                    {actionLabels[actionFilter]} 필터 적용
+                  </Badge>
+                )}
+                {dateFilter !== 'ALL' && (
+                  <Badge variant="outline">
+                    {dateFilter === '7DAYS' ? '최근 7일' : 
+                     dateFilter === '30DAYS' ? '최근 30일' : 
+                     dateFilter === '90DAYS' ? '최근 90일' : dateFilter}
+                  </Badge>
+                )}
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
-            <DataTable
-              data={filteredHistory}
-              columns={columns}
-              searchable={false}
-              pagination={{
-                pageSize: 10,
-                showSizeChanger: true,
-                pageSizeOptions: [10, 20, 50]
-              }}
-            />
+            {filteredHistory.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="mx-auto w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
+                  <FileText className="h-12 w-12 text-muted-foreground" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">결재 이력이 없습니다</h3>
+                <p className="text-muted-foreground mb-4">
+                  {actionFilter === 'ALL' 
+                    ? '아직 처리한 결재 이력이 없습니다.'
+                    : `${actionLabels[actionFilter]} 처리한 문서가 없습니다.`
+                  }
+                </p>
+                {actionFilter !== 'ALL' && (
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setActionFilter('ALL')}
+                  >
+                    전체 이력 보기
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <DataTable
+                data={filteredHistory}
+                columns={columns}
+                searchable={false}
+                pagination={{
+                  pageSize: 10,
+                  showSizeChanger: true,
+                  pageSizeOptions: [10, 20, 50]
+                }}
+              />
+            )}
           </CardContent>
         </Card>
       </div>
