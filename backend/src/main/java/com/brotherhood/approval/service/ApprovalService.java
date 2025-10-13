@@ -204,24 +204,29 @@ public class ApprovalService {
             
             log.info("결재 액션 수행 완료: {} - {}", request.getAction(), approvalStep.getId());
             
-            // 10. DTO 반환 (Lazy Loading 문제 해결을 위해 ApprovalHistory 저장 없이 DTO 직접 생성)
-            return ApprovalHistoryDto.builder()
-                    .id(UUID.randomUUID().toString())
+            // 10. ApprovalHistory 저장
+            ApprovalHistory approvalHistory = ApprovalHistory.builder()
                     .action(String.valueOf(request.getAction()))
-                    .comment(request.getComment())
+                    .comment(request.getComments())
                     .ipAddress(request.getIpAddress())
                     .userAgent(request.getUserAgent())
-                    .documentId(documentId.toString())
+                    .documentId(documentId)
                     .documentTitle(documentTitle)
-                    .approvalStepId(approvalStepId.toString())
-                    .approverId(approverId.toString())
+                    .approvalStepId(approvalStepId)
+                    .approverId(approverId)
                     .approverName(approverName)
                     .approverDisplayName(approverDisplayName)
-                    .delegatedToId(delegatedToId != null ? delegatedToId.toString() : null)
+                    .delegatedToId(delegatedToId)
                     .delegatedToName(delegatedToName)
                     .delegatedToDisplayName(delegatedToDisplayName)
                     .actionAt(LocalDateTime.now())
                     .build();
+            
+            ApprovalHistory savedHistory = approvalHistoryRepository.save(approvalHistory);
+            log.info("ApprovalHistory 저장 완료: {}", savedHistory.getId());
+            
+            // 11. DTO 반환
+            return approvalHistoryMapper.toDto(savedHistory);
                     
         } catch (Exception e) {
             log.error("결재 액션 수행 중 오류 발생: {}", e.getMessage(), e);
