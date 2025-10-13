@@ -539,6 +539,20 @@ export default function DocumentDetailPage() {
     }
   }, [params?.id]);
 
+  // 디버깅: 문서 데이터 확인
+  useEffect(() => {
+    if (document) {
+      console.log('Document Debug:', {
+        id: document.id,
+        title: document.title,
+        status: document.status,
+        rejectionReason: document.rejectionReason,
+        rejectedAt: document.rejectedAt,
+        shouldShowRejectionCard: document.status === 'REJECTED'
+      });
+    }
+  }, [document]);
+
   // 댓글 추가
   const handleAddComment = async () => {
     if (!newComment.trim() || !document) return;
@@ -890,7 +904,8 @@ export default function DocumentDetailPage() {
             </Card>
 
             {/* 반려사유 표시 (문서가 반려된 경우만) */}
-            {document.status === 'REJECTED' && document.rejectionReason && (
+            {/* 반려사유 표시 */}
+            {document.status === 'REJECTED' && (
               <Card className="border-red-200 bg-red-50">
                 <CardHeader>
                   <div className="flex items-center space-x-2">
@@ -901,7 +916,7 @@ export default function DocumentDetailPage() {
                 <CardContent>
                   <div className="bg-white border border-red-200 rounded-lg p-4">
                     <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
-                      {document.rejectionReason}
+                      {document.rejectionReason || "반려 사유가 입력되지 않았습니다."}
                     </p>
                   </div>
                   {document.rejectedAt && (
@@ -910,6 +925,10 @@ export default function DocumentDetailPage() {
                       <span>반려일: {new Date(document.rejectedAt).toLocaleString('ko-KR')}</span>
                     </div>
                   )}
+                  {/* 디버깅 정보 */}
+                  <div className="mt-3 text-xs text-gray-500 bg-gray-100 p-2 rounded">
+                    <strong>디버깅:</strong> rejectionReason = "{document.rejectionReason}"
+                  </div>
                 </CardContent>
               </Card>
             )}
