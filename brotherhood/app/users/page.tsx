@@ -144,7 +144,7 @@ export default function UsersPage() {
         console.log('3. 사용자 목록 조회 API 호출...');
         const usersResponse = await userApi.getUsers({ page: 0, size: 20 });
         
-        if (usersResponse.success) {
+        if (usersResponse.success && usersResponse.data && usersResponse.data.content) {
           console.log('✅ 사용자 목록 조회 성공:', usersResponse.data);
           
           // 백엔드 응답을 프론트엔드 형식으로 변환
