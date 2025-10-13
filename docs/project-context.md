@@ -1551,13 +1551,34 @@ Invoke-WebRequest -Uri "http://localhost:8080/api/documents" -Method GET
 - optimizeCss 옵션 오류 (critters 모듈 누락)
 - .cursorrules와 마크다운 문서 간 충돌 해결
 
+##### 진행 중인 문제 (2025-10-13 저녁)
+
+1. **사용자 목록 페이지 데이터 로드 실패** ⚠️ **긴급**
+   - **문제**: 사용자 목록 페이지에서 `Failed to fetch` 오류 발생
+   - **원인**: `app/users/page.tsx` 120번 줄에서 `http://localhost:8080/api/users/stats` 하드코딩
+   - **영향**: 다른 페이지(결재, 문서)는 정상 작동하지만 사용자 목록만 안 나옴
+   - **해결방법**: 
+     - `fetch('http://localhost:8080/api/users/stats')` → `apiRequest({ method: 'GET', url: '/users/stats' })` 변경
+     - `import { apiRequest } from '@/services/api'` 추가
+   - **우선순위**: 높음 (내일 첫 작업)
+   - **예상 시간**: 5분
+
 ### 다음 단계 (추천)
-1. **알림 시스템 구현** (우선순위 중간)
+
+#### 우선순위 긴급 (2025-10-14 첫 작업)
+1. **사용자 목록 페이지 하드코딩 URL 수정**
+   - `app/users/page.tsx` 파일 수정
+   - localhost:8080 하드코딩 제거
+   - apiRequest 사용으로 변경
+   - Railway 프로덕션 배포
+
+#### 우선순위 중간
+1. **알림 시스템 구현**
    - 결재 진행 시 실시간 알림 기능
    - 이메일/푸시 알림 연동
    - 알림 설정 및 관리 기능
 
-2. **권한 관리 시스템 강화** (우선순위 중간)
+2. **권한 관리 시스템 강화**
    - 세부 권한 제어 기능
    - 역할 기반 접근 제어 (RBAC) 강화
    - 문서 등급별 접근 권한 관리
