@@ -1,20 +1,229 @@
-- 커뮤니케이션은 한국어로 해줘
-- 코어 비즈니스 구현시에는 TDD로 구현할 것
-- 구현시 오류로 인해 디버그 필요시 퍼플렉시티를 활용할 것
-- 이 프로젝트는 로컬 개발 환경에서만 구동되도록 구현할 것
-- AWS 서버리스나 클라우드 배포는 고려하지 말고 로컬 PostgreSQL + Spring Boot로만 구현
-- 로컬 개발 환경 설정과 실행에 필요한 스크립트와 설정 파일들을 우선적으로 제공할 것
-- 프론트엔드 구현시에는 실행코드를 먼저 작성한다. 코어 비즈니스 로직 구현시에만 TDD로 구현할 것
-- 백엔드는 TDD로 구현할 것
-- PostgreSQL의 USER 패스워드는 'postgres' 이므로 모든 쉘 명령어 실행시 기억하고 실행할 것
-- PostgreSQL psql 경로는 'C:\Program Files\PostgreSQL\17\bin\psql.exe' 이므로 모든 데이터베이스 관련 명령어 실행시 이 경로를 사용할 것
-- Gradle PATH는 'C:\gradle-8.5\bin' 이므로 모든 쉘 명령어 실행시 이 경로를 사용할 것
-- Java PATH는 'C:\Program Files\Eclipse Adoptium\jdk-17.0.16.8-hotspot\bin' 이므로 모든 쉘 명령어 실행시 이 경로를 사용할 것
-- 모든 PowerShell 세션 시작시 다음 환경변수를 자동 설정할 것:
-  - $env:PATH += ";C:\gradle-8.5\bin"
-  - $env:PATH += ";C:\Program Files\Eclipse Adoptium\jdk-17.0.16.8-hotspot\bin"
-  - $env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-17.0.16.8-hotspot"
-  - $env:PGCLIENTENCODING = "UTF8"
-- PowerShell 실행시 && 연산자가 지원되지 않는다는것을 명심할 것.
-- 빌드나 bootRun 실행이후 오류 발생 여부를 확인하고 다음 명령어를 실행할 것.
-- Start-Sleep 명령어와 그와 동일한 기능을 하는 명령어는 실행하지 말 것.
+# 한국순교복자수도회 내부결재 시스템 개발 규칙
+
+## 📋 기본 원칙
+
+- **커뮤니케이션**: 모든 커뮤니케이션은 한국어로 진행
+- **보안 최우선**: 모든 기능에서 접근 제어 및 보안을 최우선으로 고려
+- **세례명 필수**: 모든 사용자는 세례명을 보유하며 "이름 (세례명)" 형태로 표시
+- **UUID 기반**: 모든 주요 식별자는 UUID로 관리 (확장성과 보안 강화)
+
+## 🏗️ 개발 방법론
+
+### 백엔드 (Spring Boot)
+- **TDD 필수**: 모든 코어 비즈니스 로직은 테스트 우선 개발
+- **테스트 순서**: Red → Green → Refactor
+- **테스트 범위**: 서비스 레이어, 도메인 로직, 비즈니스 규칙
+- **UUID 처리**: 모든 ID 관련 로직은 UUID 기반으로 테스트
+
+### 프론트엔드 (Next.js + React)
+- **실행코드 우선**: UI/UX 구현은 실행코드를 먼저 작성
+- **선택적 TDD**: 복잡한 비즈니스 로직에만 TDD 적용
+- **테스트 범위**: 상태 관리, 유틸리티 함수, 복잡한 컴포넌트
+- **모바일 우선**: 모든 컴포넌트는 모바일에서 먼저 최적화
+- **터치 친화적**: 최소 44px 터치 타겟 크기 유지 (`min-h-[44px]`)
+
+### 디버깅 전략
+- **Perplexity 활용**: 구현 중 오류 발생 시 AI 기반 문제 해결
+- **로그 확인 순서**: 백엔드 로그 → 데이터베이스 상태 → API 응답 → 프론트엔드 콘솔
+
+## 🖥️ 개발 환경
+
+### 터미널 환경
+- **Git Bash 사용 필수**: Windows Terminal + Git Bash 권장
+- **PowerShell 주의사항**:
+  - `&&` 연산자 미지원 (`;` 또는 개별 실행 사용)
+  - 명령어는 개별적으로 실행해야 함
+
+### 환경 변수 설정
+모든 PowerShell 세션 시작 시 다음 환경변수를 자동 설정:
+```powershell
+$env:PATH += ";C:\gradle-8.5\bin"
+$env:PATH += ";C:\Program Files\Eclipse Adoptium\jdk-17.0.16.8-hotspot\bin"
+$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-17.0.16.8-hotspot"
+$env:PGCLIENTENCODING = "UTF8"
+```
+
+### 경로 정보
+- **PostgreSQL psql**: `C:\Program Files\PostgreSQL\17\bin\psql.exe`
+- **Gradle**: `C:\gradle-8.5\bin`
+- **Java JDK**: `C:\Program Files\Eclipse Adoptium\jdk-17.0.16.8-hotspot\bin`
+- **PostgreSQL 비밀번호**: `postgres`
+
+## 🚀 배포 환경
+
+### 로컬 개발 환경
+- **데이터베이스**: PostgreSQL 17 (localhost:5432)
+- **백엔드**: Spring Boot 3.2.0 (localhost:8080)
+- **프론트엔드**: Next.js 14.2.25 (localhost:3000)
+- **로컬 개발 우선**: 모든 기능은 로컬에서 먼저 완전히 작동해야 함
+
+### Railway 프로덕션 환경 (✅ 배포 완료)
+- **백엔드**: https://brotherhood-approval-system-production.up.railway.app
+- **프론트엔드**: https://brotherhood-frontend-production.up.railway.app
+- **데이터베이스**: Railway PostgreSQL
+- **배포 방식**: Docker 컨테이너 + Git 자동 배포
+- **주의사항**: Railway 배포는 로컬 완성 후 진행
+
+## 📜 시스템 시작/중지 규칙 (필수 준수)
+
+### 시스템 실행
+```powershell
+# 전체 시스템 시작 (백엔드 + 프론트엔드)
+.\start-system.ps1
+
+# 서버 시작 대기 (필수)
+Start-Sleep -Seconds 15
+```
+
+### 시스템 종료
+```powershell
+# 전체 시스템 중지
+.\stop-system.ps1
+```
+
+### 절대 금지 사항
+- ❌ `gradle bootRun` 직접 실행 금지
+- ❌ `npm run dev` 직접 실행 금지
+- ❌ 개별 프로세스 수동 시작/중지 금지
+- ❌ `start-system.ps1` 실행 후 대기 없이 API 호출 금지
+
+### 시스템 재시작 패턴
+```powershell
+# 코드 수정, 설정 변경, 의존성 추가 등 모든 경우
+.\stop-system.ps1
+.\start-system.ps1
+Start-Sleep -Seconds 15
+
+# 이후 API 호출 또는 테스트 진행
+```
+
+### Start-Sleep 사용 규칙
+- **필수 사용**: `start-system.ps1` 실행 후 반드시 15초 대기
+- **이유**: 백엔드 서버가 완전히 시작되기까지 시간 필요
+- **주의**: 서버 시작 확인 없이 API 호출 시 404/500 오류 발생 가능
+
+## 🔧 명령어 실행 위치 규칙
+
+### 백엔드 명령어
+```bash
+# 항상 /c/cckbm/backend 디렉토리에서 실행
+cd /c/cckbm/backend
+./gradlew bootRun
+```
+
+### 프론트엔드 명령어
+```bash
+# 반드시 /c/cckbm/brotherhood 디렉토리에서 실행
+cd /c/cckbm/brotherhood
+npm run dev
+```
+
+### 데이터베이스 작업
+```bash
+# 항상 /c/cckbm 디렉토리에서 실행
+cd /c/cckbm
+psql -U postgres -d approval_system_dev
+```
+
+### 명령어 실행 전 확인
+```bash
+pwd  # 현재 디렉토리 확인 필수
+```
+
+## 🎨 Brotherhood 디자인 시스템
+
+### 컬러 시스템
+- **메인 컬러**: #7e1416 (레드) - 헤더, 버튼, 강조 요소
+- **보조 컬러**: #f59e0b (앰버) - 보조 액션
+- **카드 배경**: #fef2f2 (연한 레드)
+- **파괴적 컬러**: #dc2626 (빨간색) - 삭제, 경고
+
+### UI/UX 원칙
+- **모바일 우선 설계**: 모든 컴포넌트는 모바일에서 먼저 최적화
+- **터치 친화적**: 최소 44px 터치 타겟 크기 (`min-h-[44px]`)
+- **반응형 레이아웃**: `flex-col sm:flex-row` 등 반응형 클래스 활용
+- **접근성**: WCAG 2.1 AA 준수
+
+## 🔒 보안 규칙
+
+### 접근 제어
+- **최소권한 원칙**: 결재 라인 또는 명시된 권한자만 문서 열람 가능
+- **UUID 기반**: 순차적 ID 추측 방지
+- **세션 보안**: HttpOnly, SameSite, Secure 쿠키 사용
+- **감사 로그**: 모든 중요 액션 기록 (WORM 정책)
+
+### 데이터 보호
+- **비밀번호**: BCrypt 해싱 (salt rounds: 10)
+- **전송 보안**: HTTPS/TLS 1.3
+- **저장 암호화**: AES-256
+
+## 📝 코딩 규칙
+
+### 네이밍 컨벤션
+- **클래스**: PascalCase (예: `UserService`, `DocumentController`)
+- **메서드**: camelCase (예: `createUser`, `approveDocument`)
+- **상수**: UPPER_SNAKE_CASE (예: `MAX_APPROVAL_STEPS`)
+
+### API 설계
+- **Base URL**: `http://localhost:8080/api`
+- **인증**: JWT Bearer Token + Session
+- **로그인 ID**: `login_id` 필드 기반 (영문, 숫자, 언더스코어만)
+- **응답 형식**: 일관된 JSON 구조 사용
+
+## 🧪 빌드 및 테스트
+
+### 백엔드 빌드
+```bash
+cd backend
+gradle clean build -x test
+```
+
+### 프론트엔드 빌드
+```bash
+cd brotherhood
+npm run build  # 배포 전 필수 실행
+```
+
+### 빌드 후 오류 확인
+- 빌드나 bootRun 실행 후 오류 발생 여부를 확인하고 다음 명령어 실행
+- 로그 파일 확인: `backend\logs\approval-system.log`
+
+## 📚 문서 관리
+
+### project-context.md 업데이트 원칙
+- **문제 해결 시**: 즉시 "3. 문제 해결 내용" 섹션에 추가
+- **새로운 구현 완료 시**: 즉시 "1. 구현 내역" 섹션에 추가
+- **질문/답변 발생 시**: 즉시 "2. 질의 응답 내용" 섹션에 추가
+- **시스템 상태 변경 시**: 즉시 "5. 현재 시스템 상태" 섹션에 업데이트
+
+### 새 세션 시작 시
+1. `docs/project-context.md` 최신 내용 확인
+2. Railway 프로덕션 환경 정상 작동 확인
+3. 로컬 환경 정상 작동 확인
+4. 다음 작업 계획 수립
+
+## 🎯 현재 프로젝트 상태 (2025-10-02 기준)
+
+### ✅ 완료된 기능
+- Railway 프로덕션 배포 (백엔드 + 프론트엔드)
+- 모바일 반응형 시스템 (4단계 완료)
+- JWT 기반 로그인/로그아웃
+- 결재 시스템 완전 구현
+- 문서 관리 시스템
+- 사용자 관리 시스템
+- Brotherhood 브랜딩 시스템
+
+### 🔴 다음 우선순위 작업
+1. **5단계: 최종 폴리시 및 테스트** (최우선)
+   - 모바일 기기에서 실제 사용자 테스트
+   - 터치 인터랙션 및 사용성 검증
+   - 성능 최적화 및 버그 수정
+
+## ⚠️ 주의사항
+
+- 항상 현재 디렉토리 위치 확인 (`pwd`)
+- PowerShell에서 `&&` 연산자 사용 금지
+- 시스템 시작 후 반드시 15초 대기
+- 모든 ID는 UUID로 처리
+- 배포 전 로컬에서 `npm run build` 테스트 필수
+- Git Bash 사용 권장 (PowerShell 제한사항 회피)

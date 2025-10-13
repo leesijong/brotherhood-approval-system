@@ -49,6 +49,8 @@ export function AppLayout({
             "md:ml-64",
             showTopNav ? "pt-16" : "pt-0"
           )}
+          role="main"
+          aria-label="메인 콘텐츠"
         >
           <div className={cn(
             "p-4 md:p-6", // 모바일에서 패딩 줄임

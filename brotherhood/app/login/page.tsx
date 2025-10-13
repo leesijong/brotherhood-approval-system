@@ -217,7 +217,7 @@ export default function LoginPage() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleLogin} className="space-y-4">
+              <form onSubmit={handleLogin} className="space-y-4" aria-label="로그인 폼">
                 {/* 로그인 ID */}
                 <FormField
                   label="로그인 ID"
@@ -225,7 +225,7 @@ export default function LoginPage() {
                   error={errors.username}
                 >
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
                     <Input
                       type="text"
                       placeholder="로그인 ID를 입력하세요"
@@ -233,6 +233,8 @@ export default function LoginPage() {
                       onChange={(e) => updateFormData('username', e.target.value)}
                       className={`pl-10 min-h-[44px] ${errors.username ? 'border-red-500' : ''}`}
                       disabled={isLoading}
+                      aria-label="로그인 ID"
+                      aria-required="true"
                     />
                   </div>
                 </FormField>
@@ -244,7 +246,7 @@ export default function LoginPage() {
                   error={errors.password}
                 >
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
                     <Input
                       type={showPassword ? 'text' : 'password'}
                       placeholder="비밀번호를 입력하세요"
@@ -252,13 +254,16 @@ export default function LoginPage() {
                       onChange={(e) => updateFormData('password', e.target.value)}
                       className={`pl-10 pr-10 min-h-[44px] ${errors.password ? 'border-red-500' : ''}`}
                       disabled={isLoading}
+                      aria-label="비밀번호"
+                      aria-required="true"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground min-h-[44px] min-w-[44px] flex items-center justify-center"
+                      aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
                     >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      {showPassword ? <EyeOff className="h-4 w-4" aria-hidden="true" /> : <Eye className="h-4 w-4" aria-hidden="true" />}
                     </button>
                   </div>
                 </FormField>

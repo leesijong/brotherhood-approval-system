@@ -616,8 +616,9 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
                 router.push('/documents/create');
                 onClose(); // 모바일에서 메뉴 클릭 후 사이드바 닫기
               }}
+              aria-label="새 문서 작성하기"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4" aria-hidden="true" />
               <span className="text-sm md:text-base">새 문서 작성</span>
             </Button>
           </div>

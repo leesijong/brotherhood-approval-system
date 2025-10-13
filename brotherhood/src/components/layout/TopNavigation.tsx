@@ -87,7 +87,11 @@ export function TopNavigation({ onMenuClick }: TopNavigationProps) {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border">
+    <header 
+      className="fixed top-0 left-0 right-0 z-50 bg-background border-b border-border"
+      role="banner"
+      aria-label="상단 네비게이션"
+    >
       <div className="flex items-center justify-between h-16 px-3 md:px-4">
         {/* Left Section */}
         <div className="flex items-center space-x-2 md:space-x-4">
@@ -96,8 +100,10 @@ export function TopNavigation({ onMenuClick }: TopNavigationProps) {
             size="icon"
             onClick={onMenuClick}
             className="md:hidden min-h-[44px] min-w-[44px]" // 터치 친화적 크기
+            aria-label="메뉴 열기"
+            aria-expanded={false}
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-5 w-5" aria-hidden="true" />
           </Button>
 
           {/* Logo */}
@@ -120,14 +126,16 @@ export function TopNavigation({ onMenuClick }: TopNavigationProps) {
 
         {/* Center Section - Search (모바일에서는 숨김) */}
         <div className="flex-1 max-w-md mx-4 hidden lg:block">
-          <form onSubmit={handleSearch} className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <form onSubmit={handleSearch} className="relative" role="search" aria-label="문서 검색">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
             <Input
               type="text"
               placeholder="문서, 사용자, 결재선 검색..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 pr-4"
+              aria-label="검색어 입력"
+              role="searchbox"
             />
           </form>
         </div>
@@ -139,12 +147,14 @@ export function TopNavigation({ onMenuClick }: TopNavigationProps) {
             variant="ghost" 
             size="icon" 
             className="relative min-h-[44px] min-w-[44px] md:min-h-auto md:min-w-auto"
+            aria-label={`알림 ${unreadNotifications > 0 ? `(${unreadNotifications}개 읽지 않음)` : ''}`}
           >
-            <Bell className="h-5 w-5" />
+            <Bell className="h-5 w-5" aria-hidden="true" />
             {unreadNotifications > 0 && (
               <Badge 
                 variant="destructive" 
                 className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+                aria-hidden="true"
               >
                 {unreadNotifications > 9 ? '9+' : unreadNotifications}
               </Badge>
@@ -157,10 +167,12 @@ export function TopNavigation({ onMenuClick }: TopNavigationProps) {
               <Button 
                 variant="ghost" 
                 className="relative h-8 w-8 md:h-8 md:w-8 rounded-full min-h-[44px] min-w-[44px] md:min-h-auto md:min-w-auto"
+                aria-label="사용자 메뉴 열기"
+                aria-haspopup="true"
               >
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="" alt={user?.displayName} />
-                  <AvatarFallback>
+                  <AvatarImage src="" alt={user?.displayName || '사용자'} />
+                  <AvatarFallback aria-label={`${user?.displayName || '사용자'} 프로필`}>
                     {user?.displayName?.charAt(0) || 'U'}
                   </AvatarFallback>
                 </Avatar>
