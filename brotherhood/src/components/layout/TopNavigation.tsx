@@ -28,6 +28,7 @@ interface TopNavigationProps {
 
 export function TopNavigation({ onMenuClick }: TopNavigationProps) {
   const { user, logout, isLoggingOut, setLoggingOut } = useAuthStore();
+  const { sidebarOpen } = useUIStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [isLoggingOutLocal, setIsLoggingOutLocal] = useState(false);
@@ -100,8 +101,8 @@ export function TopNavigation({ onMenuClick }: TopNavigationProps) {
             size="icon"
             onClick={onMenuClick}
             className="md:hidden min-h-[44px] min-w-[44px]" // 터치 친화적 크기
-            aria-label="메뉴 열기"
-            aria-expanded={false}
+            aria-label={sidebarOpen ? "메뉴 닫기" : "메뉴 열기"}
+            aria-expanded={sidebarOpen}
           >
             <Menu className="h-5 w-5" aria-hidden="true" />
           </Button>

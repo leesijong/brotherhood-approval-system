@@ -1,5 +1,11 @@
 ﻿import { create } from 'zustand'
 
+// 화면 크기 감지를 위한 유틸리티
+const isDesktop = () => {
+  if (typeof window === 'undefined') return false;
+  return window.innerWidth >= 768; // md breakpoint
+}
+
 interface Notification {
   id: string
   type: 'success' | 'error' | 'warning' | 'info'
@@ -24,7 +30,7 @@ interface UIState {
 }
 
 export const useUIStore = create<UIState>((set) => ({
-  sidebarOpen: true,
+  sidebarOpen: false, // 초기값: 닫힌 상태 (모바일 우선)
   theme: 'system',
   globalLoading: false,
   notifications: [],

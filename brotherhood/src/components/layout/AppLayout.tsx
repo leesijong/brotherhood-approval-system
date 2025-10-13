@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TopNavigation } from './TopNavigation';
 import { DashboardSidebar } from '../dashboard-sidebar';
 import { useUIStore } from '@/stores/uiStore';
@@ -22,6 +22,32 @@ export function AppLayout({
   contentClassName
 }: AppLayoutProps) {
   const { sidebarOpen, setSidebarOpen } = useUIStore();
+
+  // 화면 크기 변화 감지하여 사이드바 상태 조정
+  useEffect(() => {
+    const handleResize = () => {
+      const isDesktop = window.innerWidth >= 768; // md breakpoint
+      
+      if (isDesktop) {
+        // 데스크톱에서는 사이드바를 항상 열어둠
+        setSidebarOpen(true);
+      } else {
+        // 모바일에서는 사이드바를 닫음
+        setSidebarOpen(false);
+      }
+    };
+
+    // 초기 설정
+    handleResize();
+
+    // 리사이즈 이벤트 리스너 등록
+    window.addEventListener('resize', handleResize);
+
+    // 클린업
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [setSidebarOpen]);
 
   return (
     <div className={cn("min-h-screen bg-background", className)}>

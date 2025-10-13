@@ -578,19 +578,10 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
 
   return (
     <>
-      {/* Mobile Overlay */}
+      {/* Mobile Overlay - 모바일에서 사이드바가 열릴 때만 표시 */}
       {isOpen && (
         <div 
           className="fixed inset-0 z-40 bg-black/50 md:hidden"
-          onClick={onClose}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Mobile Backdrop */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -600,6 +591,7 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
       <aside 
         className={cn(
           "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-sidebar border-r border-sidebar-border z-50 transition-transform duration-300 ease-in-out",
+          // 데스크톱에서는 항상 표시, 모바일에서는 상태에 따라 표시/숨김
           "md:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
