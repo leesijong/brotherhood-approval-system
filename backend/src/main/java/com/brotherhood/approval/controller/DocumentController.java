@@ -388,6 +388,26 @@ public class DocumentController {
     }
     
     /**
+     * 문서 상태 복원 (테스트용)
+     */
+    @PostMapping("/{id}/restore")
+    @Operation(summary = "문서 상태 복원", description = "문서를 PENDING 상태로 복원합니다. (테스트용)")
+    public ResponseEntity<BaseResponse<DocumentDto>> restoreDocument(
+            @PathVariable String id, @RequestHeader(value = "X-User-Id", required = false) String userId) {
+        try {
+            DocumentDto document = documentService.restoreDocument(id, userId);
+            return ResponseEntity.ok(BaseResponse.success(document, "문서가 성공적으로 복원되었습니다"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                    .body(BaseResponse.error(e.getMessage()));
+        } catch (Exception e) {
+            log.error("문서 복원 오류", e);
+            return ResponseEntity.internalServerError()
+                    .body(BaseResponse.error("문서 복원 중 오류가 발생했습니다"));
+        }
+    }
+    
+    /**
      * 문서 삭제
      */
     @DeleteMapping("/{id}")

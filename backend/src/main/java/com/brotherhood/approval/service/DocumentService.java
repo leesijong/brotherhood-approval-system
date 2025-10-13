@@ -450,6 +450,32 @@ public class DocumentService {
     }
     
     /**
+     * 문서 상태 복원 (테스트용)
+     */
+    @Transactional
+    public DocumentDto restoreDocument(String id, String userId) {
+        log.info("문서 상태 복원 요청: {}", id);
+        
+        Document document = documentRepository.findById(UUID.fromString(id))
+                .orElseThrow(() -> new IllegalArgumentException("문서를 찾을 수 없습니다: " + id));
+        
+        // 반려된 문서를 PENDING 상태로 복원
+        if ("REJECTED".equals(document.getStatus())) {
+            document.setStatus("PENDING");
+            document.setRejectionReason(null);  // 반려사유 제거
+            document.setRejectedAt(null);       // 반려일 제거
+            document.setApprovedAt(null);       // 승인일 제거 (혹시 있을 경우)
+            
+            Document savedDocument = documentRepository.save(document);
+            
+            log.info("문서 상태 복원 완료: {} (REJECTED -> PENDING)", savedDocument.getId());
+            return documentMapper.toDto(savedDocument);
+        } else {
+            throw new IllegalArgumentException("복원 가능한 상태가 아닙니다. 현재 상태: " + document.getStatus());
+        }
+    }
+    
+    /**
      * 문서 삭제
      */
     @Transactional
