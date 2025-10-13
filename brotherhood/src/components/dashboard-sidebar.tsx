@@ -534,8 +534,11 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
         <Button
           variant={isActive ? "secondary" : "ghost"}
           className={cn(
-            "w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors min-h-[44px]",
-            isActive && "bg-sidebar-primary text-sidebar-primary-foreground",
+            "w-full justify-start gap-3 transition-colors min-h-[44px]",
+            // 모바일에서 더 명확한 색상 대비
+            "text-gray-100 md:text-sidebar-foreground",
+            "hover:bg-gray-800 hover:text-white md:hover:bg-sidebar-accent md:hover:text-sidebar-accent-foreground",
+            isActive && "bg-gray-800 text-white md:bg-sidebar-primary md:text-sidebar-primary-foreground",
             level > 0 && "ml-4 text-sm"
           )}
           size="sm"
@@ -581,7 +584,7 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
       {/* Mobile Overlay - 모바일에서 사이드바가 열릴 때만 표시 */}
       {isOpen && (
         <div 
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
+          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm md:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -590,7 +593,10 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
       {/* Sidebar */}
       <aside 
         className={cn(
-          "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 bg-sidebar border-r border-sidebar-border z-50 transition-transform duration-300 ease-in-out",
+          "fixed left-0 top-16 h-[calc(100vh-4rem)] w-64 border-r border-sidebar-border z-50 transition-transform duration-300 ease-in-out",
+          // 모바일에서 더 진한 배경색과 그림자 효과
+          "bg-gray-900 md:bg-sidebar",
+          "shadow-2xl md:shadow-none",
           // 데스크톱에서는 항상 표시, 모바일에서는 상태에 따라 표시/숨김
           "md:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
@@ -602,7 +608,7 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
           {/* Quick Actions */}
           <div className="p-3 md:p-4 border-b border-sidebar-border">
             <Button 
-              className="w-full justify-start gap-2 min-h-[44px]" 
+              className="w-full justify-start gap-2 min-h-[44px] bg-red-600 hover:bg-red-700 text-white border-0" 
               size="sm"
               onClick={() => {
                 router.push('/documents/create');
@@ -629,10 +635,10 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
                 </span>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-sidebar-foreground truncate">
+                <p className="text-sm font-medium text-gray-100 md:text-sidebar-foreground truncate">
                   {user?.displayName || '사용자'}
                 </p>
-                <p className="text-xs text-sidebar-foreground/70 truncate">
+                <p className="text-xs text-gray-300 md:text-sidebar-foreground/70 truncate">
                   {user?.branch?.name || '지사'}
                 </p>
               </div>
