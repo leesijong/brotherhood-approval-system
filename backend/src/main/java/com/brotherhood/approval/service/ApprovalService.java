@@ -199,8 +199,8 @@ public class ApprovalService {
             // 8. ApprovalStep 상태 업데이트
             updateApprovalStepStatus(approvalStep, request.getAction());
             
-            // 9. 문서 상태 업데이트
-            updateDocumentStatus(documentId, request.getAction());
+            // 9. 문서 상태 업데이트 (반려사유 포함)
+            updateDocumentStatus(documentId, request.getAction(), request.getComments());
             
             log.info("결재 액션 수행 완료: {} - {}", request.getAction(), approvalStep.getId());
             
@@ -303,9 +303,9 @@ public class ApprovalService {
     }
     
     /**
-     * 문서 상태 업데이트 (Lazy Loading 문제 해결)
+     * 문서 상태 업데이트 (Lazy Loading 문제 해결, 반려사유 포함)
      */
-    private void updateDocumentStatus(UUID documentId, String action) {
+    private void updateDocumentStatus(UUID documentId, String action, String comments) {
         Document document = documentRepository.findById(documentId)
                 .orElseThrow(() -> new IllegalArgumentException("문서를 찾을 수 없습니다: " + documentId));
         
@@ -323,7 +323,8 @@ public class ApprovalService {
             case "REJECT" -> {
                 document.setStatus("REJECTED");
                 document.setRejectedAt(LocalDateTime.now());
-                log.info("문서 반려: {}", documentId);
+                document.setRejectionReason(comments);  // 반려사유 저장
+                log.info("문서 반려: {} (사유: {})", documentId, comments);
             }
             case "RETURN" -> {
                 document.setStatus("DRAFT");
