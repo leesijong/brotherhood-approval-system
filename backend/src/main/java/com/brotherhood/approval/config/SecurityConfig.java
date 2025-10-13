@@ -49,17 +49,19 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // 로컬 개발 환경
-        configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:3000", 
-            "http://127.0.0.1:3000"
-        ));
-        // Railway 프로덕션 환경 (와일드카드 패턴)
+        
+        // 로컬 개발 환경 및 Railway 프로덕션 환경 모두 허용
         configuration.setAllowedOriginPatterns(Arrays.asList(
-            "https://*.up.railway.app"  // 모든 Railway 도메인 허용
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "https://*.up.railway.app",  // 모든 Railway 도메인 허용
+            "https://brotherhood-frontend-production.up.railway.app",  // 프론트엔드 명시적 허용
+            "https://brotherhood-approval-system-production.up.railway.app"  // 백엔드도 허용
         ));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type", "X-User-Id", "X-User-Roles"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
