@@ -107,8 +107,12 @@ export function TopNavigation({ onMenuClick }: TopNavigationProps) {
             <Menu className="h-5 w-5" aria-hidden="true" />
           </Button>
 
-          {/* Logo */}
-          <div className="flex items-center space-x-2">
+          {/* Logo - 클릭 시 대시보드로 이동 */}
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity min-h-[44px] md:min-h-auto"
+            aria-label="대시보드로 이동"
+          >
             <div className="w-6 h-6 md:w-8 md:h-8 rounded-lg flex items-center justify-center">
               <Image 
                 src={brotherhoodLogo} 
@@ -122,7 +126,7 @@ export function TopNavigation({ onMenuClick }: TopNavigationProps) {
             <span className="font-semibold text-base md:text-lg text-foreground hidden sm:block">
               Brotherhood
             </span>
-          </div>
+          </button>
         </div>
 
         {/* Center Section - Search (모바일에서는 숨김) */}
