@@ -180,6 +180,25 @@ export default function DocumentDetailPage() {
   const [isAddingComment, setIsAddingComment] = useState(false);
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [loadingAttachments, setLoadingAttachments] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // 화면 크기 감지 훅
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+
+    // 초기 체크
+    checkScreenSize();
+
+    // 리사이즈 이벤트 리스너
+    window.addEventListener('resize', checkScreenSize);
+
+    // 클린업
+    return () => {
+      window.removeEventListener('resize', checkScreenSize);
+    };
+  }, []);
 
   // 테스트용 사용자 초기화
   // initTestUser 제거 - 자동 로그인 비활성화
@@ -748,18 +767,16 @@ export default function DocumentDetailPage() {
             
             {document.status === 'PENDING' && (
               <>
-                {/* 승인/반려는 작성자가 아닌 다른 사용자만 가능하고, 결재할 수 있는 단계가 있을 때만 */}
-                {document.authorId !== user?.id && user && findPendingApprovalStepForUser(document, user.id) && (
+                {/* 승인/반려는 작성자가 아닌 다른 사용자만 가능하고, 결재할 수 있는 단계가 있을 때만 - 데스크톱에서만 표시 */}
+                {!isMobile && document.authorId !== user?.id && user && findPendingApprovalStepForUser(document, user.id) && (
                   <>
                     <Button onClick={handleApproveDocument} size="sm" className="bg-green-600 hover:bg-green-700 min-h-[44px]">
                       <Check className="mr-2 h-4 w-4" />
-                      <span className="hidden sm:inline">승인</span>
-                      <span className="sm:hidden">승인</span>
+                      <span>승인</span>
                     </Button>
                     <Button onClick={handleRejectDocument} size="sm" variant="destructive" className="min-h-[44px]">
                       <X className="mr-2 h-4 w-4" />
-                      <span className="hidden sm:inline">반려</span>
-                      <span className="sm:hidden">반려</span>
+                      <span>반려</span>
                     </Button>
                   </>
                 )}
@@ -1010,13 +1027,14 @@ export default function DocumentDetailPage() {
                   문서 다운로드
                 </Button>
                 
-                {document.status === 'PENDING' && (
+                {/* 모바일에서만 승인/반려 버튼 표시 */}
+                {isMobile && document.status === 'PENDING' && document.authorId !== user?.id && user && findPendingApprovalStepForUser(document, user.id) && (
                   <>
-                    <Button className="w-full min-h-[44px]">
+                    <Button onClick={handleApproveDocument} className="w-full min-h-[44px] bg-green-600 hover:bg-green-700">
                       <CheckCircle className="mr-2 h-4 w-4" />
                       승인
                     </Button>
-                    <Button className="w-full min-h-[44px]" variant="destructive">
+                    <Button onClick={handleRejectDocument} className="w-full min-h-[44px]" variant="destructive">
                       <XCircle className="mr-2 h-4 w-4" />
                       반려
                     </Button>
