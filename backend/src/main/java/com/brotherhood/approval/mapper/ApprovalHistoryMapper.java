@@ -21,15 +21,6 @@ public interface ApprovalHistoryMapper {
     /**
      * 엔티티를 DTO로 변환
      */
-    @Mapping(target = "documentId", source = "document.id")
-    @Mapping(target = "documentTitle", source = "document.title")
-    @Mapping(target = "approvalStepId", source = "approvalStep.id")
-    @Mapping(target = "approverId", source = "approver.id")
-    @Mapping(target = "approverName", source = "approver.fullName")
-    @Mapping(target = "approverDisplayName", source = "approver.displayName")
-    @Mapping(target = "delegatedToId", source = "delegatedTo.id")
-    @Mapping(target = "delegatedToName", source = "delegatedTo.fullName")
-    @Mapping(target = "delegatedToDisplayName", source = "delegatedTo.displayName")
     ApprovalHistoryDto toDto(ApprovalHistory approvalHistory);
     
     /**

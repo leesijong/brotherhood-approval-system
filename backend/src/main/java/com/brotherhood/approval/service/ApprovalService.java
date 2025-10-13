@@ -217,8 +217,6 @@ public class ApprovalService {
                     .approverName(approverName)
                     .approverDisplayName(approverDisplayName)
                     .delegatedToId(delegatedToId)
-                    .delegatedToName(delegatedToName)
-                    .delegatedToDisplayName(delegatedToDisplayName)
                     .actionAt(LocalDateTime.now())
                     .build();
             

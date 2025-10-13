@@ -43,64 +43,31 @@ public class ApprovalHistory {
     @Column(name = "user_agent", columnDefinition = "TEXT")
     private String userAgent;
     
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "document_id", nullable = false, columnDefinition = "UUID")
-    private Document document;
+    @Column(name = "document_id", nullable = false, columnDefinition = "UUID")
+    private UUID documentId;
     
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "approval_step_id", nullable = false, columnDefinition = "UUID")
-    private ApprovalStep approvalStep;
+    @Column(name = "approval_step_id", nullable = false, columnDefinition = "UUID")
+    private UUID approvalStepId;
     
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "approver_id", nullable = false, columnDefinition = "UUID")
-    private User approver;
+    @Column(name = "approver_id", nullable = false, columnDefinition = "UUID")
+    private UUID approverId;
     
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "delegated_to", columnDefinition = "UUID")
-    private User delegatedTo;
+    @Column(name = "delegated_to", columnDefinition = "UUID")
+    private UUID delegatedToId;
     
     @CreatedDate
     @Column(name = "action_at", nullable = false, updatable = false)
     private LocalDateTime actionAt;
     
-    // Helper methods
-    public UUID getDocumentId() {
-        return document != null ? document.getId() : null;
-    }
-    
-    public UUID getApprovalStepId() {
-        return approvalStep != null ? approvalStep.getId() : null;
-    }
-    
-    public UUID getApproverId() {
-        return approver != null ? approver.getId() : null;
-    }
-    
-    public UUID getDelegatedToId() {
-        return delegatedTo != null ? delegatedTo.getId() : null;
-    }
-    
     // Additional fields for DTO mapping (Lazy Loading 문제 해결용)
     @Transient
-    private UUID documentId;
-    
-    @Transient
     private String documentTitle;
-    
-    @Transient
-    private UUID approvalStepId;
-    
-    @Transient
-    private UUID approverId;
     
     @Transient
     private String approverName;
     
     @Transient
     private String approverDisplayName;
-    
-    @Transient
-    private UUID delegatedToId;
     
     @Transient
     private String delegatedToName;
