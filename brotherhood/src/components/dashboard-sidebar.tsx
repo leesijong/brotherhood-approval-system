@@ -412,10 +412,11 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
 
   const handleItemClick = (item: MenuItem) => {
     if (item.children) {
+      // 하위 메뉴가 있는 경우: 토글만 하고 사이드바는 유지
       toggleExpanded(item.id);
     } else if (item.href) {
+      // 하위 메뉴가 없는 경우: 페이지 이동 후 모바일에서 사이드바 닫기
       router.push(item.href);
-      // 모바일에서 사이드바 닫기
       if (window.innerWidth < 768) {
         onClose();
       }
@@ -542,13 +543,7 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
             level > 0 && "ml-4 text-sm"
           )}
           size="sm"
-          onClick={() => {
-            handleItemClick(item);
-            // 모바일에서 메뉴 클릭 시 사이드바 닫기
-            if (window.innerWidth < 768) {
-              onClose();
-            }
-          }}
+          onClick={() => handleItemClick(item)}
           aria-expanded={hasChildren ? isExpanded : undefined}
           aria-current={isActive ? "page" : undefined}
         >
