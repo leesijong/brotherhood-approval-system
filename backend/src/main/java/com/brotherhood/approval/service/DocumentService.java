@@ -461,10 +461,26 @@ public class DocumentService {
         
         // 반려된 문서를 PENDING 상태로 복원
         if ("REJECTED".equals(document.getStatus())) {
+            // 1. 문서 상태 복원
             document.setStatus("PENDING");
             document.setRejectionReason(null);  // 반려사유 제거
             document.setRejectedAt(null);       // 반려일 제거
             document.setApprovedAt(null);       // 승인일 제거 (혹시 있을 경우)
+            
+            // 2. 관련 결재선의 모든 결재단계 상태를 PENDING으로 복원
+            List<ApprovalLine> approvalLines = approvalLineRepository.findByDocumentId(document.getId());
+            for (ApprovalLine approvalLine : approvalLines) {
+                List<ApprovalStep> approvalSteps = approvalStepRepository.findByApprovalLineId(approvalLine.getId().toString());
+                for (ApprovalStep approvalStep : approvalSteps) {
+                    if ("REJECTED".equals(approvalStep.getStatus()) || "APPROVED".equals(approvalStep.getStatus())) {
+                        approvalStep.setStatus("PENDING");
+                        approvalStep.setApprovedAt(null);
+                        approvalStep.setRejectedAt(null);
+                        approvalStepRepository.save(approvalStep);
+                        log.info("결재단계 복원: {} ({} -> PENDING)", approvalStep.getId(), approvalStep.getStatus());
+                    }
+                }
+            }
             
             Document savedDocument = documentRepository.save(document);
             
