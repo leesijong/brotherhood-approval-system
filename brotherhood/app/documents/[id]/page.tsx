@@ -38,6 +38,7 @@ import { useToast } from '@/components/Toast';
 import { AttachmentDownloader } from '@/components/AttachmentDownloader';
 import { ApprovalProgress } from '@/components/ApprovalProgress';
 import { ApprovalAction, ApprovalActionRequest } from '@/types/approval';
+import { RejectModal } from '@/components/ui/reject-modal';
 
 // 첨부파일 타입
 interface Attachment {
@@ -181,6 +182,7 @@ export default function DocumentDetailPage() {
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [loadingAttachments, setLoadingAttachments] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
 
   // 화면 크기 감지 훅
   useEffect(() => {
@@ -644,11 +646,13 @@ export default function DocumentDetailPage() {
     }
   };
 
-  const handleRejectDocument = async () => {
+  const handleRejectDocument = () => {
     if (!document || !user) return;
-    
-    const rejectionReason = prompt('반려 사유를 입력해주세요:');
-    if (!rejectionReason) return;
+    setShowRejectModal(true);
+  };
+
+  const handleRejectConfirm = async (rejectionReason: string) => {
+    if (!document || !user) return;
     
     try {
       // 현재 사용자가 결재할 수 있는 결재단계 찾기
@@ -885,6 +889,31 @@ export default function DocumentDetailPage() {
               </CardContent>
             </Card>
 
+            {/* 반려사유 표시 (문서가 반려된 경우만) */}
+            {document.status === 'REJECTED' && document.rejectionReason && (
+              <Card className="border-red-200 bg-red-50">
+                <CardHeader>
+                  <div className="flex items-center space-x-2">
+                    <XCircle className="h-5 w-5 text-red-600" />
+                    <CardTitle className="text-red-800">반려 사유</CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="bg-white border border-red-200 rounded-lg p-4">
+                    <p className="text-gray-800 leading-relaxed whitespace-pre-wrap">
+                      {document.rejectionReason}
+                    </p>
+                  </div>
+                  {document.rejectedAt && (
+                    <div className="mt-3 text-sm text-gray-600 flex items-center space-x-2">
+                      <Clock className="h-4 w-4" />
+                      <span>반려일: {new Date(document.rejectedAt).toLocaleString('ko-KR')}</span>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
             {/* 문서 내용 */}
             <Card>
               <CardHeader>
@@ -1050,6 +1079,15 @@ export default function DocumentDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* 반려사유 입력 모달 */}
+      <RejectModal
+        isOpen={showRejectModal}
+        onClose={() => setShowRejectModal(false)}
+        onConfirm={handleRejectConfirm}
+        title="문서 반려"
+        description="반려 사유를 입력해주세요. 입력된 사유는 기안자에게 전달됩니다."
+      />
     </AppLayout>
   );
 }
