@@ -14,6 +14,7 @@ import com.brotherhood.approval.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -205,6 +206,9 @@ public class ApprovalService {
             log.info("결재 액션 수행 완료: {} - {}", request.getAction(), approvalStep.getId());
             
             // 10. ApprovalHistory 저장
+            log.info("ApprovalHistory 생성 데이터 - documentId: {}, approvalStepId: {}, approverId: {}, delegatedToId: {}", 
+                    documentId, approvalStepId, approverId, delegatedToId);
+            
             ApprovalHistory approvalHistory = ApprovalHistory.builder()
                     .action(String.valueOf(request.getAction()))
                     .comment(request.getComments())
@@ -217,7 +221,7 @@ public class ApprovalService {
                     .approverName(approverName)
                     .approverDisplayName(approverDisplayName)
                     .delegatedToId(delegatedToId)
-                    .actionAt(LocalDateTime.now())
+                    // actionAt은 @CreatedDate로 자동 설정됨
                     .build();
             
             ApprovalHistory savedHistory = approvalHistoryRepository.save(approvalHistory);
@@ -246,8 +250,21 @@ public class ApprovalService {
      * 사용자별 결재 이력 조회
      */
     public Page<ApprovalHistoryDto> getApprovalHistoryByUser(String userId, Pageable pageable) {
-        return approvalHistoryRepository.findByApproverIdOrderByActionAtDesc(UUID.fromString(userId), pageable)
-                .map(approvalHistoryMapper::toDto);
+        List<ApprovalHistory> histories = approvalHistoryRepository.findByApproverIdOrderByActionAtDesc(UUID.fromString(userId));
+        
+        // @Transient 필드들을 다시 채워주기
+        histories.forEach(this::populateTransientFields);
+        
+        // 페이징 처리
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), histories.size());
+        List<ApprovalHistory> pagedHistories = histories.subList(start, end);
+        
+        return new PageImpl<>(
+                pagedHistories.stream().map(approvalHistoryMapper::toDto).toList(),
+                pageable,
+                histories.size()
+        );
     }
     
     /**
@@ -396,5 +413,40 @@ public class ApprovalService {
         
         approvalStepRepository.delete(approvalStep);
         log.info("결재단계 삭제 완료: {}", id);
+    }
+    
+    /**
+     * @Transient 필드들을 다시 채워주는 메서드
+     */
+    private void populateTransientFields(ApprovalHistory approvalHistory) {
+        try {
+            // 문서 제목 조회
+            if (approvalHistory.getDocumentId() != null) {
+                Document document = documentRepository.findById(approvalHistory.getDocumentId()).orElse(null);
+                if (document != null) {
+                    approvalHistory.setDocumentTitle(document.getTitle());
+                }
+            }
+            
+            // 결재자 정보 조회
+            if (approvalHistory.getApproverId() != null) {
+                User approver = userRepository.findById(approvalHistory.getApproverId()).orElse(null);
+                if (approver != null) {
+                    approvalHistory.setApproverName(approver.getFullName());
+                    approvalHistory.setApproverDisplayName(approver.getDisplayName());
+                }
+            }
+            
+            // 위임받은 사용자 정보 조회
+            if (approvalHistory.getDelegatedToId() != null) {
+                User delegatedTo = userRepository.findById(approvalHistory.getDelegatedToId()).orElse(null);
+                if (delegatedTo != null) {
+                    approvalHistory.setDelegatedToName(delegatedTo.getFullName());
+                    approvalHistory.setDelegatedToDisplayName(delegatedTo.getDisplayName());
+                }
+            }
+        } catch (Exception e) {
+            log.warn("ApprovalHistory @Transient 필드 채우기 실패: {}", e.getMessage());
+        }
     }
 }

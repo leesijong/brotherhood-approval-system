@@ -25,20 +25,20 @@ public interface ApprovalHistoryRepository extends JpaRepository<ApprovalHistory
     /**
      * 문서별 결재 이력 조회
      */
-    @Query("SELECT ah FROM ApprovalHistory ah WHERE ah.document.id = :documentId ORDER BY ah.actionAt DESC")
+    @Query("SELECT ah FROM ApprovalHistory ah WHERE ah.documentId = :documentId ORDER BY ah.actionAt DESC")
     List<ApprovalHistory> findByDocumentIdOrderByActionAtDesc(@Param("documentId") UUID documentId);
     
     /**
      * 결재단계별 결재 이력 조회
      */
-    @Query("SELECT ah FROM ApprovalHistory ah WHERE ah.approvalStep.id = :approvalStepId ORDER BY ah.actionAt DESC")
+    @Query("SELECT ah FROM ApprovalHistory ah WHERE ah.approvalStepId = :approvalStepId ORDER BY ah.actionAt DESC")
     List<ApprovalHistory> findByApprovalStepIdOrderByActionAtDesc(@Param("approvalStepId") String approvalStepId);
     
     /**
      * 결재자별 결재 이력 조회
      */
-    @Query("SELECT ah FROM ApprovalHistory ah WHERE ah.approver.id = :approverId ORDER BY ah.actionAt DESC")
-    Page<ApprovalHistory> findByApproverIdOrderByActionAtDesc(@Param("approverId") UUID approverId, Pageable pageable);
+    @Query("SELECT ah FROM ApprovalHistory ah WHERE ah.approverId = :approverId ORDER BY ah.actionAt DESC")
+    List<ApprovalHistory> findByApproverIdOrderByActionAtDesc(@Param("approverId") UUID approverId);
     
     /**
      * 액션별 결재 이력 조회
@@ -57,13 +57,13 @@ public interface ApprovalHistoryRepository extends JpaRepository<ApprovalHistory
     /**
      * 문서별 결재 이력 수 조회
      */
-    @Query("SELECT COUNT(ah) FROM ApprovalHistory ah WHERE ah.document.id = :documentId")
+    @Query("SELECT COUNT(ah) FROM ApprovalHistory ah WHERE ah.documentId = :documentId")
     long countByDocumentId(@Param("documentId") UUID documentId);
     
     /**
      * 결재자별 결재 이력 수 조회
      */
-    @Query("SELECT COUNT(ah) FROM ApprovalHistory ah WHERE ah.approver.id = :approverId")
+    @Query("SELECT COUNT(ah) FROM ApprovalHistory ah WHERE ah.approverId = :approverId")
     long countByApproverId(@Param("approverId") UUID approverId);
     
     /**
