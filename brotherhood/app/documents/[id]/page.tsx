@@ -539,19 +539,6 @@ export default function DocumentDetailPage() {
     }
   }, [params?.id]);
 
-  // 디버깅: 문서 데이터 확인
-  useEffect(() => {
-    if (document) {
-      console.log('Document Debug:', {
-        id: document.id,
-        title: document.title,
-        status: document.status,
-        rejectionReason: document.rejectionReason,
-        rejectedAt: document.rejectedAt,
-        shouldShowRejectionCard: document.status === 'REJECTED'
-      });
-    }
-  }, [document]);
 
   // 댓글 추가
   const handleAddComment = async () => {
@@ -925,10 +912,6 @@ export default function DocumentDetailPage() {
                       <span>반려일: {new Date(document.rejectedAt).toLocaleString('ko-KR')}</span>
                     </div>
                   )}
-                  {/* 디버깅 정보 */}
-                  <div className="mt-3 text-xs text-gray-500 bg-gray-100 p-2 rounded">
-                    <strong>디버깅:</strong> rejectionReason = "{document.rejectionReason}"
-                  </div>
                 </CardContent>
               </Card>
             )}
