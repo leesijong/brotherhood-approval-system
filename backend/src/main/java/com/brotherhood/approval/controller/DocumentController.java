@@ -33,7 +33,6 @@ import java.nio.file.Paths;
 import java.nio.file.Files;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.Optional;
 
@@ -385,66 +384,6 @@ public class DocumentController {
             log.error("문서 회수 오류", e);
             return ResponseEntity.internalServerError()
                     .body(BaseResponse.error("문서 회수 중 오류가 발생했습니다"));
-        }
-    }
-    
-    /**
-     * 문서 상태 복원 (테스트용)
-     */
-    @PostMapping("/{id}/restore")
-    @Operation(summary = "문서 상태 복원", description = "문서를 PENDING 상태로 복원합니다. (테스트용)")
-    public ResponseEntity<BaseResponse<DocumentDto>> restoreDocument(
-            @PathVariable String id, @RequestHeader(value = "X-User-Id", required = false) String userId) {
-        try {
-            DocumentDto document = documentService.restoreDocument(id, userId);
-            return ResponseEntity.ok(BaseResponse.success(document, "문서가 성공적으로 복원되었습니다"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest()
-                    .body(BaseResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            log.error("문서 복원 오류", e);
-            return ResponseEntity.internalServerError()
-                    .body(BaseResponse.error("문서 복원 중 오류가 발생했습니다"));
-        }
-    }
-    
-    /**
-     * 결재선 상태 복원 (테스트용)
-     */
-    @PostMapping("/{id}/restore-approval-steps")
-    @Operation(summary = "결재선 상태 복원", description = "문서의 결재선 상태를 PENDING으로 복원합니다. (테스트용)")
-    public ResponseEntity<BaseResponse<String>> restoreApprovalSteps(
-            @PathVariable String id, @RequestHeader(value = "X-User-Id", required = false) String userId) {
-        try {
-            documentService.restoreApprovalSteps(id, userId);
-            return ResponseEntity.ok(BaseResponse.success("SUCCESS", "결재선 상태가 성공적으로 복원되었습니다"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest()
-                    .body(BaseResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            log.error("결재선 상태 복원 오류", e);
-            return ResponseEntity.internalServerError()
-                    .body(BaseResponse.error("결재선 상태 복원 중 오류가 발생했습니다"));
-        }
-    }
-    
-    /**
-     * 문서 및 결재선 상태 디버깅 (테스트용)
-     */
-    @GetMapping("/{id}/debug-status")
-    @Operation(summary = "문서 및 결재선 상태 디버깅", description = "문서와 결재선의 모든 상태 정보를 조회합니다. (테스트용)")
-    public ResponseEntity<BaseResponse<Map<String, Object>>> debugDocumentStatus(
-            @PathVariable String id, @RequestHeader(value = "X-User-Id", required = false) String userId) {
-        try {
-            Map<String, Object> debugInfo = documentService.debugDocumentStatus(id);
-            return ResponseEntity.ok(BaseResponse.success(debugInfo, "디버깅 정보 조회 성공"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest()
-                    .body(BaseResponse.error(e.getMessage()));
-        } catch (Exception e) {
-            log.error("디버깅 정보 조회 오류", e);
-            return ResponseEntity.internalServerError()
-                    .body(BaseResponse.error("디버깅 정보 조회 중 오류가 발생했습니다"));
         }
     }
     

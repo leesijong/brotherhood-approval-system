@@ -30,14 +30,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.UUID;
 
 /**
@@ -451,137 +446,6 @@ public class DocumentService {
         
         log.info("문서 회수 완료: {}", savedDocument.getId());
         return documentMapper.toDto(savedDocument);
-    }
-    
-    /**
-     * 문서 상태 복원 (테스트용)
-     */
-    @Transactional
-    public DocumentDto restoreDocument(String id, String userId) {
-        log.info("문서 상태 복원 요청: {}", id);
-        
-        Document document = documentRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new IllegalArgumentException("문서를 찾을 수 없습니다: " + id));
-        
-        // 반려된 문서를 PENDING 상태로 복원
-        if ("REJECTED".equals(document.getStatus())) {
-            // 1. 문서 상태 복원
-            document.setStatus("PENDING");
-            document.setRejectionReason(null);  // 반려사유 제거
-            document.setRejectedAt(null);       // 반려일 제거
-            document.setApprovedAt(null);       // 승인일 제거 (혹시 있을 경우)
-            
-            // 2. 관련 결재선의 모든 결재단계 상태를 PENDING으로 복원
-            List<ApprovalLine> approvalLines = approvalLineRepository.findByDocumentId(document.getId());
-            for (ApprovalLine approvalLine : approvalLines) {
-                List<ApprovalStep> approvalSteps = approvalStepRepository.findByApprovalLineId(approvalLine.getId().toString());
-                for (ApprovalStep approvalStep : approvalSteps) {
-                    if ("REJECTED".equals(approvalStep.getStatus()) || "APPROVED".equals(approvalStep.getStatus())) {
-                        approvalStep.setStatus("PENDING");
-                        approvalStep.setApprovedAt(null);
-                        approvalStep.setRejectedAt(null);
-                        approvalStepRepository.save(approvalStep);
-                        log.info("결재단계 복원: {} ({} -> PENDING)", approvalStep.getId(), approvalStep.getStatus());
-                    }
-                }
-            }
-            
-            Document savedDocument = documentRepository.save(document);
-            
-            log.info("문서 상태 복원 완료: {} (REJECTED -> PENDING)", savedDocument.getId());
-            return documentMapper.toDto(savedDocument);
-        } else {
-            throw new IllegalArgumentException("복원 가능한 상태가 아닙니다. 현재 상태: " + document.getStatus());
-        }
-    }
-    
-    /**
-     * 결재선 상태 복원 (테스트용)
-     */
-    @Transactional
-    public void restoreApprovalSteps(String id, String userId) {
-        log.info("결재선 상태 복원 요청: {}", id);
-        
-        Document document = documentRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new IllegalArgumentException("문서를 찾을 수 없습니다: " + id));
-        
-        // 관련 결재선의 모든 결재단계 상태를 PENDING으로 복원
-        List<ApprovalLine> approvalLines = approvalLineRepository.findByDocumentId(document.getId());
-        int restoredCount = 0;
-        
-        for (ApprovalLine approvalLine : approvalLines) {
-            List<ApprovalStep> approvalSteps = approvalStepRepository.findByApprovalLineId(approvalLine.getId().toString());
-            for (ApprovalStep approvalStep : approvalSteps) {
-                if ("REJECTED".equals(approvalStep.getStatus()) || "APPROVED".equals(approvalStep.getStatus())) {
-                    approvalStep.setStatus("PENDING");
-                    approvalStep.setApprovedAt(null);
-                    approvalStep.setRejectedAt(null);
-                    approvalStepRepository.save(approvalStep);
-                    restoredCount++;
-                    log.info("결재단계 복원: {} ({} -> PENDING)", approvalStep.getId(), approvalStep.getStatus());
-                }
-            }
-        }
-        
-        log.info("결재선 상태 복원 완료: {} (복원된 결재단계: {}개)", document.getId(), restoredCount);
-    }
-    
-    /**
-     * 문서 및 결재선 상태 디버깅 (테스트용)
-     */
-    @Transactional(readOnly = true)
-    public Map<String, Object> debugDocumentStatus(String id) {
-        log.info("문서 상태 디버깅 요청: {}", id);
-        
-        Map<String, Object> debugInfo = new HashMap<>();
-        
-        // 1. 문서 정보
-        Document document = documentRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new IllegalArgumentException("문서를 찾을 수 없습니다: " + id));
-        
-        Map<String, Object> documentInfo = new HashMap<>();
-        documentInfo.put("id", document.getId().toString());
-        documentInfo.put("title", document.getTitle());
-        documentInfo.put("status", document.getStatus());
-        documentInfo.put("rejectionReason", document.getRejectionReason());
-        documentInfo.put("createdAt", document.getCreatedAt());
-        documentInfo.put("approvedAt", document.getApprovedAt());
-        documentInfo.put("rejectedAt", document.getRejectedAt());
-        debugInfo.put("document", documentInfo);
-        
-        // 2. 결재선 정보
-        List<ApprovalLine> approvalLines = approvalLineRepository.findByDocumentId(document.getId());
-        List<Map<String, Object>> approvalLinesInfo = new ArrayList<>();
-        
-        for (ApprovalLine approvalLine : approvalLines) {
-            Map<String, Object> lineInfo = new HashMap<>();
-            lineInfo.put("id", approvalLine.getId().toString());
-            lineInfo.put("name", approvalLine.getName());
-            
-            // 3. 결재단계 정보
-            List<ApprovalStep> approvalSteps = approvalStepRepository.findByApprovalLineId(approvalLine.getId().toString());
-            List<Map<String, Object>> stepsInfo = new ArrayList<>();
-            
-            for (ApprovalStep step : approvalSteps) {
-                Map<String, Object> stepInfo = new HashMap<>();
-                stepInfo.put("id", step.getId().toString());
-                stepInfo.put("stepOrder", step.getStepOrder());
-                stepInfo.put("status", step.getStatus());
-                stepInfo.put("approverId", step.getApproverId() != null ? step.getApproverId().toString() : null);
-                stepInfo.put("approverName", step.getApprover() != null ? step.getApprover().getName() : null);
-                stepInfo.put("approvedAt", step.getApprovedAt());
-                stepInfo.put("rejectedAt", step.getRejectedAt());
-                stepsInfo.add(stepInfo);
-            }
-            
-            lineInfo.put("approvalSteps", stepsInfo);
-            approvalLinesInfo.add(lineInfo);
-        }
-        
-        debugInfo.put("approvalLines", approvalLinesInfo);
-        
-        log.info("문서 상태 디버깅 완료: {}", id);
-        return debugInfo;
     }
     
     /**
