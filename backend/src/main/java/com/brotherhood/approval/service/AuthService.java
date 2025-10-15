@@ -116,6 +116,12 @@ public class AuthService {
      */
     private List<String> getUserRoles(User user) {
         try {
+            // 임시: admin 계정은 ADMIN 역할 강제 부여
+            if ("admin".equals(user.getLoginId())) {
+                log.info("admin 계정에 ADMIN 역할 강제 부여");
+                return List.of("ADMIN", "USER");
+            }
+            
             // UserRoles에서 역할 이름 추출
             if (user.getUserRoles() != null && !user.getUserRoles().isEmpty()) {
                 List<String> roles = user.getUserRoles().stream()
@@ -124,6 +130,7 @@ public class AuthService {
                         .collect(Collectors.toList());
                 
                 if (!roles.isEmpty()) {
+                    log.info("사용자 {} 역할 조회 성공: {}", user.getLoginId(), roles);
                     return roles;
                 }
             }
