@@ -30,11 +30,11 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
     
-  # Security Configuration
-  security:
-    jwt:
-      secret: ${JWT_SECRET:brotherhood-approval-system-secret-key-change-in-production}
-      expiration: ${JWT_EXPIRATION:3600}
+  # JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:brotherhood-approval-system-secret-key-change-this-in-production-min-256-bits}
+  access-token-validity: ${JWT_ACCESS_TOKEN_VALIDITY:3600000}  # 1시간 (밀리초)
+  refresh-token-validity: ${JWT_REFRESH_TOKEN_VALIDITY:86400000}  # 24시간 (밀리초)
       
   # Encryption Configuration
   encryption:

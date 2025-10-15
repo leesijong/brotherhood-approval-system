@@ -4,6 +4,7 @@ import com.brotherhood.approval.dto.auth.LoginRequest;
 import com.brotherhood.approval.dto.auth.LoginResponse;
 import com.brotherhood.approval.entity.User;
 import com.brotherhood.approval.repository.UserRepository;
+import com.brotherhood.approval.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,13 +13,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * 인증 서비스 - 기본 Spring Security 사용
+ * 인증 서비스 - JWT 기반 인증
  * 
  * @author Brotherhood Development Team
- * @version 3.0.0
- * @since 2024-09-23
+ * @version 4.0.0
+ * @since 2025-10-15
  */
 @Slf4j
 @Service
@@ -28,18 +30,19 @@ public class AuthService {
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
     
     /**
-     * 사용자 로그인
+     * 사용자 로그인 - JWT 토큰 생성
      */
     @Transactional
     public LoginResponse login(LoginRequest request) {
         log.info("사용자 로그인 시도: {}", request.getUsername());
         
         try {
-            // 사용자 조회 (기본 정보만)
+            // 사용자 조회 (역할 정보 포함)
             log.info("로그인 ID로 사용자 조회 시도: {}", request.getUsername());
-            User user = userRepository.findByLoginId(request.getUsername())
+            User user = userRepository.findByLoginIdWithRoles(request.getUsername())
                     .orElseThrow(() -> new IllegalArgumentException("사용자명 또는 비밀번호가 올바르지 않습니다"));
             log.info("사용자 조회 성공: {}", user.getLoginId());
             
@@ -51,16 +54,32 @@ public class AuthService {
                 throw new IllegalArgumentException("사용자명 또는 비밀번호가 올바르지 않습니다");
             }
             
+            // 사용자 역할 조회
+            List<String> roles = getUserRoles(user);
+            log.info("사용자 역할: {}", roles);
+            
+            // JWT 토큰 생성
+            String accessToken = jwtTokenProvider.createAccessToken(
+                user.getId().toString(), 
+                user.getLoginId(), 
+                roles
+            );
+            String refreshToken = jwtTokenProvider.createRefreshToken(user.getId().toString());
+            
             // 로그인 시간 업데이트
             user.setLastLoginAt(LocalDateTime.now());
             userRepository.save(user);
             
-                log.info("사용자 로그인 성공: {}", user.getName());
+            log.info("사용자 로그인 성공: {} (역할: {})", user.getName(), roles);
+            
+            // Branch 정보 안전하게 조회
+            String branchId = user.getBranch() != null ? user.getBranch().getId().toString() : null;
+            String branchName = user.getBranch() != null ? user.getBranch().getName() : null;
             
             return LoginResponse.builder()
-                    .accessToken("SESSION_BASED") // 세션 기반이므로 토큰 대신 세션 사용
-                    .refreshToken("SESSION_BASED")
-                    .tokenType("Session")
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .tokenType("Bearer")
                     .expiresIn(3600L) // 1시간
                 .userInfo(LoginResponse.UserInfo.builder()
                         .id(user.getId().toString())
@@ -70,9 +89,9 @@ public class AuthService {
                         .lastName("")
                         .baptismalName(user.getBaptismalName())
                         .displayName(user.getName() + " (" + user.getBaptismalName() + ")")
-                        .branchId(null) // 임시로 null 설정
-                        .branchName(null) // 임시로 null 설정
-                        .roles(List.of("USER")) // 임시로 기본 역할 설정
+                        .branchId(branchId)
+                        .branchName(branchName)
+                        .roles(roles)
                         .isActive(user.getIsActive())
                         .build())
                     .build();
@@ -93,15 +112,27 @@ public class AuthService {
     }
     
     /**
-     * 사용자 역할 조회 (별도 쿼리 사용)
+     * 사용자 역할 조회
      */
     private List<String> getUserRoles(User user) {
         try {
-            // 별도 쿼리로 역할 조회하여 Lazy Loading 문제 방지
-            List<String> roles = userRepository.findRoleNamesByUserId(user.getId());
-            return roles.isEmpty() ? List.of("USER") : roles;
+            // UserRoles에서 역할 이름 추출
+            if (user.getUserRoles() != null && !user.getUserRoles().isEmpty()) {
+                List<String> roles = user.getUserRoles().stream()
+                        .filter(ur -> ur.getIsActive())
+                        .map(ur -> ur.getRole().getName())
+                        .collect(Collectors.toList());
+                
+                if (!roles.isEmpty()) {
+                    return roles;
+                }
+            }
+            
+            // 역할이 없으면 기본 USER 역할 부여
+            log.warn("사용자 {}에게 할당된 역할이 없습니다. 기본 USER 역할 부여", user.getLoginId());
+            return List.of("USER");
         } catch (Exception e) {
-            log.warn("사용자 역할 조회 중 오류 발생: {}", e.getMessage());
+            log.error("사용자 역할 조회 중 오류 발생: {}", e.getMessage(), e);
             return List.of("USER");
         }
     }
