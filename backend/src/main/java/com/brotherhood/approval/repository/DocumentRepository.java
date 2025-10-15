@@ -206,5 +206,53 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
     List<Document> findUrgentDocumentsByDateRange(@Param("priority") String priority,
                                                   @Param("startDate") LocalDateTime startDate,
                                                   @Param("endDate") LocalDateTime endDate);
+    
+    // ===== 통계 쿼리 메서드들 =====
+    
+    /**
+     * 상태별 문서 수 조회 (Map 형태)
+     */
+    @Query("SELECT d.status, COUNT(d) FROM Document d GROUP BY d.status")
+    List<Object[]> countByStatus();
+    
+    /**
+     * 지사별 문서 분포 조회
+     */
+    @Query("SELECT d.branch.id, d.branch.name, COUNT(d) FROM Document d GROUP BY d.branch.id, d.branch.name")
+    List<Object[]> countByBranch();
+    
+    /**
+     * 문서 유형별 분포 조회
+     */
+    @Query("SELECT d.documentType, COUNT(d) FROM Document d GROUP BY d.documentType")
+    List<Object[]> countByDocumentType();
+    
+    /**
+     * 보안 등급별 분포 조회
+     */
+    @Query("SELECT d.securityLevel, COUNT(d) FROM Document d GROUP BY d.securityLevel")
+    List<Object[]> countBySecurityLevel();
+    
+    /**
+     * 월별 트렌드 조회 (최근 12개월)
+     */
+    @Query("SELECT " +
+           "TO_CHAR(d.createdAt, 'YYYY-MM') as month, " +
+           "COUNT(d) as created, " +
+           "SUM(CASE WHEN d.status = 'APPROVED' THEN 1 ELSE 0 END) as approved, " +
+           "SUM(CASE WHEN d.status = 'REJECTED' THEN 1 ELSE 0 END) as rejected " +
+           "FROM Document d " +
+           "WHERE d.createdAt >= :startDate " +
+           "GROUP BY TO_CHAR(d.createdAt, 'YYYY-MM') " +
+           "ORDER BY month DESC")
+    List<Object[]> getMonthlyTrend(@Param("startDate") LocalDateTime startDate);
+    
+    /**
+     * 월별 트렌드 조회 (기본값: 최근 12개월)
+     */
+    default List<Object[]> getMonthlyTrend() {
+        LocalDateTime startDate = LocalDateTime.now().minusMonths(12);
+        return getMonthlyTrend(startDate);
+    }
 }
 
