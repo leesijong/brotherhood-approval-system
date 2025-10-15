@@ -21,26 +21,44 @@ apiClient.interceptors.request.use(
     // 로컬 스토리지에서 토큰 가져오기
     if (typeof window !== 'undefined') {
       const authData = localStorage.getItem('brotherhood-auth')
+      console.log('🔍 [API 요청 인터셉터] authData 존재:', !!authData)
+      
       if (authData) {
         try {
           const { state } = JSON.parse(authData)
+          console.log('🔍 [API 요청 인터셉터] state:', state)
+          
           if (state?.accessToken) {
             config.headers.Authorization = `Bearer ${state.accessToken}`
+            console.log('✅ [API 요청 인터셉터] Authorization 헤더 추가:', `Bearer ${state.accessToken.substring(0, 20)}...`)
+          } else {
+            console.warn('⚠️ [API 요청 인터셉터] accessToken 없음')
           }
+          
           // X-User-Id 헤더 추가
           if (state?.user?.id) {
             config.headers['X-User-Id'] = state.user.id
+            console.log('✅ [API 요청 인터셉터] X-User-Id 헤더 추가:', state.user.id)
           }
+          
           // X-User-Roles 헤더 추가
           if (state?.user?.roles) {
-            const roles = state.user.roles.map((role: any) => role.name).join(',')
+            // roles가 이미 string[] 형식이므로 직접 join
+            const roles = Array.isArray(state.user.roles) 
+              ? state.user.roles.join(',')
+              : state.user.roles.map((role: any) => role.name || role).join(',')
             config.headers['X-User-Roles'] = roles
+            console.log('✅ [API 요청 인터셉터] X-User-Roles 헤더 추가:', roles)
           }
         } catch (error) {
-          console.warn('Failed to parse auth data:', error)
+          console.error('❌ [API 요청 인터셉터] auth data 파싱 실패:', error)
         }
+      } else {
+        console.warn('⚠️ [API 요청 인터셉터] localStorage에 brotherhood-auth 없음')
       }
     }
+    
+    console.log('📤 [API 요청]', config.method?.toUpperCase(), config.url, 'Headers:', config.headers)
     return config
   },
   (error) => Promise.reject(error)
