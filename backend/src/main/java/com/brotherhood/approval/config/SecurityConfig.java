@@ -37,13 +37,8 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authz -> authz
-                // 공개 엔드포인트
-                .requestMatchers("/api/auth/login", "/api/auth/logout").permitAll()
-                .requestMatchers("/api/health", "/health", "/hello").permitAll()
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                
-                // 나머지는 인증 필요 (세션 기반)
-                .anyRequest().authenticated()
+                // 개발 단계: 모든 요청 허용 (TODO: 인증 시스템 완전 구현 후 활성화)
+                .anyRequest().permitAll()
             )
             .formLogin(AbstractHttpConfigurer::disable)
             .logout(logout -> logout
