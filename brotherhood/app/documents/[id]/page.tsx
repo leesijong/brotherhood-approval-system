@@ -264,12 +264,11 @@ export default function DocumentDetailPage() {
     
     try {
       setLoadingAttachments(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://brotherhood-approval-system-production.up.railway.app/api'}/documents/${documentId}/attachments`, {
-        headers: { 'X-User-Id': user.id || 'ac31e829-d5c6-4a1d-92de-439178b12f5f' }
-      });
-      const result = await response.json();
+      // documentApi 사용 (Axios 인터셉터를 통해 Authorization 헤더 자동 추가)
+      const result = await documentApi.getAttachments(documentId);
+      
       if (result.success && result.data) {
-        setAttachments(result.data);
+        setAttachments(result.data as any);
       }
     } catch (error) {
       console.error('첨부파일 로드 오류:', error);
@@ -300,17 +299,12 @@ export default function DocumentDetailPage() {
         }
         
         console.log('문서 상세 조회 시작:', { 
-          documentId: params.id, 
-          apiUrl: `${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://brotherhood-approval-system-production.up.railway.app/api'}/documents/${params.id}` 
+          documentId: params.id
         });
         
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://brotherhood-approval-system-production.up.railway.app/api'}/documents/${params.id}`);
+        // documentApi 사용 (Axios 인터셉터를 통해 Authorization 헤더 자동 추가)
+        const result = await documentApi.getDocument(params.id as string);
         
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
         console.log('문서 데이터 응답:', { 
           success: result.success, 
           documentId: result.data?.id, 
@@ -319,12 +313,12 @@ export default function DocumentDetailPage() {
         });
         
         if (result.success && result.data) {
-          const apiDocument = result.data;
-          const document: Document = {
+          const apiDocument = result.data as any;
+          const document = {
             id: apiDocument.id,
             title: apiDocument.title,
             content: apiDocument.content,
-            status: apiDocument.status,
+            status: apiDocument.status as any,
             author: apiDocument.authorName || apiDocument.authorDisplayName || 'Unknown',
             authorId: apiDocument.authorId,
             authorName: apiDocument.authorName,
