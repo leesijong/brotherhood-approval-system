@@ -168,6 +168,19 @@ export const documentApi = {
     })
   },
 
+  // 문서에 첨부파일 업로드
+  uploadAttachment: async (
+    documentId: string,
+    file: File,
+    onUploadProgress?: (progressEvent: any) => void
+  ): Promise<BaseResponse<Attachment>> => {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await createFormDataRequest(`/documents/${documentId}/attachments/upload`, formData, onUploadProgress)
+    return response.data
+  },
+
   // 첨부파일 다운로드 URL 생성
   getDownloadUrl: async (attachmentId: string): Promise<BaseResponse<{ downloadUrl: string; expiresAt: string }>> => {
     return apiRequest<{ downloadUrl: string; expiresAt: string }>({

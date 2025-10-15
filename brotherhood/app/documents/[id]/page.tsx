@@ -39,21 +39,7 @@ import { AttachmentDownloader } from '@/components/AttachmentDownloader';
 import { ApprovalProgress } from '@/components/ApprovalProgress';
 import { ApprovalAction, ApprovalActionRequest } from '@/types/approval';
 import { RejectModal } from '@/components/ui/reject-modal';
-
-// 첨부파일 타입
-interface Attachment {
-  id: string;
-  filename: string;
-  originalFilename: string;
-  fileSize: number;
-  mimeType: string;
-  uploadedAt: string;
-  documentId: string;
-  uploadedBy: string;
-  name: string;
-  size: number;
-  type: string;
-}
+import type { Attachment } from '@/types';
 
 // 결재선 타입
 interface ApprovalLine {
@@ -98,15 +84,6 @@ interface Document {
   approvedAt?: string;
   rejectedAt?: string;
   rejectionReason?: string;
-}
-
-interface Attachment {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  uploadedAt: string;
-  uploadedBy: string;
 }
 
 interface ApprovalStep {
@@ -405,29 +382,25 @@ export default function DocumentDetailPage() {
           attachments: [
             {
               id: 'att-1',
-              filename: '3분기_예산계획.xlsx',
-              originalFilename: '3분기_예산계획.xlsx',
+              fileName: '3분기_예산계획.xlsx',
+              originalFileName: '3분기_예산계획.xlsx',
               fileSize: 1024000,
-              mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+              contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+              filePath: '/uploads/3분기_예산계획.xlsx',
               uploadedAt: '2024-09-15T10:00:00Z',
               documentId: params?.id as string,
-              uploadedBy: '김철수',
-              name: '3분기_예산계획.xlsx',
-              size: 1024000,
-              type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+              uploadedBy: '김철수'
             },
             {
               id: 'att-2',
-              filename: '마케팅_전략.pdf',
-              originalFilename: '마케팅_전략.pdf',
+              fileName: '마케팅_전략.pdf',
+              originalFileName: '마케팅_전략.pdf',
               fileSize: 2048000,
-              mimeType: 'application/pdf',
+              contentType: 'application/pdf',
+              filePath: '/uploads/마케팅_전략.pdf',
               uploadedAt: '2024-09-15T11:00:00Z',
               documentId: params?.id as string,
-              uploadedBy: '김철수',
-              name: '마케팅_전략.pdf',
-              size: 2048000,
-              type: 'application/pdf'
+              uploadedBy: '김철수'
             }
           ],
           approvalHistory: [
@@ -1002,7 +975,7 @@ export default function DocumentDetailPage() {
                           <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                           <div className="min-w-0 flex-1">
                             <div className="font-medium text-sm break-words">
-                              {attachment.originalFilename}
+                              {attachment.originalFileName}
                             </div>
                             <div className="text-xs text-muted-foreground">
                               {formatFileSize(attachment.fileSize)} • {new Date(attachment.uploadedAt).toLocaleDateString('ko-KR')}

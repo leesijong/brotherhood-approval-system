@@ -3,14 +3,7 @@
 import React from 'react';
 import { Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-interface Attachment {
-  id: string;
-  originalFilename: string;
-  fileSize: number;
-  mimeType: string;
-  uploadedAt: string;
-}
+import type { Attachment } from '@/types';
 
 interface AttachmentDownloaderProps {
   attachment: Attachment;
@@ -41,7 +34,7 @@ export const AttachmentDownloader: React.FC<AttachmentDownloaderProps> = ({
         // 다운로드 링크 생성 및 클릭
         const link = document.createElement('a');
         link.href = url;
-        link.download = attachment.originalFilename;
+        link.download = attachment.originalFileName;
         link.style.display = 'none';
         
         // DOM에 추가하고 클릭 후 제거
@@ -54,7 +47,7 @@ export const AttachmentDownloader: React.FC<AttachmentDownloaderProps> = ({
           window.URL.revokeObjectURL(url);
         }, 1000);
         
-        console.log(`${attachment.originalFilename} 파일이 다운로드되었습니다.`);
+        console.log(`${attachment.originalFileName} 파일이 다운로드되었습니다.`);
       } else {
         throw new Error('다운로드에 실패했습니다.');
       }

@@ -26,18 +26,7 @@ import { useToast } from '@/components/Toast';
 import { AttachmentDownloader } from '@/components/AttachmentDownloader';
 import { DeleteConfirmDialog } from '@/components/ConfirmDialog';
 import { documentApi } from '@/services/documentApi';
-
-// 첨부파일 타입
-interface Attachment {
-  id: string;
-  filename: string;
-  originalFilename: string;
-  fileSize: number;
-  mimeType: string;
-  uploadedAt: string;
-  documentId: string;
-  uploadedBy: string;
-}
+import type { Attachment } from '@/types';
 
 // 문서 타입
 interface Document {
@@ -212,18 +201,8 @@ export default function DocumentEditPage() {
     try {
       setUploadingFile(true);
       
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await fetch(`http://localhost:8080/api/documents/${document.id}/attachments/upload`, {
-        method: 'POST',
-        headers: {
-          'X-User-Id': user.id || 'ac31e829-d5c6-4a1d-92de-439178b12f5f'
-        },
-        body: formData
-      });
-
-      const result = await response.json();
+      // documentApi 사용 (Axios 인터셉터를 통해 Authorization 헤더 자동 추가)
+      const result = await documentApi.uploadAttachment(document.id, file);
       
       if (result.success && result.data) {
         toast({
@@ -266,14 +245,8 @@ export default function DocumentEditPage() {
     try {
       setDeletingAttachmentId(attachmentToDelete.id);
       
-      const response = await fetch(`http://localhost:8080/api/documents/attachments/${attachmentToDelete.id}`, {
-        method: 'DELETE',
-        headers: {
-          'X-User-Id': user.id || 'ac31e829-d5c6-4a1d-92de-439178b12f5f'
-        }
-      });
-
-      const result = await response.json();
+      // documentApi 사용 (Axios 인터셉터를 통해 Authorization 헤더 자동 추가)
+      const result = await documentApi.deleteAttachment(attachmentToDelete.id);
       
       if (result.success) {
         toast({
@@ -304,16 +277,11 @@ export default function DocumentEditPage() {
   // 첨부파일 목록 로드
   const loadAttachments = async (documentId?: string) => {
     const docId = documentId || document?.id;
-    if (!docId || !user) return;
+    if (!docId) return;
 
     try {
-      const response = await fetch(`http://localhost:8080/api/documents/${docId}/attachments`, {
-        headers: {
-          'X-User-Id': user.id || 'ac31e829-d5c6-4a1d-92de-439178b12f5f'
-        }
-      });
-
-      const result = await response.json();
+      // documentApi 사용 (Axios 인터셉터를 통해 Authorization 헤더 자동 추가)
+      const result = await documentApi.getAttachments(docId);
       
       if (result.success && result.data) {
         setAttachments(result.data);
@@ -616,7 +584,7 @@ export default function DocumentEditPage() {
                             <FileText className="h-4 w-4 text-muted-foreground" />
                             <div>
                               <div className="font-medium text-sm">
-                                {attachment.originalFilename}
+                                {attachment.originalFileName}
                               </div>
                               <div className="text-xs text-muted-foreground">
                                 {formatFileSize(attachment.fileSize)} • {new Date(attachment.uploadedAt).toLocaleDateString()}
@@ -690,7 +658,7 @@ export default function DocumentEditPage() {
         open={showDeleteConfirm}
         onOpenChange={setShowDeleteConfirm}
         title="첨부파일 삭제"
-        itemName={attachmentToDelete?.originalFilename}
+        itemName={attachmentToDelete?.originalFileName}
         onConfirm={handleDeleteAttachment}
         loading={deletingAttachmentId !== null}
       />
