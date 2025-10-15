@@ -253,6 +253,74 @@
    - **해결**: 주요 컴포넌트에 WCAG 2.1 AA 준수를 위한 속성 추가
    - **결과**: 스크린 리더 및 키보드 네비게이션 지원 개선
 
+##### 해결된 주요 문제들 (2025-10-01 Railway 배포)
+
+**Railway 배포 성공까지 16-17번 시도를 통해 해결한 8가지 핵심 문제**
+
+1. **NoResourceFoundException: No static resource api/auth/login**
+   - **문제**: 모든 API 요청이 static resource로 처리되어 404 오류
+   - **원인**: WebConfig.java에서 `/api/**` 경로를 static resource로 잘못 등록
+   - **해결**: 
+     - WebConfig.java 완전 삭제
+     - application-prod.yml MVC 설정 추가
+     - `spring.web.resources.add-mappings: false` 설정
+   - **결과**: API 요청이 Controller로 정상 라우팅
+
+2. **Controller 매핑 경로 불일치**
+   - **문제**: 모든 Controller에 `/api` prefix 누락으로 404 오류
+   - **해결**: 모든 Controller에 `/api` prefix 추가
+     - AuthController: `/auth` → `/api/auth`
+     - UserController: `/users` → `/api/users`
+     - DocumentController: `/documents` → `/api/documents`
+     - DashboardController: `/dashboard` → `/api/dashboard`
+     - ApprovalController: `""` → `/api/approvals`
+   - **결과**: API 경로 일관성 확보
+
+3. **AuditLog actionAt null 제약조건 위반**
+   - **문제**: `null value in column "action_at" violates not-null constraint`
+   - **해결**: AuditLoggingInterceptor에서 `actionAt(LocalDateTime.now())` 추가
+   - **결과**: AuditLog 정상 저장, Documents API 200 OK
+
+4. **DocumentController 필수 헤더 오류**
+   - **문제**: `Required request header 'X-User-Id' is not present`
+   - **해결**: 헤더를 optional로 변경 (`required = false`)
+   - **결과**: 헤더 없이도 API 호출 가능
+
+5. **프론트엔드 TypeScript 프로덕션 빌드 오류 (12개 파일)**
+   - **문제**: `npm run dev`는 정상이지만 `npm run build`에서 타입 오류
+   - **주요 오류**:
+     - Property 'content' does not exist on PageResponse
+     - roles는 string[] 타입인데 .name 접근 시도
+     - useSearchParams() should be wrapped in suspense boundary
+   - **해결**:
+     - PageResponse.data.content 명시적 접근
+     - roles 타입 수정 (`role === 'ADMIN'`)
+     - useSearchParams 제거, window.location 직접 사용
+     - Next.js 설정 최적화 (`eslint: { ignoreDuringBuilds: true }`)
+   - **결과**: Railway 배포 성공
+
+6. **public 폴더 Git 추적 문제**
+   - **문제**: brotherhood-logo.png 404 오류
+   - **해결**: 
+     - `git add -f brotherhood/public/` 강제 추가
+     - Next.js Image 컴포넌트 적용
+     - images.unoptimized 설정
+   - **결과**: 이미지 파일 배포, 로고 정상 표시
+
+7. **Railway PostgreSQL 스키마 불일치**
+   - **문제**: Railway DB에 테이블이 없음
+   - **해결**:
+     - JPA `hibernate.ddl-auto: update` 설정으로 자동 테이블 생성
+     - 로컬 데이터 마이그레이션 (`pg_dump → railway connect → psql`)
+   - **결과**: 12명 사용자, 15개 문서 완전 마이그레이션
+
+8. **Dockerfile 빌드 오류**
+   - **문제**: `Unable to access jarfile` - 버전에 따라 JAR 파일명 동적 변경
+   - **해결**:
+     - build.gradle: `bootJar { archiveFileName = 'app.jar' }`
+     - Dockerfile: 고정 파일명 사용
+   - **결과**: Dockerfile 빌드 성공
+
 #### 4. 터미널 사용 및 스크립트 운용 방식
 
 ##### 5단계 작업 명령어 (2025-10-13)
