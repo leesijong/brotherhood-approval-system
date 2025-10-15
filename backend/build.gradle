@@ -40,10 +40,10 @@ dependencies {
     // Security
     implementation 'org.springframework.security:spring-security-oauth2-jose'
     
-    // JWT
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
+    // JWT (임시 비활성화 - 메모리 부족 해결을 위해)
+    // implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
+    // runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'
+    // runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.3'
     
     // API Documentation
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
