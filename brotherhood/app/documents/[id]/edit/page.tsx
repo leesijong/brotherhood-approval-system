@@ -25,6 +25,7 @@ import Link from 'next/link';
 import { useToast } from '@/components/Toast';
 import { AttachmentDownloader } from '@/components/AttachmentDownloader';
 import { DeleteConfirmDialog } from '@/components/ConfirmDialog';
+import { documentApi } from '@/services/documentApi';
 
 // 첨부파일 타입
 interface Attachment {
@@ -119,18 +120,14 @@ export default function DocumentEditPage() {
         if (!params?.id) {
           throw new Error('문서 ID가 없습니다.');
         }
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://brotherhood-approval-system-production.up.railway.app/api'}/documents/${params.id}`);
         
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const result = await response.json();
+        // documentApi 사용 (Axios 인터셉터를 통해 Authorization 헤더 자동 추가)
+        const result = await documentApi.getDocument(params.id as string);
         console.log('문서 수정용 데이터 로드:', result);
         
         if (result.success && result.data) {
-          const apiDocument = result.data;
-          const document: Document = {
+          const apiDocument = result.data as any;
+          const document = {
             id: apiDocument.id,
             title: apiDocument.title,
             content: apiDocument.content,
@@ -151,6 +148,7 @@ export default function DocumentEditPage() {
             version: apiDocument.version || 1,
             securityLevel: apiDocument.securityLevel || 'NORMAL',
             branchName: apiDocument.branchName || 'Unknown',
+            attachments: apiDocument.attachments || [],
           };
           
           setDocument(document);
@@ -358,7 +356,7 @@ export default function DocumentEditPage() {
         title: formData.title,
         content: formData.content,
         priority: formData.priority,
-        documentType: formData.category,
+        documentType: formData.category as any, // DocumentType으로 처리
         isUrgent: formData.isUrgent,
         dueDate: formData.dueDate ? `${formData.dueDate}T18:00:00Z` : null
       };
@@ -369,19 +367,11 @@ export default function DocumentEditPage() {
         throw new Error('문서 ID가 없습니다.');
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'https://brotherhood-approval-system-production.up.railway.app/api'}/documents/${params.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-User-Id': user.id || 'ac31e829-d5c6-4a1d-92de-439178b12f5f'
-        },
-        body: JSON.stringify(updateData)
-      });
-
-      const result = await response.json();
+      // documentApi 사용 (Axios 인터셉터를 통해 Authorization 헤더 자동 추가)
+      const result = await documentApi.updateDocument(params.id as string, updateData as any);
       console.log('문서 수정 응답:', result);
 
-      if (response.ok && result.success) {
+      if (result.success) {
         toast({
           title: '성공',
           description: '문서가 성공적으로 수정되었습니다.',
