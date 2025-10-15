@@ -39,7 +39,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(authz -> authz
                 // 공개 엔드포인트
                 .requestMatchers("/api/auth/login", "/api/auth/logout").permitAll()
-                .requestMatchers("/api/health", "/hello").permitAll()
+                .requestMatchers("/api/health", "/health", "/hello").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 
                 // 나머지는 인증 필요 (세션 기반)
