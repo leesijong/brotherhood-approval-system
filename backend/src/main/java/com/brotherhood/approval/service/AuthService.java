@@ -4,7 +4,7 @@ import com.brotherhood.approval.dto.auth.LoginRequest;
 import com.brotherhood.approval.dto.auth.LoginResponse;
 import com.brotherhood.approval.entity.User;
 import com.brotherhood.approval.repository.UserRepository;
-// import com.brotherhood.approval.security.JwtTokenProvider;
+import com.brotherhood.approval.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,7 +30,7 @@ public class AuthService {
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    // private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
     
     /**
      * 사용자 로그인 - JWT 토큰 생성
@@ -58,9 +58,13 @@ public class AuthService {
             List<String> roles = getUserRoles(user);
             log.info("사용자 역할: {}", roles);
             
-            // JWT 토큰 생성 (임시 비활성화 - 메모리 부족 해결을 위해)
-            String accessToken = "temp-token-" + user.getId().toString();
-            String refreshToken = "temp-refresh-" + user.getId().toString();
+            // JWT 토큰 생성
+            String accessToken = jwtTokenProvider.createAccessToken(
+                user.getId().toString(), 
+                user.getLoginId(), 
+                roles
+            );
+            String refreshToken = jwtTokenProvider.createRefreshToken(user.getId().toString());
             
             // 로그인 시간 업데이트
             user.setLastLoginAt(LocalDateTime.now());
