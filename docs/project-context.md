@@ -66,16 +66,44 @@
 
 ### ⚠️ 알려진 이슈 (2025-10-15)
 
-1. **사용자 목록 페이지 데이터 로드 실패** (긴급)
-   - **위치**: `app/users/page.tsx` 120번 줄
-   - **문제**: `http://localhost:8080/api/users/stats` 하드코딩
-   - **영향**: Railway 프로덕션에서 사용자 목록 페이지 오류
-   - **해결방법**: `apiRequest({ method: 'GET', url: '/users/stats' })` 사용
-   - **우선순위**: 높음 (다음 작업 첫 번째)
+1. **파일 업로드 영구 저장 문제** (중간)
+   - **위치**: Railway Volume 제거로 인한 임시 저장
+   - **문제**: Railway 재시작 시 업로드된 파일 사라짐
+   - **영향**: 파일 첨부 기능 제한적 사용
+   - **해결방법**: Cloudflare R2 또는 Railway Volume 재설정 필요
+   - **우선순위**: 중간 (기능적 제약 있음)
+
+2. **메모리 사용량 모니터링 필요** (낮음)
+   - **위치**: Railway 배포 환경
+   - **문제**: JWT 라이브러리로 인한 메모리 사용량 증가
+   - **영향**: OOM 위험성 존재
+   - **해결방법**: Railway 메모리 증설 또는 코드 최적화
+   - **우선순위**: 낮음 (현재 정상 작동)
 
 ---
 
 ## 📝 최근 주요 작업
+
+### 2025-10-15 (Railway Volume 설정 및 OOM 문제 해결)
+
+#### Railway Volume 설정 및 메모리 최적화
+- ✅ **Railway Volume 설정**: `brotherhood-approval-system-volume` 생성 (500MB)
+- ✅ **Volume 마운트**: `/app/uploads` 경로로 파일 저장소 설정
+- ✅ **환경변수 설정**: `UPLOAD_DIR=/app/uploads` Railway 환경변수 추가
+- ✅ **OOM 문제 해결**: JWT 라이브러리 임시 비활성화로 메모리 사용량 대폭 감소
+- ✅ **JWT 복원**: 인증 기능 정상화를 위해 JWT 클래스들 복원
+- ✅ **Volume 제거**: 메모리 부족 해결을 위해 Volume 삭제, 로컬 임시 저장으로 전환
+
+#### 파일 업로드 시스템 개선
+- ✅ **하드코딩 URL 제거**: `localhost:8080` → `apiRequest()` 통합
+- ✅ **documentApi 확장**: `uploadAttachment()`, `deleteAttachment()`, `getAttachments()` 메서드 추가
+- ✅ **Attachment 타입 통일**: `@/types`에서 import하여 일관성 확보
+- ✅ **프론트엔드 수정**: 문서 수정 페이지에서 `fetch` → `documentApi` 사용
+
+#### 인증 시스템 안정화
+- ✅ **JWT 토큰 생성**: 실제 JWT 토큰 생성 로직 복원
+- ✅ **SecurityConfig 복원**: JWT 인증 필터 정상 작동
+- ✅ **문서 목록 복구**: JWT 인증으로 인한 문서 목록 표시 정상화
 
 ### 2025-10-15 (문서 정리)
 
@@ -156,12 +184,23 @@
 
 ## 🚀 다음 단계
 
-### 긴급 (2025-10-15 첫 작업)
-1. **사용자 목록 페이지 하드코딩 URL 수정**
+### 우선순위 높음 (2025-10-15 완료)
+1. ✅ **사용자 목록 페이지 하드코딩 URL 수정** (완료)
    - `app/users/page.tsx` 120번 줄 수정
    - `fetch('http://localhost:8080...')` → `apiRequest(...)` 변경
-   - Railway 프로덕션 배포
-   - 예상 시간: 5분
+   - Railway 프로덕션 배포 완료
+
+2. ✅ **파일 업로드 시스템 개선** (완료)
+   - 하드코딩 URL 제거
+   - documentApi 통합
+   - Attachment 타입 통일
+
+### 우선순위 중간 (다음 작업)
+1. **파일 영구 저장 시스템 구현**
+   - Cloudflare R2 설정 및 연동
+   - 또는 Railway Volume 재설정 (메모리 증설 필요)
+   - 파일 업로드/다운로드 영구 저장
+   - 예상 시간: 2-3시간
 
 ### 우선순위 중간
 1. **알림 시스템 구현**
@@ -214,7 +253,7 @@ Start-Sleep -Seconds 15  # ⚠️ 필수 대기!
 ```
 
 #### 디렉토리 이동 규칙
-```powershell
+  ```powershell
 # 백엔드 실행 - 반드시 backend 디렉토리에서
 cd C:\cckbm\backend
 gradle bootRun
@@ -257,6 +296,23 @@ git commit -m "기능: 사용자 관리 페이지 추가"
 ---
 
 ## 📚 참고: 문제 해결 레퍼런스
+
+### Railway 메모리 및 Volume 관련
+
+#### Out of Memory (OOM) 오류
+- **원인**: JWT 라이브러리 + Volume 마운트로 인한 메모리 사용량 급증
+- **증상**: Railway 배포 실패, "Out of Memory" 로그
+- **해결**: 
+  - JWT 라이브러리 임시 비활성화 (메모리 감소)
+  - Volume 제거 (파일 시스템 오버헤드 제거)
+  - JWT 복원 후 인증 기능 정상화
+- **예방**: Railway 메모리 증설 또는 Cloudflare R2 사용 고려
+
+#### Volume 설정 및 제거
+- **Volume 생성**: `railway volume add --mount-path /app/uploads`
+- **Volume 삭제**: `railway volume delete --volume volume-name`
+- **환경변수 설정**: `railway variables --set "UPLOAD_DIR=/app/uploads"`
+- **제한사항**: Railway 무료 플랜은 0.5GB, 메모리 사용량 증가
 
 ### Railway 배포 관련
 
