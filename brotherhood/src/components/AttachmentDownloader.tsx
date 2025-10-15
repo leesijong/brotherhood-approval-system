@@ -29,7 +29,8 @@ export const AttachmentDownloader: React.FC<AttachmentDownloaderProps> = ({
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/documents/attachments/${attachment.id}/download`, {
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api';
+      const response = await fetch(`${API_BASE_URL}/documents/attachments/${attachment.id}/download`, {
         headers: { 'X-User-Id': userId }
       });
       

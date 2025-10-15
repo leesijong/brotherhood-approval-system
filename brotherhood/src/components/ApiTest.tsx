@@ -93,7 +93,8 @@ export function ApiTest() {
     try {
       setTestResults(prev => ({ ...prev, auth: '간단한 fetch 테스트 중...' }))
       
-      const response = await fetch('http://localhost:8080/api/health')
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api';
+      const response = await fetch(`${API_BASE_URL}/health`)
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -119,7 +120,8 @@ export function ApiTest() {
     try {
       setTestResults(prev => ({ ...prev, auth: 'Hello 엔드포인트 테스트 중...' }))
       
-      const response = await fetch('http://localhost:8080/api/hello')
+      const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api';
+      const response = await fetch(`${API_BASE_URL}/hello`)
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)

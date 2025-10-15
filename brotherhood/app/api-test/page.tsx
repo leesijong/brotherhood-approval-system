@@ -6,11 +6,13 @@ export default function ApiTestPage() {
   const [testResults, setTestResults] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080/api';
+  
   const testEndpoints = [
-    { name: 'Health Check', url: 'http://localhost:8080/api/health', method: 'GET' },
-    { name: 'Test Endpoint', url: 'http://localhost:8080/api/test', method: 'GET' },
-    { name: 'Simple Hello', url: 'http://localhost:8080/api/hello', method: 'GET' },
-    { name: 'Auth Login', url: 'http://localhost:8080/api/auth/login', method: 'POST', body: { username: 'admin', password: 'admin123' } },
+    { name: 'Health Check', url: `${API_BASE_URL}/health`, method: 'GET' },
+    { name: 'Test Endpoint', url: `${API_BASE_URL}/test`, method: 'GET' },
+    { name: 'Simple Hello', url: `${API_BASE_URL}/hello`, method: 'GET' },
+    { name: 'Auth Login', url: `${API_BASE_URL}/auth/login`, method: 'POST', body: { username: 'admin', password: 'admin123' } },
   ];
 
   const runTest = async (endpoint: any) => {

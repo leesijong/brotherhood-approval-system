@@ -28,6 +28,14 @@ export const userApi = {
     })
   },
 
+  // 사용자 통계 조회
+  getStats: async (): Promise<BaseResponse<{ totalUsers: number; activeUsers: number; }>> => {
+    return apiRequest<{ totalUsers: number; activeUsers: number; }>({
+      method: 'GET',
+      url: '/users/stats',
+    })
+  },
+
   // 사용자 상세 조회
   getUser: async (id: string): Promise<BaseResponse<UserInfo>> => {
     return apiRequest<UserInfo>({

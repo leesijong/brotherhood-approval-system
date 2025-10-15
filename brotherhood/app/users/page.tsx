@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import ToastContainer from '@/components/ui/toast-container';
 import { useToast } from '@/hooks/useToast';
+import type { UserCreateRequest, UserUpdateRequest } from '@/types/user';
 import { 
   Users, 
   UserPlus, 
@@ -117,27 +118,20 @@ export default function UsersPage() {
         
         // 1. 사용자 통계 조회
         console.log('2. 사용자 통계 조회 API 호출...');
-        const statsResponse = await fetch('http://localhost:8080/api/users/stats', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include', // 쿠키 포함
-        });
+        const statsResponse = await userApi.getStats();
         
-        if (statsResponse.ok) {
-          const statsData = await statsResponse.json();
-          console.log('✅ 사용자 통계 조회 성공:', statsData);
+        if (statsResponse.success && statsResponse.data) {
+          console.log('✅ 사용자 통계 조회 성공:', statsResponse.data);
           setStats({
-            totalUsers: statsData.data.totalUsers,
-            activeUsers: statsData.data.activeUsers,
-            inactiveUsers: statsData.data.totalUsers - statsData.data.activeUsers,
+            totalUsers: statsResponse.data.totalUsers,
+            activeUsers: statsResponse.data.activeUsers,
+            inactiveUsers: statsResponse.data.totalUsers - statsResponse.data.activeUsers,
             newUsersThisMonth: 0, // API에 없음
             adminUsers: 0, // API에 없음
-            regularUsers: statsData.data.activeUsers, // 임시값
+            regularUsers: statsResponse.data.activeUsers, // 임시값
           });
         } else {
-          console.error('❌ 사용자 통계 조회 실패:', statsResponse.status);
+          console.error('❌ 사용자 통계 조회 실패:', statsResponse.message);
         }
 
         // 3. 사용자 목록 조회
@@ -313,40 +307,34 @@ export default function UsersPage() {
       }
       
       // 2. 사용자 생성
-      const newUser = {
-        name: createForm.name,
+      const newUser: UserCreateRequest = {
+        username: createForm.name, // loginId로 사용
         email: createForm.email,
+        firstName: createForm.name,
+        lastName: '',
         baptismalName: createForm.baptismalName,
         password: createForm.password,
-        phone: createForm.phone || null,
-        department: createForm.department || null,
-        position: createForm.position || null,
+        phone: createForm.phone || undefined,
+        branchId: '00000000-0000-0000-0000-000000000001', // 기본 지사 (실제로는 선택해야 함)
+        roleIds: ['00000000-0000-0000-0000-000000000001'], // 기본 역할 (실제로는 선택해야 함)
       };
 
-      const response = await fetch('http://localhost:8080/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // 쿠키 포함
-        body: JSON.stringify(newUser),
-      });
+      const response = await userApi.createUser(newUser);
       
-      if (response.ok) {
-        const userData = await response.json();
+      if (response.success && response.data) {
+        const userData = response.data;
         console.log('✅ 사용자 생성 성공:', userData);
         showSuccess(
           '사용자 생성 성공',
-          `이름: ${userData.data.name}\n이메일: ${userData.data.email}\n세례명: ${userData.data.baptismalName}`
+          `이름: ${userData.firstName}\n이메일: ${userData.email}\n세례명: ${userData.baptismalName}`
         );
         
         // 모달 닫기 및 목록 새로고침
         handleCloseCreateModal();
         window.location.reload();
       } else {
-        console.error('❌ 사용자 생성 실패:', response.status);
-        const errorData = await response.json();
-        showError('사용자 생성 실패', errorData.message || '알 수 없는 오류');
+        console.error('❌ 사용자 생성 실패:', response.message);
+        showError('사용자 생성 실패', response.message || '알 수 없는 오류');
       }
     } catch (error) {
       console.error('❌ 사용자 생성 오류:', error);
@@ -382,41 +370,31 @@ export default function UsersPage() {
       }
 
       // 2. 사용자 정보 수정
-      const updateData = {
-        name: editForm.name,
+      const updateData: UserUpdateRequest = {
+        firstName: editForm.name,
+        lastName: '',
         email: editForm.email,
         baptismalName: editForm.baptismalName,
-        phone: editForm.phone || null,
-        department: editForm.department || null,
-        position: editForm.position || null,
-        role: editForm.role,
+        phone: editForm.phone || undefined,
         isActive: editForm.isActive,
       };
 
-      const response = await fetch(`http://localhost:8080/api/users/${editingUser.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // 쿠키 포함
-        body: JSON.stringify(updateData),
-      });
+      const response = await userApi.updateUser(editingUser.id, updateData);
       
-      if (response.ok) {
-        const userData = await response.json();
+      if (response.success && response.data) {
+        const userData = response.data;
         console.log('✅ 사용자 정보 수정 성공:', userData);
         showSuccess(
           '사용자 정보 수정 성공',
-          `이름: ${userData.data.name}\n이메일: ${userData.data.email}\n권한: ${roleOptions.find(r => r.value === editForm.role)?.label}`
+          `이름: ${userData.firstName}\n이메일: ${userData.email}\n권한: ${roleOptions.find(r => r.value === editForm.role)?.label}`
         );
         
         // 모달 닫기 및 목록 새로고침
         handleCloseEditModal();
         window.location.reload();
       } else {
-        console.error('❌ 사용자 정보 수정 실패:', response.status);
-        const errorData = await response.json();
-        showError('사용자 정보 수정 실패', errorData.message || '알 수 없는 오류');
+        console.error('❌ 사용자 정보 수정 실패:', response.message);
+        showError('사용자 정보 수정 실패', response.message || '알 수 없는 오류');
       }
     } catch (error) {
       console.error('❌ 사용자 정보 수정 오류:', error);

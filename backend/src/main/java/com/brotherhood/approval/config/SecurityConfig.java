@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -15,11 +16,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 
 /**
- * Spring Security 설정 - 모든 요청 허용
+ * Spring Security 설정 - 세션 기반 인증
  * 
  * @author Brotherhood Development Team
- * @version 2.0.0
- * @since 2024-09-23
+ * @version 3.0.0
+ * @since 2025-10-15
  */
 @Configuration
 @EnableWebSecurity
@@ -36,12 +37,25 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authz -> authz
-                // 모든 요청 허용
-                .anyRequest().permitAll()
+                // 공개 엔드포인트
+                .requestMatchers("/api/auth/login", "/api/auth/logout").permitAll()
+                .requestMatchers("/api/health", "/hello").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                
+                // 나머지는 인증 필요 (세션 기반)
+                .anyRequest().authenticated()
             )
             .formLogin(AbstractHttpConfigurer::disable)
-            .logout(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable);
+            .logout(logout -> logout
+                .logoutUrl("/api/auth/logout")
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .permitAll()
+            )
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+            );
 
         return http.build();
     }
