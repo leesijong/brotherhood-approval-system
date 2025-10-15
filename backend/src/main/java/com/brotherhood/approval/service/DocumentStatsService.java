@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -103,13 +104,13 @@ public class DocumentStatsService {
         
         return results.stream()
                 .map(result -> {
-                    String branchId = (String) result[0];
+                    UUID branchId = (UUID) result[0];
                     String branchName = (String) result[1];
                     Long count = ((Number) result[2]).longValue();
                     Double percentage = totalDocuments > 0 ? (count.doubleValue() / totalDocuments) * 100 : 0.0;
                     
                     return DocumentStatsResponse.BranchDistribution.builder()
-                            .branchId(branchId)
+                            .branchId(branchId.toString())
                             .branchName(branchName)
                             .count(count)
                             .percentage(Math.round(percentage * 100.0) / 100.0)
