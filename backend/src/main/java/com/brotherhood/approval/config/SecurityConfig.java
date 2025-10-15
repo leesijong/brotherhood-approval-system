@@ -46,13 +46,9 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT는 stateless
             )
             .authorizeHttpRequests(authz -> authz
-                // 공개 엔드포인트
-                .requestMatchers("/api/auth/login", "/api/auth/logout").permitAll()
-                .requestMatchers("/api/health", "/health", "/hello").permitAll()
-                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/api-docs/**").permitAll()
-                
-                // 나머지는 인증 필요 (JWT)
-                .anyRequest().authenticated()
+                // 임시: 프론트엔드 배포 완료까지 모든 요청 허용
+                // TODO: 프론트엔드 Axios 인터셉터 작동 확인 후 활성화
+                .anyRequest().permitAll()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .formLogin(AbstractHttpConfigurer::disable)
