@@ -68,8 +68,14 @@ public class DocumentController {
     @Operation(summary = "문서 생성", description = "새로운 문서를 생성합니다.")
     public ResponseEntity<BaseResponse<DocumentDto>> createDocument(
             @Valid @RequestBody DocumentCreateRequest request,
-            @RequestHeader("X-User-Id") String authorId) {
+            @RequestHeader(value = "X-User-Id", required = false) String authorId) {
         try {
+            // X-User-Id 헤더가 없으면 SecurityContext에서 추출
+            if (authorId == null || authorId.trim().isEmpty()) {
+                authorId = getCurrentUserId();
+                log.info("SecurityContext에서 사용자 ID 추출: {}", authorId);
+            }
+            
             DocumentDto document = documentService.createDocument(request, authorId);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(BaseResponse.success(document, "문서가 성공적으로 생성되었습니다"));
@@ -286,8 +292,11 @@ public class DocumentController {
     public ResponseEntity<BaseResponse<DocumentDto>> updateDocument(
             @PathVariable String id, 
             @Valid @RequestBody DocumentUpdateRequest request,
-            @RequestHeader("X-User-Id") String userId) {
+            @RequestHeader(value = "X-User-Id", required = false) String userId) {
         try {
+            if (userId == null || userId.trim().isEmpty()) {
+                userId = getCurrentUserId();
+            }
             log.info("문서 수정 컨트롤러 호출: id={}, userId={}", id, userId);
             log.info("요청 데이터: title={}, content={}, documentType={}, priority={}", 
                     request.getTitle(), request.getContent(), request.getDocumentType(), request.getPriority());
@@ -311,8 +320,11 @@ public class DocumentController {
     @PostMapping("/{id}/submit")
     @Operation(summary = "문서 상신", description = "문서를 상신합니다.")
     public ResponseEntity<BaseResponse<DocumentDto>> submitDocument(
-            @PathVariable String id, @RequestHeader("X-User-Id") String userId) {
+            @PathVariable String id, @RequestHeader(value = "X-User-Id", required = false) String userId) {
         try {
+            if (userId == null || userId.trim().isEmpty()) {
+                userId = getCurrentUserId();
+            }
             DocumentDto document = documentService.submitDocument(id, userId);
             return ResponseEntity.ok(BaseResponse.success(document, "문서가 성공적으로 상신되었습니다"));
         } catch (IllegalArgumentException e) {
@@ -331,8 +343,11 @@ public class DocumentController {
     @PostMapping("/{id}/approve")
     @Operation(summary = "문서 승인", description = "문서를 승인합니다.")
     public ResponseEntity<BaseResponse<DocumentDto>> approveDocument(
-            @PathVariable String id, @RequestHeader("X-User-Id") String userId) {
+            @PathVariable String id, @RequestHeader(value = "X-User-Id", required = false) String userId) {
         try {
+            if (userId == null || userId.trim().isEmpty()) {
+                userId = getCurrentUserId();
+            }
             DocumentDto document = documentService.approveDocument(id, userId);
             return ResponseEntity.ok(BaseResponse.success(document, "문서가 성공적으로 승인되었습니다"));
         } catch (IllegalArgumentException e) {
@@ -353,8 +368,11 @@ public class DocumentController {
     public ResponseEntity<BaseResponse<DocumentDto>> rejectDocument(
             @PathVariable String id, 
             @RequestBody @Parameter(description = "반려 사유") String rejectionReason,
-            @RequestHeader("X-User-Id") String userId) {
+            @RequestHeader(value = "X-User-Id", required = false) String userId) {
         try {
+            if (userId == null || userId.trim().isEmpty()) {
+                userId = getCurrentUserId();
+            }
             DocumentDto document = documentService.rejectDocument(id, rejectionReason, userId);
             return ResponseEntity.ok(BaseResponse.success(document, "문서가 성공적으로 반려되었습니다"));
         } catch (IllegalArgumentException e) {
@@ -373,8 +391,11 @@ public class DocumentController {
     @PostMapping("/{id}/recall")
     @Operation(summary = "문서 회수", description = "상신된 문서를 회수합니다.")
     public ResponseEntity<BaseResponse<DocumentDto>> recallDocument(
-            @PathVariable String id, @RequestHeader("X-User-Id") String userId) {
+            @PathVariable String id, @RequestHeader(value = "X-User-Id", required = false) String userId) {
         try {
+            if (userId == null || userId.trim().isEmpty()) {
+                userId = getCurrentUserId();
+            }
             DocumentDto document = documentService.recallDocument(id, userId);
             return ResponseEntity.ok(BaseResponse.success(document, "문서가 성공적으로 회수되었습니다"));
         } catch (IllegalArgumentException e) {
@@ -393,8 +414,11 @@ public class DocumentController {
     @DeleteMapping("/{id}")
     @Operation(summary = "문서 삭제", description = "문서를 삭제합니다. 작성자 또는 관리자만 삭제 가능하며, DRAFT 또는 REJECTED 상태만 삭제 가능합니다.")
     public ResponseEntity<BaseResponse<Void>> deleteDocument(
-            @PathVariable String id, @RequestHeader("X-User-Id") String userId) {
+            @PathVariable String id, @RequestHeader(value = "X-User-Id", required = false) String userId) {
         try {
+            if (userId == null || userId.trim().isEmpty()) {
+                userId = getCurrentUserId();
+            }
             documentService.deleteDocument(id, userId);
             return ResponseEntity.ok(BaseResponse.success(null, "문서가 성공적으로 삭제되었습니다"));
         } catch (IllegalArgumentException e) {
@@ -444,8 +468,11 @@ public class DocumentController {
     public ResponseEntity<BaseResponse<FileUploadResponse>> uploadAttachment(
             @PathVariable String id,
             @RequestParam("file") MultipartFile file,
-            @RequestHeader("X-User-Id") String userId) {
+            @RequestHeader(value = "X-User-Id", required = false) String userId) {
         try {
+            if (userId == null || userId.trim().isEmpty()) {
+                userId = getCurrentUserId();
+            }
             FileUploadResponse response = attachmentService.uploadFile(file, id, userId);
             return ResponseEntity.ok(BaseResponse.success(response, "첨부파일이 성공적으로 업로드되었습니다"));
         } catch (IllegalArgumentException e) {
@@ -542,4 +569,19 @@ public class DocumentController {
         }
     }
     
+    /**
+     * SecurityContext에서 현재 사용자 ID 추출
+     */
+    private String getCurrentUserId() {
+        org.springframework.security.core.Authentication authentication = 
+            org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication == null || !authentication.isAuthenticated() || 
+            authentication instanceof org.springframework.security.authentication.AnonymousAuthenticationToken) {
+            throw new IllegalArgumentException("인증되지 않은 사용자입니다");
+        }
+        
+        // JWT 필터에서 설정한 userId (principal)
+        return authentication.getName();
+    }
 }
